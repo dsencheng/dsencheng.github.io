@@ -157,21 +157,13 @@ WKWebView* webView = [[WKWebView alloc] initWithFrame:self.view.frame configurat
 我也没有找到具体含义，如果你知道可以告诉我。<br/>
 <strong>友情提醒</strong>，<code>applicationNameForUserAgent</code> 应该追加，不是直接赋值。</p>
 
-<div id="container"></div>
-<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
-<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-<script>
-var gitment = new Gitment({
-  id: '<%= page.title %>', // 可选。默认为 location.href
-  owner: 'dsencheng@gmail.com',
-  repo: 'dsencheng.github.io',
-  oauth: {
-    client_id: '15742af25e190ae9f0d0',
-    client_secret: 'e8d6cd4c99890fc4167a3b63703a1c6d3e7325d0',
-  },
-})
-gitment.render('container')
-</script>
+<script src="https://utteranc.es/client.js"
+        repo="https://github.com/dsencheng/dsencheng.github.io.utteranc.git"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>        
 
 
     
