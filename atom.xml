@@ -4,7 +4,7 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2019-09-12T11:45:09+08:00</updated>
+  <updated>2019-09-12T12:57:26+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -31,6 +31,8 @@
 </code></pre>
 
 <p><a href="https://stackoverflow.com/questions/41046258/bash-command-redirection-in-expect-script-failing-with-permission-denied-spawn">原址链接</a></p>
+
+<span id="more"></span><!-- more -->
 
 <p>——————————————————————————</p>
 
@@ -184,6 +186,8 @@ The key&#39;s randomart image is:
 
 </code></pre>
 
+<span id="more"></span><!-- more -->
+
 <h5 id="toc_2">3.创建config文件</h5>
 
 <p>在 <code>~/.ssh</code> 目录创建一个<code>config</code>文件</p>
@@ -269,6 +273,8 @@ Permission denied, please try again
 
 <p>下面就是如何在终端内使用Shadowsocks的访问外网操作。</p>
 
+<span id="more"></span><!-- more -->
+
 <h6 id="toc_1">点击小飞机 -- 复制终端代理命令，或直接使用下面的命令。</h6>
 
 <p><code>export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;</code></p>
@@ -317,6 +323,8 @@ URL : http://www.cip.cc/66.112.xx.xx
 网上也有这大量如何修改<code>UserAgent</code>的方法，但总是会出现<code>UserAgent</code>无效的情况，比如<a href="https://awesome-tips.gitbook.io/ios/webview/content">iOS12 设置 WKWebView 的 UserAgent</a></p>
 
 <p>掉进坑里无数次后发现，系统早已准备好，只是我没有发现，擦干菜鸟的泪水。。。</p>
+
+<span id="more"></span><!-- more -->
 
 <h4 id="toc_0">系统需要高于 iOS9</h4>
 

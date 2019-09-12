@@ -120,33 +120,6 @@
 
 <p>掉进坑里无数次后发现，系统早已准备好，只是我没有发现，擦干菜鸟的泪水。。。</p>
 
-<h4 id="toc_0">系统需要高于 iOS9</h4>
-
-<h6 id="toc_1">WKWebView正确设置、修改UserAgent</h6>
-
-<pre><code class="language-text">WKWebViewConfiguration* webViewConfig = WKWebViewConfiguration.new;
-NSLog(@&quot;修改前 = %@&quot;,webViewConfig.applicationNameForUserAgent);
-//正确设置UserAgent的代码
-webViewConfig.applicationNameForUserAgent = @&quot;我是自定义Agent&quot;;
-NSLog(@&quot;修改后 = %@&quot;,webViewConfig.applicationNameForUserAgent);
-//正确使用设计的初始化方法，不要使用其他初始化方法。
-WKWebView* webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:webViewConfig];
-//注意：下面这句代码是查看，不是设置UserAgent
-[webView evaluateJavaScript:@&quot;navigator.userAgent&quot; completionHandler:^(NSString * _Nullable originUserAgent, NSError * _Nullable error) {
-    NSLog(@&quot;完整UserAgent = %@&quot;,originUserAgent);
-}];
-</code></pre>
-
-<h6 id="toc_2">输出</h6>
-
-<pre><code class="language-text">修改前 = Mobile/16A404
-修改后 = 我是自定义Agent
-完整UserAgent = Mozilla/5.0 (iPhone; CPU iPhone OS 12_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) 我是自定义Agent
-</code></pre>
-
-<p>你可能会好奇 <code>Mobile/16A404</code> 是什么？ <br/>
-我也没有找到具体含义，如果你知道可以告诉我。<br/>
-<strong>友情提醒</strong>，<code>applicationNameForUserAgent</code> 应该追加，不是直接赋值。   </p>
 
                         
                       </div>
@@ -154,7 +127,7 @@ WKWebView* webView = [[WKWebView alloc] initWithFrame:self.view.frame configurat
                 </a>
                 <div class="read-more clearfix">
                   <div class="more-left left">
-                  
+                   <a href="15681188779301.html">Read more</a>&nbsp;&nbsp; 
                     <span class="date">2019/9/10</span>
                     <span>posted in&nbsp;</span> 
           				  
