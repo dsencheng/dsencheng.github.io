@@ -4,13 +4,308 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2019-09-12T11:41:09+08:00</updated>
+  <updated>2019-09-12T11:45:09+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[expect 中处理重定向]]></title>
+    <link href="https://dsencheng.github.io/15682637412780.html"/>
+    <updated>2019-09-12T12:49:01+08:00</updated>
+    <id>https://dsencheng.github.io/15682637412780.html</id>
+    <content type="html"><![CDATA[
+<p>先说结果，下面这个expect脚本会执行错误，其原因是spawn不能响应Linux中的重定向，也就 <strong>2&gt;&amp;1</strong> 这个部分。</p>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log   //执行错误
+</code></pre>
+
+<p>通过Google在Stack Overflow上找到了解决方法。修改如下：</p>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  spawn bash -c &quot;./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log&quot;
+</code></pre>
+
+<p><a href="https://stackoverflow.com/questions/41046258/bash-command-redirection-in-expect-script-failing-with-permission-denied-spawn">原址链接</a></p>
+
+<p>——————————————————————————</p>
+
+<h2 id="toc_0">下面是啰嗦，可以不看。</h2>
+
+<p>在vps上安装ss(翻墙)时，使用root用户登录，运行以下命令：</p>
+
+<pre><code class="language-text">  wget --no-check-certificate -O shadowsocks.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+  chmod +x shadowsocks.sh
+  ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+</code></pre>
+
+<p>在ssh登录时，网上抄了一份expect脚本来自动登录，例如：</p>
+
+<h4 id="toc_1">注1：如果你想使用，请不要照抄，很可能执行失败</h4>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  set user 用户名
+  set host IP地址
+  set password 密码
+
+  spawn ssh $user@$host
+  expect {
+      &quot;yes/no&quot; {
+          send &quot;yes\r&quot;
+          exp_continue
+        }
+      &quot;password:&quot; {
+        send &quot;$password\r&quot; 
+      }
+  }
+ interact
+</code></pre>
+
+<p>之后就想安装ss的3条命令，也可以这样执行啊，然后自己就写了一个expect脚本，保存为   <strong><em>ss.exp</em></strong>  </p>
+
+<h4 id="toc_2">注2：如果你想使用，请不要照抄，很可能执行失败</h4>
+
+<pre><code class="language-text">#!/usr/bin/expect -f
+set timeout -1
+spawn wget --no-check-certificate  https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+
+expect &quot;#&quot;
+spawn chmod +x shadowsocks.sh
+expect &quot;#&quot;
+spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+
+
+expect {
+    &quot;*Default password*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;*Default port*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;*Which cipher you&#39;d select*&quot; {
+        send &quot;7\n&quot;
+        exp_continue
+    }
+    &quot;*Press any key to start*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;#&quot; {
+        send &quot;\r&quot;
+    }
+}
+interact
+</code></pre>
+
+<p>好，写完了，上传到vps上，同样用expect写的上传脚本</p>
+
+<pre><code class="language-text">#!/usr/bin/expect -f
+set pwd 密码
+
+spawn scp 本地文件名 访问地址的用户名@IP地址:/目录
+#例：spawn scp ss.exp root@127.0.0.1:/root
+expect &quot;password*&quot;
+send &quot;$pwd\r&quot;
+
+interact
+</code></pre>
+
+<p>Linux执行安装expect的命令</p>
+
+<pre><code class="language-text">sudo apt-get install expect
+</code></pre>
+
+<p>安装完成后，执行命令</p>
+
+<pre><code class="language-text">expect ss.exp //这是刚刚上传的文件
+</code></pre>
+
+<p>报错，会提示</p>
+
+<blockquote>
+<p>shadowsocks.sh argument error 什么的,懒得补错误提示了。</p>
+</blockquote>
+
+<p>找了好久，才发现</p>
+
+<pre><code class="language-text">./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+</code></pre>
+
+<p>原来这个命令中的 <strong>2&gt;&amp;1</strong> ，叫重定向，而expect好像不支持Linux中的重定向。<br/>
+经过2天的Google后终于找到了文章开头的处理方法。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mac设置多个SSH]]></title>
+    <link href="https://dsencheng.github.io/15682636653993.html"/>
+    <updated>2019-09-12T12:47:45+08:00</updated>
+    <id>https://dsencheng.github.io/15682636653993.html</id>
+    <content type="html"><![CDATA[
+<h5 id="toc_0">1.前因</h5>
+
+<p>个人常用github，公司使用gitee，为了不同环境的使用方便。下文以这两个网站示例设置多个SSH。</p>
+
+<h5 id="toc_1">2.生成SSH公钥私钥</h5>
+
+<pre><code class="language-text">//1.进入ssh目录
+$ cd ~/.ssh 
+//2.创建公私钥，输入对应gitee、github邮箱
+$ ssh-keygen -t rsa -C &quot;youremail@email.com&quot; 
+Generating public/private rsa key pair.
+//3.输入区分名字,例如 github_id_rsa 、 gitee_rsa
+Enter file in which to save the key (/Users/dsen/.ssh/id_rsa):github_id_rsa
+//4.设置密码，我这里为了方便，没有使用密码，直接按回车enter,
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in github_id_rsa.
+Your public key has been saved in github_id_rsa.pub.
+The key fingerprint is:
+SHA256:mvlMQCBQqa1TQjtSduYPIqJbxRJidpqAwj9bR5KQ02E youremail@email.com
+The key&#39;s randomart image is:
++---[RSA 2048]----+
+|+ooo=Eo          |
+|====+= .         |
+|****. +          |
+|*==o=o .         |
+|+=.++oo S        |
+|+ ..  .=         |
+| +    + .        |
+|.      +         |
+|        o        |
++----[SHA256]-----+
+
+</code></pre>
+
+<h5 id="toc_2">3.创建config文件</h5>
+
+<p>在 <code>~/.ssh</code> 目录创建一个<code>config</code>文件</p>
+
+<pre><code class="language-text">vim config
+或
+touch config
+</code></pre>
+
+<h5 id="toc_3">4.config文件写入内容</h5>
+
+<pre><code class="language-text"># github
+  Host github.com
+  HostName github.com
+# github对应的email或者用户名
+  User xxxxx@gmail.com
+  PreferredAuthentications publickey
+# github对应的私钥完整路径,没有pub后缀
+  IdentityFile ~/.ssh/github_id_rsa
+
+# gitee
+  Host gitee.com
+# gitee对应的email
+  User xxxx@163.com
+  PreferredAuthentications publickey
+# gitee对应的私钥完整路径,没有pub后缀
+  IdentityFile ~/.ssh/gitee_id_rsa
+</code></pre>
+
+<h5 id="toc_4">5.配置网站SSH公钥</h5>
+
+<p>a.打开网址，填写公钥标题，用来识别。<br/>
+<a href="https://github.com/settings/keys">https://github.com/settings/keys</a><br/>
+<a href="https://gitee.com/profile/sshkeys">https://gitee.com/profile/sshkeys</a><br/>
+b.填写公钥内容。</p>
+
+<pre><code class="language-text">//查看公钥，把输出的内容全部填入的网站SSH公钥内容中，ssh-rsa开头，email结尾。
+$ cat github_id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTa570Bo0BptLJKbXxVrMfe7xv6I9dFY7GTh7LQcaaYe9G7miT0HuX+PS1eu4qmYAeY7HmEsHFGOfOkcq+d5CYYLabUFCuW0BtQEgniQuUr9Aumr9R6nhUbyQ+ldFAUkOqmxP3upUSPbilCzfQ2hBpAik2zZ2yeiDTBKXXq5HU1c4W9c3pbTetUYr36QgfBo6XuK8zlt24DwNmjplOasUhiejK68KVBgmsPuIeU71b8aZcdn9oTF0BIjapLQ0n4F180Oexp0PHvojN8k13oglgkb+ljtrPa8tPbb4xd+j0gr3DM8aG+kF704yuTKwKlVIARZpbgdzc4SSaH0+zr4yN youremail@email.com
+</code></pre>
+
+<h5 id="toc_5">6. 测试</h5>
+
+<pre><code class="language-text">ssh -T git@github.com
+//成功
+Hi xxx! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+
+ssh -T git@gitee.com       
+//成功                                                                                                                       
+Hi xxx! You&#39;ve successfully authenticated, but GITEE.COM does not provide shell access.
+</code></pre>
+
+<h5 id="toc_6">7.错误</h5>
+
+<pre><code class="language-text">$ ssh -T git@gitee.com
+Permission denied, please try again
+</code></pre>
+
+<blockquote>
+<ol>
+<li>检查命令、config文件是否拼写错误。2.检查网站是否配置公钥。3.若<code>~/.ssh</code>目录存在<code>known_hosts</code>文件，打开 <code>known_hosts</code> ,删除对应的ip、网址记录。</li>
+</ol>
+</blockquote>
+
+<h5 id="toc_7">参考链接：</h5>
+
+<p><a href="https://juejin.im/post/5bf6092a6fb9a04a0279fb6a">Mac生成多个ssh并配置不同域名</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mac 终端 terminal 命令行 iTerm2 访问外网]]></title>
+    <link href="https://dsencheng.github.io/15682635419676.html"/>
+    <updated>2019-09-12T12:45:41+08:00</updated>
+    <id>https://dsencheng.github.io/15682635419676.html</id>
+    <content type="html"><![CDATA[
+<h5 id="toc_0">此文不含 Shadowsocks 配置。</h5>
+
+<p>Mac下常用访问外网软件是小飞机，即Shadowsocks。<br/>
+配置完成后，打开网页就可以访问google等网站。<br/>
+作为一个码农，经常使用termainl、iterm2等终端工具访问外网，更新包等操作，这时就无法直接访问外网了。</p>
+
+<p>下面就是如何在终端内使用Shadowsocks的访问外网操作。</p>
+
+<h6 id="toc_1">点击小飞机 -- 复制终端代理命令，或直接使用下面的命令。</h6>
+
+<p><code>export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;</code></p>
+
+<h6 id="toc_2">此命令仅当前终端窗口有效。比如iTerm可以多开窗口，其他窗口不会生效。</h6>
+
+<p>如果你需要一直有效，可以参考以下链接<br/>
+<a href="%5Bhttps://kerminate.me/2018/10/22/mac-%E7%BB%88%E7%AB%AF%E5%AE%9E%E7%8E%B0%E7%BF%BB%E5%A2%99/%5D(https://kerminate.me/2018/10/22/mac-%E7%BB%88%E7%AB%AF%E5%AE%9E%E7%8E%B0%E7%BF%BB%E5%A2%99/)">mac 终端实现翻墙</a><br/>
+<a href="%5Bhttps://segmentfault.com/a/1190000016126554%5D(https://segmentfault.com/a/1190000016126554)">Mac命令行终端下使用shadowsocks翻墙</a></p>
+
+<pre><code class="language-text">$ curl cip.cc                                                     
+IP  : 122.14.xx.xx
+地址  : 中国  北京
+运营商 : rhtd.net
+
+数据二 : 北京市 | 北京融合通达网络科技有限公司
+
+数据三 : 中国北京北京市 | 联通
+
+URL : http://www.cip.cc/122.14.xx.xx
+
+$ export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;
+
+$ curl cip.cc                                                     
+IP  : 66.112.xx.xx
+地址  : 美国  加利福尼亚州  洛杉矶
+运营商 : it7.net
+
+数据二 : 美国
+
+数据三 : 美国加利福尼亚洛杉矶
+
+URL : http://www.cip.cc/66.112.xx.xx
+</code></pre>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[正确设置WKWebView的UserAgent指南]]></title>

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Archives - Dsen
+  expect 中处理重定向 - Dsen
   
   </title>
   
@@ -100,80 +100,196 @@
 
  <script type="text/javascript">
   $(function(){
-    $('#menu_item_archives').addClass('is_active');
+    $('#menu_item_index').addClass('is_active');
   });
 </script>
 <div class="row">
   <div class="large-8 medium-8 columns">
-    <div id="archives-page-wrap">
-        <h1>Archives</h1>
-        <div class="markdown-body archives-wrap">
+      <div class="markdown-body article-wrap">
+       <div class="article">
           
-             
-                <h1>2019</h1>
-            
-            <div class="article">
-              <a class="clearlink" href="15682637412780.html">
-                <h1>expect 中处理重定向</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/12</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='Command%20Line.html'>Command Line</a></span>
-                 
-              </div>
-            </div><!-- article -->
+          <h1>expect 中处理重定向</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2019/9/12</span>
 
+          <span>posted in&nbsp;</span> 
           
-            
-            <div class="article">
-              <a class="clearlink" href="15682636653993.html">
-                <h1>Mac设置多个SSH</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/12</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='SSH.html'>SSH</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="15682635419676.html">
-                <h1>Mac 终端 terminal 命令行 iTerm2 访问外网</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/12</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='Command%20Line.html'>Command Line</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="15681188779301.html">
-                <h1>正确设置WKWebView的UserAgent指南</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/10</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
+              <span class="posted-in"><a href='Command%20Line.html'>Command Line</a></span>
            
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <p>先说结果，下面这个expect脚本会执行错误，其原因是spawn不能响应Linux中的重定向，也就 <strong>2&gt;&amp;1</strong> 这个部分。</p>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log   //执行错误
+</code></pre>
+
+<p>通过Google在Stack Overflow上找到了解决方法。修改如下：</p>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  spawn bash -c &quot;./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log&quot;
+</code></pre>
+
+<p><a href="https://stackoverflow.com/questions/41046258/bash-command-redirection-in-expect-script-failing-with-permission-denied-spawn">原址链接</a></p>
+
+<p>——————————————————————————</p>
+
+<h2 id="toc_0">下面是啰嗦，可以不看。</h2>
+
+<p>在vps上安装ss(翻墙)时，使用root用户登录，运行以下命令：</p>
+
+<pre><code class="language-text">  wget --no-check-certificate -O shadowsocks.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+  chmod +x shadowsocks.sh
+  ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+</code></pre>
+
+<p>在ssh登录时，网上抄了一份expect脚本来自动登录，例如：</p>
+
+<h4 id="toc_1">注1：如果你想使用，请不要照抄，很可能执行失败</h4>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  set user 用户名
+  set host IP地址
+  set password 密码
+
+  spawn ssh $user@$host
+  expect {
+      &quot;yes/no&quot; {
+          send &quot;yes\r&quot;
+          exp_continue
+        }
+      &quot;password:&quot; {
+        send &quot;$password\r&quot; 
+      }
+  }
+ interact
+</code></pre>
+
+<p>之后就想安装ss的3条命令，也可以这样执行啊，然后自己就写了一个expect脚本，保存为   <strong><em>ss.exp</em></strong>  </p>
+
+<h4 id="toc_2">注2：如果你想使用，请不要照抄，很可能执行失败</h4>
+
+<pre><code class="language-text">#!/usr/bin/expect -f
+set timeout -1
+spawn wget --no-check-certificate  https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+
+expect &quot;#&quot;
+spawn chmod +x shadowsocks.sh
+expect &quot;#&quot;
+spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+
+
+expect {
+    &quot;*Default password*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;*Default port*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;*Which cipher you&#39;d select*&quot; {
+        send &quot;7\n&quot;
+        exp_continue
+    }
+    &quot;*Press any key to start*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;#&quot; {
+        send &quot;\r&quot;
+    }
+}
+interact
+</code></pre>
+
+<p>好，写完了，上传到vps上，同样用expect写的上传脚本</p>
+
+<pre><code class="language-text">#!/usr/bin/expect -f
+set pwd 密码
+
+spawn scp 本地文件名 访问地址的用户名@IP地址:/目录
+#例：spawn scp ss.exp root@127.0.0.1:/root
+expect &quot;password*&quot;
+send &quot;$pwd\r&quot;
+
+interact
+</code></pre>
+
+<p>Linux执行安装expect的命令</p>
+
+<pre><code class="language-text">sudo apt-get install expect
+</code></pre>
+
+<p>安装完成后，执行命令</p>
+
+<pre><code class="language-text">expect ss.exp //这是刚刚上传的文件
+</code></pre>
+
+<p>报错，会提示</p>
+
+<blockquote>
+<p>shadowsocks.sh argument error 什么的,懒得补错误提示了。</p>
+</blockquote>
+
+<p>找了好久，才发现</p>
+
+<pre><code class="language-text">./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+</code></pre>
+
+<p>原来这个命令中的 <strong>2&gt;&amp;1</strong> ，叫重定向，而expect好像不支持Linux中的重定向。<br/>
+经过2天的Google后终于找到了文章开头的处理方法。</p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15682636653993.html" 
+          title="Next Post: Mac设置多个SSH">Mac设置多个SSH &raquo;</a>
+      
+      </p>
         </div>
       </div>
-  </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <script src="https://utteranc.es/client.js"
+        repo="dsencheng/dsencheng.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script> 
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">

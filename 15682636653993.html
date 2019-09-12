@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>
     
-  Archives - Dsen
+  Mac设置多个SSH - Dsen
   
   </title>
   
@@ -100,80 +100,180 @@
 
  <script type="text/javascript">
   $(function(){
-    $('#menu_item_archives').addClass('is_active');
+    $('#menu_item_index').addClass('is_active');
   });
 </script>
 <div class="row">
   <div class="large-8 medium-8 columns">
-    <div id="archives-page-wrap">
-        <h1>Archives</h1>
-        <div class="markdown-body archives-wrap">
+      <div class="markdown-body article-wrap">
+       <div class="article">
           
-             
-                <h1>2019</h1>
-            
-            <div class="article">
-              <a class="clearlink" href="15682637412780.html">
-                <h1>expect 中处理重定向</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/12</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='Command%20Line.html'>Command Line</a></span>
-                 
-              </div>
-            </div><!-- article -->
+          <h1>Mac设置多个SSH</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2019/9/12</span>
 
+          <span>posted in&nbsp;</span> 
           
-            
-            <div class="article">
-              <a class="clearlink" href="15682636653993.html">
-                <h1>Mac设置多个SSH</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/12</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='SSH.html'>SSH</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="15682635419676.html">
-                <h1>Mac 终端 terminal 命令行 iTerm2 访问外网</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/12</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='Command%20Line.html'>Command Line</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
-          
-            
-            <div class="article">
-              <a class="clearlink" href="15681188779301.html">
-                <h1>正确设置WKWebView的UserAgent指南</h1>
-              </a>
-              <div class="read-more clearfix">
-                <span class="date">2019/9/10</span>
-                <span>posted in&nbsp;</span> 
-                
-                    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
-                 
-              </div>
-            </div><!-- article -->
-
+              <span class="posted-in"><a href='SSH.html'>SSH</a></span>
            
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <h5 id="toc_0">1.前因</h5>
+
+<p>个人常用github，公司使用gitee，为了不同环境的使用方便。下文以这两个网站示例设置多个SSH。</p>
+
+<h5 id="toc_1">2.生成SSH公钥私钥</h5>
+
+<pre><code class="language-text">//1.进入ssh目录
+$ cd ~/.ssh 
+//2.创建公私钥，输入对应gitee、github邮箱
+$ ssh-keygen -t rsa -C &quot;youremail@email.com&quot; 
+Generating public/private rsa key pair.
+//3.输入区分名字,例如 github_id_rsa 、 gitee_rsa
+Enter file in which to save the key (/Users/dsen/.ssh/id_rsa):github_id_rsa
+//4.设置密码，我这里为了方便，没有使用密码，直接按回车enter,
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in github_id_rsa.
+Your public key has been saved in github_id_rsa.pub.
+The key fingerprint is:
+SHA256:mvlMQCBQqa1TQjtSduYPIqJbxRJidpqAwj9bR5KQ02E youremail@email.com
+The key&#39;s randomart image is:
++---[RSA 2048]----+
+|+ooo=Eo          |
+|====+= .         |
+|****. +          |
+|*==o=o .         |
+|+=.++oo S        |
+|+ ..  .=         |
+| +    + .        |
+|.      +         |
+|        o        |
++----[SHA256]-----+
+
+</code></pre>
+
+<h5 id="toc_2">3.创建config文件</h5>
+
+<p>在 <code>~/.ssh</code> 目录创建一个<code>config</code>文件</p>
+
+<pre><code class="language-text">vim config
+或
+touch config
+</code></pre>
+
+<h5 id="toc_3">4.config文件写入内容</h5>
+
+<pre><code class="language-text"># github
+  Host github.com
+  HostName github.com
+# github对应的email或者用户名
+  User xxxxx@gmail.com
+  PreferredAuthentications publickey
+# github对应的私钥完整路径,没有pub后缀
+  IdentityFile ~/.ssh/github_id_rsa
+
+# gitee
+  Host gitee.com
+# gitee对应的email
+  User xxxx@163.com
+  PreferredAuthentications publickey
+# gitee对应的私钥完整路径,没有pub后缀
+  IdentityFile ~/.ssh/gitee_id_rsa
+</code></pre>
+
+<h5 id="toc_4">5.配置网站SSH公钥</h5>
+
+<p>a.打开网址，填写公钥标题，用来识别。<br/>
+<a href="https://github.com/settings/keys">https://github.com/settings/keys</a><br/>
+<a href="https://gitee.com/profile/sshkeys">https://gitee.com/profile/sshkeys</a><br/>
+b.填写公钥内容。</p>
+
+<pre><code class="language-text">//查看公钥，把输出的内容全部填入的网站SSH公钥内容中，ssh-rsa开头，email结尾。
+$ cat github_id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTa570Bo0BptLJKbXxVrMfe7xv6I9dFY7GTh7LQcaaYe9G7miT0HuX+PS1eu4qmYAeY7HmEsHFGOfOkcq+d5CYYLabUFCuW0BtQEgniQuUr9Aumr9R6nhUbyQ+ldFAUkOqmxP3upUSPbilCzfQ2hBpAik2zZ2yeiDTBKXXq5HU1c4W9c3pbTetUYr36QgfBo6XuK8zlt24DwNmjplOasUhiejK68KVBgmsPuIeU71b8aZcdn9oTF0BIjapLQ0n4F180Oexp0PHvojN8k13oglgkb+ljtrPa8tPbb4xd+j0gr3DM8aG+kF704yuTKwKlVIARZpbgdzc4SSaH0+zr4yN youremail@email.com
+</code></pre>
+
+<h5 id="toc_5">6. 测试</h5>
+
+<pre><code class="language-text">ssh -T git@github.com
+//成功
+Hi xxx! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+
+ssh -T git@gitee.com       
+//成功                                                                                                                       
+Hi xxx! You&#39;ve successfully authenticated, but GITEE.COM does not provide shell access.
+</code></pre>
+
+<h5 id="toc_6">7.错误</h5>
+
+<pre><code class="language-text">$ ssh -T git@gitee.com
+Permission denied, please try again
+</code></pre>
+
+<blockquote>
+<ol>
+<li>检查命令、config文件是否拼写错误。2.检查网站是否配置公钥。3.若<code>~/.ssh</code>目录存在<code>known_hosts</code>文件，打开 <code>known_hosts</code> ,删除对应的ip、网址记录。</li>
+</ol>
+</blockquote>
+
+<h5 id="toc_7">参考链接：</h5>
+
+<p><a href="https://juejin.im/post/5bf6092a6fb9a04a0279fb6a">Mac生成多个ssh并配置不同域名</a></p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+          <a href="15682637412780.html" 
+          title="Previous Post: expect 中处理重定向">&laquo; expect 中处理重定向</a>
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15682635419676.html" 
+          title="Next Post: Mac 终端 terminal 命令行 iTerm2 访问外网">Mac 终端 terminal 命令行 iTerm2 访问外网 &raquo;</a>
+      
+      </p>
         </div>
       </div>
-  </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <script src="https://utteranc.es/client.js"
+        repo="dsencheng/dsencheng.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script> 
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
 
  <div class="large-4 medium-4 columns">
   <div class="hide-for-small">
