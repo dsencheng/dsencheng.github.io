@@ -4,7 +4,7 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2019-09-12T10:11:19+08:00</updated>
+  <updated>2019-09-12T10:13:20+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -56,9 +56,9 @@ WKWebView* webView = [[WKWebView alloc] initWithFrame:self.view.frame configurat
 <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
 <script>
 var gitment = new Gitment({
-  id: location.href, // 可选。默认为 location.href
+  id: '<%= page.title %>', // 可选。默认为 location.href
   owner: 'dsencheng@gmail.com',
-  repo: 'https://github.com/dsencheng/dsencheng.github.io.git',
+  repo: 'dsencheng.github.io',
   oauth: {
     client_id: '15742af25e190ae9f0d0',
     client_secret: 'e8d6cd4c99890fc4167a3b63703a1c6d3e7325d0',
