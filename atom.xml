@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Dsen]]></title>
+  <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
+  <link href="https://dsencheng.github.io/"/>
+  <updated>2019-09-12T10:11:19+08:00</updated>
+  <id>https://dsencheng.github.io/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+  <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[正确设置WKWebView的UserAgent指南]]></title>
+    <link href="https://dsencheng.github.io/15681188779301.html"/>
+    <updated>2019-09-10T20:34:37+08:00</updated>
+    <id>https://dsencheng.github.io/15681188779301.html</id>
+    <content type="html"><![CDATA[
+<p>开发者在使用<code>WKWebView</code>时会遇到需要自定义<code>UserAgent</code>的情况，比如web需要区分iOS、Android、WeChat等等。<br/>
+网上也有这大量如何修改<code>UserAgent</code>的方法，但总是会出现<code>UserAgent</code>无效的情况，比如<a href="https://awesome-tips.gitbook.io/ios/webview/content">iOS12 设置 WKWebView 的 UserAgent</a></p>
+
+<p>掉进坑里无数次后发现，系统早已准备好，只是我没有发现，擦干菜鸟的泪水。。。</p>
+
+<h4 id="toc_0">系统需要高于 iOS9</h4>
+
+<h6 id="toc_1">WKWebView正确设置、修改UserAgent</h6>
+
+<pre><code class="language-text">WKWebViewConfiguration* webViewConfig = WKWebViewConfiguration.new;
+NSLog(@&quot;修改前 = %@&quot;,webViewConfig.applicationNameForUserAgent);
+//正确设置UserAgent的代码
+webViewConfig.applicationNameForUserAgent = @&quot;我是自定义Agent&quot;;
+NSLog(@&quot;修改后 = %@&quot;,webViewConfig.applicationNameForUserAgent);
+//正确使用设计的初始化方法，不要使用其他初始化方法。
+WKWebView* webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:webViewConfig];
+//注意：下面这句代码是查看，不是设置UserAgent
+[webView evaluateJavaScript:@&quot;navigator.userAgent&quot; completionHandler:^(NSString * _Nullable originUserAgent, NSError * _Nullable error) {
+    NSLog(@&quot;完整UserAgent = %@&quot;,originUserAgent);
+}];
+</code></pre>
+
+<h6 id="toc_2">输出</h6>
+
+<pre><code class="language-text">修改前 = Mobile/16A404
+修改后 = 我是自定义Agent
+完整UserAgent = Mozilla/5.0 (iPhone; CPU iPhone OS 12_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) 我是自定义Agent
+</code></pre>
+
+<p>你可能会好奇 <code>Mobile/16A404</code> 是什么？ <br/>
+我也没有找到具体含义，如果你知道可以告诉我。<br/>
+<strong>友情提醒</strong>，<code>applicationNameForUserAgent</code> 应该追加，不是直接赋值。</p>
+
+<div id="container"></div>
+<link rel="stylesheet" href="https://imsun.github.io/gitment/style/default.css">
+<script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
+<script>
+var gitment = new Gitment({
+  id: location.href, // 可选。默认为 location.href
+  owner: 'dsencheng@gmail.com',
+  repo: 'https://github.com/dsencheng/dsencheng.github.io.git',
+  oauth: {
+    client_id: '15742af25e190ae9f0d0',
+    client_secret: 'e8d6cd4c99890fc4167a3b63703a1c6d3e7325d0',
+  },
+})
+gitment.render('container')
+</script>
+
+]]></content>
+  </entry>
+  
+</feed>
