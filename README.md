@@ -1,2 +1,2 @@
 # https://dsencheng.github.io
-技术的复读机。
+技术复读机而已。
