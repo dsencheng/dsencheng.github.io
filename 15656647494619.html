@@ -1,0 +1,648 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  Jenkins - Dsen
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="https://dsencheng.github.io/
+复读机而已">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="Dsen" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">Dsen</a></h1>
+  
+    <h2>https://dsencheng.github.io/
+复读机而已</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dsencheng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">Jenkins</h1>
+				<p class="meta"><time datetime="2019-08-13T10:52:29+08:00" pubdate data-updated="true">2019/08/13 10:52 上午</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<h1 id="toc_0">准备工作</h1>
+
+<ol>
+<li>开发环境，如Java、Ruby、MacOS等。</li>
+<li>开发工具，如Xcode、Android Studio、IntelliJ IDEA等。</li>
+<li>证书管理，如推送证书、商店证书、手机配置文件等。</li>
+<li>其他依赖工具，如Git、Fastlane、Cocoapods、Maven等。</li>
+</ol>
+
+<p><strong>准备完成后，创建新项目或使用已有项目，打包一次验证是否可以成功打包。</strong></p>
+
+<span id="more"></span><!-- more -->
+
+<h1 id="toc_1">安装</h1>
+
+<h4 id="toc_2"><a href="https://www.jenkins.io/zh/doc/book/installing/">Jenkins中文安装文档</a></h4>
+
+<p>1、<strong>推荐安装方式</strong>，安装完成自动运行。<strong>不推荐PKG方式安装</strong></p>
+
+<pre><code class="language-text">brew install jenkins-lts
+
+# 启动/停止/重启
+
+brew services start jenkins-lts
+brew services stop jenkins-lts
+brew services restart jenkins-lts
+</code></pre>
+
+<p>2、简单方式，下载jenkins-lts.war，cd到文件所在目录，使用命令启动</p>
+
+<pre><code class="language-text">java -jar jenkins-lts.war
+</code></pre>
+
+<p>3、浏览器访问: <a href="http://localhost:8080">http://localhost:8080</a> 或者 <a href="http://10.0.1.147:8080">http://10.0.1.147:8080</a> 按引导教程完成配置。若局域网内无法访问，参考下面的问题记录。</p>
+
+<h1 id="toc_3">Jenkins构建</h1>
+
+<ol>
+<li>创建一个FreeStyle的任务。</li>
+<li>新任务的配置工作。</li>
+<li>构建。</li>
+</ol>
+
+<p><strong>任务配置介绍</strong></p>
+
+<pre><code class="language-text">1.General
+    设置文件存留天数、数量等。
+2.源码管理
+    git、svn
+3.构建触发器
+    提供webhook，轮询，定时等触发构建条件，便于打包自动化。
+4.构建环境
+    设置构建的参数、打包证书(需要插件)等。
+5.构建
+    提供shell、插件等多种构建方式，可以执行多个构建方式，并且有顺序。比如先执行shell，然后执行插件构建。
+6.构建后操作
+    提供通知，邮件，推送等构建完成后任务。
+</code></pre>
+
+<h4 id="toc_4">Jenkins新建任务</h4>
+
+<p>1.创建名为ITOSDK的自由风格任务。<br/>
+2.</p>
+
+<h1 id="toc_5">Jenkins插件</h1>
+
+<p>安装完成后建议重启<br/>
+汉化插件：Localization: Chinese (Simplified) <br/>
+证书管理插件：Keychains and Provisioning Profiles Management<br/>
+Xcode打包插件：Xcode integration</p>
+
+<h1 id="toc_6">问题记录</h1>
+
+<h4 id="toc_7">无法更新插件</h4>
+
+<p>管理Jenkins &gt; 插件管理 &gt; 高级 <br/>
+把<code>URL</code>里的地址<code>https</code>改为<code>http</code> </p>
+
+<hr/>
+
+<h4 id="toc_8">局域网内，无法通过ip+port访问</h4>
+
+<p>关闭Jenkins服务，打开文件夹 <code>/usr/local/Cellar/jenkins/</code>,找到<code>homebrew.mxcl.jenkins.pist</code>这个文件.</p>
+
+<pre><code class="language-text">--httpListenAddress=127.0.0.1
+修改为
+--httpListenAddress=0.0.0.0
+</code></pre>
+
+<p>启动Jenkins，局域网其他用户就可以访问了。</p>
+
+<hr/>
+
+<h4 id="toc_9">fastlane: command not found</h4>
+
+<p>参照安装方法添加路径<code>sudo gem install fastlane -n /usr/local/bin</code>，在Jenkins &gt; 节点管理 &gt; 配置(右侧⚙图标) &gt; 设置环境变量。<br/>
+查看当前环境变量,</p>
+
+<pre><code class="language-text">echo $PATH
+</code></pre>
+
+<hr/>
+
+<h3 id="toc_10">git fetch 443</h3>
+
+<blockquote>
+<p>使用私有库</p>
+</blockquote>
+
+<pre><code class="language-text">Started by user dsen
+Running as SYSTEM
+Building in workspace /Users/Shared/Jenkins/Home/workspace/PrivateTest
+using credential 380f80e8-7d4d-4bfd-8505-e739d1f1c86f
+ &gt; git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ &gt; git config remote.origin.url https://gitee.com/gdyh21/PrivateTest.git # timeout=10
+Fetching upstream changes from https://gitee.com/gdyh21/PrivateTest.git
+ &gt; git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ &gt; git fetch --tags --force --progress https://gitee.com/gdyh21/PrivateTest.git +refs/heads/*:refs/remotes/origin/* # timeout=2
+ERROR: Timeout after 2 minutes
+ERROR: Error fetching remote repo &#39;origin&#39;
+hudson.plugins.git.GitException: Failed to fetch from https://gitee.com/gdyh21/PrivateTest.git
+    at hudson.plugins.git.GitSCM.fetchFrom(GitSCM.java:894)
+    at hudson.plugins.git.GitSCM.retrieveChanges(GitSCM.java:1161)
+    at hudson.plugins.git.GitSCM.checkout(GitSCM.java:1192)
+    at hudson.scm.SCM.checkout(SCM.java:504)
+    at hudson.model.AbstractProject.checkout(AbstractProject.java:1208)
+    at hudson.model.AbstractBuild$AbstractBuildExecution.defaultCheckout(AbstractBuild.java:574)
+    at jenkins.scm.SCMCheckoutStrategy.checkout(SCMCheckoutStrategy.java:86)
+    at hudson.model.AbstractBuild$AbstractBuildExecution.run(AbstractBuild.java:499)
+    at hudson.model.Run.execute(Run.java:1815)
+    at hudson.model.FreeStyleBuild.run(FreeStyleBuild.java:43)
+    at hudson.model.ResourceController.execute(ResourceController.java:97)
+    at hudson.model.Executor.run(Executor.java:429)
+Caused by: hudson.plugins.git.GitException: Command &quot;git fetch --tags --force --progress https://gitee.com/gdyh21/PrivateTest.git +refs/heads/*:refs/remotes/origin/*&quot; returned status code 143:
+stdout: 
+stderr: 
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl.launchCommandIn(CliGitAPIImpl.java:2042)
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl.launchCommandWithCredentials(CliGitAPIImpl.java:1761)
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl.access$400(CliGitAPIImpl.java:72)
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl$1.execute(CliGitAPIImpl.java:442)
+    at hudson.plugins.git.GitSCM.fetchFrom(GitSCM.java:892)
+    ... 11 more
+ERROR: Error fetching remote repo &#39;origin&#39;
+Finished: FAILURE
+</code></pre>
+
+<p>PKG卸载<br/>
+&#39;/Library/Application Support/Jenkins/Uninstall.command&#39;</p>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='Jenkins-1.html'>Jenkins</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
+	    
+		<div class="sharing">
+		  <script src="https://utteranc.es/client.js"
+        repo="dsencheng/dsencheng.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script> 
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	        <a class="basic-alignment left" href="15681188779301.html" 
+	        title="Previous Post: 正确设置WKWebView的UserAgent指南">&laquo; 正确设置WKWebView的UserAgent指南</a>
+	    
+	    
+	        <a class="basic-alignment right" href="15622122724549.html" 
+	        title="Next Post: 制作一个CocoaPods私有库">制作一个CocoaPods私有库 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="iOS.html"><strong>iOS&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Cocoapods.html"><strong>Cocoapods&nbsp;(7)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Shell.html"><strong>Shell&nbsp;(3)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="SSH.html"><strong>SSH&nbsp;(2)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Fastlane.html"><strong>Fastlane&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Jenkins-1.html"><strong>Jenkins&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Ruby.html"><strong>Ruby&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="RaspberryPi.html"><strong>RaspberryPi&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Xcode.html"><strong>Xcode&nbsp;(2)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15934342416600.html">FRP 笔记</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15933946041998.html">Ruby 笔记</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15923835113038.html">Xcode命令</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15923777936483.html">Shell 笔记</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15747536824820.html">Cocoapods之`pod`命令</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+<style type="text/css">
+  
+/* PrismJS 1.14.0
+https://prismjs.com/download.html#themes=prism-solarizedlight&languages=markup+css+clike+javascript */
+/*
+ Solarized Color Schemes originally by Ethan Schoonover
+ http://ethanschoonover.com/solarized
+
+ Ported for PrismJS by Hector Matos
+ Website: https://krakendev.io
+ Twitter Handle: https://twitter.com/allonsykraken)
+*/
+
+/*
+SOLARIZED HEX
+--------- -------
+base03    #002b36
+base02    #073642
+base01    #586e75
+base00    #657b83
+base0     #839496
+base1     #93a1a1
+base2     #eee8d5
+base3     #fdf6e3
+yellow    #b58900
+orange    #cb4b16
+red       #dc322f
+magenta   #d33682
+violet    #6c71c4
+blue      #268bd2
+cyan      #2aa198
+green     #859900
+*/
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #657b83; /* base00 */
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+  background: #073642; /* base02 */
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+  background: #073642; /* base02 */
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+  border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background-color: #fdf6e3; /* base3 */
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #93a1a1; /* base1 */
+}
+
+.token.punctuation {
+  color: #586e75; /* base01 */
+}
+
+.namespace {
+  opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #268bd2; /* blue */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.url,
+.token.inserted {
+  color: #2aa198; /* cyan */
+}
+
+.token.entity {
+  color: #657b83; /* base00 */
+  background: #eee8d5; /* base2 */
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #859900; /* green */
+}
+
+.token.function,
+.token.class-name {
+  color: #b58900; /* yellow */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #cb4b16; /* orange */
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+  
+    
+
+
+</body>
+</html>

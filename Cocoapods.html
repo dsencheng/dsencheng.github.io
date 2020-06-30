@@ -1,0 +1,699 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>
+    
+  Cocoapods - Dsen
+  
+
+  </title>
+  <meta name="author" content="">
+  <meta name="description" content="https://dsencheng.github.io/
+复读机而已">
+
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <link href="asset/css/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="atom.xml" rel="alternate" title="Dsen" type="application/atom+xml">
+  <script src="asset/js/modernizr-2.0.js"></script>
+  <script src="asset/js/jquery.min.js"></script>
+  <style type="text/css">
+  .cat-children-p{ padding: 6px 0px;}
+  .hljs{background: none;}
+  </style>
+  <script type="text/javascript">
+  var isAddSildbar = true;
+  </script>
+  <script src="asset/js/octopress.js" type="text/javascript"></script>
+</head>
+<script type="text/javascript">
+//链接新开窗口
+function addBlankTargetForLinks () {
+  $('a[href^="http"]').each(function(){
+      $(this).attr('target', '_blank');
+  });
+}
+$(document).ready(function(event) {
+  addBlankTargetForLinks();
+});
+</script>
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="index.html">Dsen</a></h1>
+  
+    <h2>https://dsencheng.github.io/
+复读机而已</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="http://google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:dsencheng.github.io" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+
+  <li id=""><a target="_self" href="archives.html">Archives</a></li>
+
+  <li id=""><a target="_self" href="index.html">Home</a></li>
+
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content"> 
+<div class="blog-index">
+
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15747536824820.html">Cocoapods之`pod`命令</a></h1>
+			<p class="meta"><time datetime="2019-11-26T15:34:42+08:00" 
+			pubdate data-updated="true">2019/11/26 15:34 下午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p><code>pod init</code><br/>
+初始化</p>
+
+<p><code>pod install</code><br/>
+安装/更新库</p>
+
+<p><code>pod lib lint</code><br/>
+验证lib合法性</p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15747536824820.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15747536460432.html">Cocoapods之`Podfile`文件</a></h1>
+			<p class="meta"><time datetime="2019-11-26T15:34:06+08:00" 
+			pubdate data-updated="true">2019/11/26 15:34 下午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<pre><code class="language-text">#swift为动态库
+use_frameworks!
+#最低版本号
+platform :ios, &#39;9.0&#39;
+#忽略库里的警告
+inhibit_all_warnings!
+
+target &#39;DCServices_Example&#39; do
+  pod &#39;DCServices&#39;, :path =&gt; &#39;../&#39;
+
+  target &#39;DCServices_Tests&#39; do
+    inherit! :search_paths
+
+    
+  end
+end
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15747477473465.html">Cocoapods之`.podspec`文件</a></h1>
+			<p class="meta"><time datetime="2019-11-26T13:55:47+08:00" 
+			pubdate data-updated="true">2019/11/26 13:55 下午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<pre><code class="language-text">#名字
+s.name             = &#39;Chat2Love&#39;
+#版本号，更新发布内容最好更新版本号
+s.version          = &#39;0.1.0&#39;
+#简介说明
+s.summary          = &#39;A short description of Chat2Love.&#39;
+#详细说明
+s.description      = &#39;&#39;
+#主页，通常是github项目地址
+s.homepage         = &#39;https://github.com/dsencheng/Chat2Love&#39;
+#屏幕快照链接
+# s.screenshots     = &#39;www.example.com/screenshots_1&#39;, &#39;www.example.com/screenshots_2&#39;
+#协议
+s.license          = { :type =&gt; &#39;MIT&#39;, :file =&gt; &#39;LICENSE&#39; }
+#作者
+s.author           = { &#39;dsencheng&#39; =&gt; &#39;dsencheng@gmail.com&#39; }
+#源码地址
+s.source           = { :git =&gt; &#39;https://github.com/dsencheng/Chat2Love.git&#39;, :tag =&gt; s.version.to_s }
+#社交信息
+# s.social_media_url = &#39;https://twitter.com/&lt;TWITTER_USERNAME&gt;&#39;
+#开发版本
+s.ios.deployment_target = &#39;8.0&#39;
+#暴露的文件，举例：`/*.h` 仅暴露.h文件。 `/*.{h,m} ` 仅暴露.h和.m文件
+s.source_files = &#39;Chat2Love/Classes/**/*&#39;
+#资源文件
+# s.resource_bundles = {
+#   &#39;Chat2Love&#39; =&gt; [&#39;Chat2Love/Assets/*.png&#39;]
+# }
+#暂未用到
+# s.public_header_files = &#39;Pod/Classes/**/*.h&#39;
+#需要使用到的系统库
+# s.frameworks = &#39;UIKit&#39;, &#39;MapKit&#39;
+# 需要依赖的三方库，支持指定版本,不支持指定地址。可在podfile文件中指定地址。
+# s.dependency &#39;AFNetworking&#39;, &#39;~&gt; 2.3&#39;
+#静态库
+#s.static_framework = true
+# 依赖的系统静态库
+#s.library = &#39;c++&#39;, &#39;resolv&#39;
+# build setting中的配置
+#s.ios.pod_target_xcconfig = { &#39;OTHER_LDFLAGS&#39; =&gt; &#39;-lObjC&#39;, &#39;ENABLE_BITCODE&#39; =&gt; false, }
+# 子库,会有不同的文件夹
+#  s.subspec &#39;Sub&#39; do | b |
+#      b.source_files = &#39;Chat2Love/Classes/**/*&#39;
+#   end
+# 引用其他的库，不建议样写，pod中引用framework文件会报错。
+# s.ios.vendored_frameworks = &#39;Ali/Classes/AliRTCSdk.framework&#39;,&#39;Ali/Classes/UTDID.framework&#39;
+# 引用其他的库，建议写法
+#  s.subspec &#39;AliRTC&#39; do | sub_rtc |
+#      sub_rtc.ios.vendored_frameworks = &#39;Ali/Classes/AliRTCSdk.framework&#39;,&#39;Ali/Classes/UTDID.framework&#39;
+#   end
+
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15747423574103.html">Cocoapods之私有库发布及使用</a></h1>
+			<p class="meta"><time datetime="2019-11-26T12:25:57+08:00" 
+			pubdate data-updated="true">2019/11/26 12:25 下午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>本文以github为例<br/>
+1、打开你的github主页，选择 <code>New repository</code> .</p>
+
+<blockquote>
+<p>a. <code>Repository name</code> 填写 <code>DCSpecs</code>。<br/>
+b. <code>Description</code> 可以不填写。<br/>
+c. 选择 <code>Private</code> 或 <code>Public</code>。<br/>
+d. 勾选 <code>Initialize this repository with a README</code>。<br/>
+e. 点击 <code>Create repository</code> 按钮。</p>
+</blockquote>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15747423574103.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15747367843901.html">Cocoapods之私有库代码同步</a></h1>
+			<p class="meta"><time datetime="2019-11-26T10:53:04+08:00" 
+			pubdate data-updated="true">2019/11/26 10:53 上午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>本文项目名<code>DCServices</code>,仓库为github。</p>
+
+<p>1、打开你的github主页，选择 <code>New repository</code> .</p>
+
+<blockquote>
+<p>a. <code>Repository name</code> 填写 <code>DCServices</code>。<br/>
+b. <code>Description</code> 可以不填写。<br/>
+c. 选择 <code>Private</code> 。<br/>
+d. 点击 <code>Create repository</code> 按钮。</p>
+
+<h6 id="toc_0">注:不需要勾选 <code>Initialize this repository with a README</code>。</h6>
+</blockquote>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15747367843901.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15747347938087.html">Cocoapods之创建私有库</a></h1>
+			<p class="meta"><time datetime="2019-11-26T10:19:53+08:00" 
+			pubdate data-updated="true">2019/11/26 10:19 上午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>本文以创建名为&quot;DCServices&quot;的私有库为例。<br/>
+1.打开任意终端工具，进入你的工作目录，输入命令 <code>pod lib create DCServices</code>，按照提示回答问题，即可完成lib项目的创建工作。</p>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15747347938087.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15622122724549.html">制作一个CocoaPods私有库</a></h1>
+			<p class="meta"><time datetime="2019-07-04T11:51:12+08:00" 
+			pubdate data-updated="true">2019/07/04 11:51 上午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>1、在GitHub上创建一个空仓库，不要初始化。<code>PrivatePods</code> 是你的私有库名字。如果已经初始化，下面创建lib要在对应的目录里执行。</p>
+
+<pre><code class="language-text">https://github.com/your_github_name/PrivatePods.git
+</code></pre>
+
+<p>2、打开终端，进入到要建立私有库工程的目录，执行下面的命令 。执行命令过程中会询问几个问题，按自己所需回答。</p>
+
+<pre><code class="language-text">pod lib create PrivatePods
+</code></pre>
+
+
+
+		</div>
+
+		 
+		 <footer>
+      	<a rel="full-article" href="15622122724549.html#more">read more &rarr;</a>
+    	</footer>
+    	
+
+	</article>
+  
+	<div class="pagination">
+	
+<a href="archives.html">Blog Archives</a>
+	 
+	    
+	</div>
+</div>
+ <aside class="sidebar"> 
+
+	<section>
+	  <h1>Categories</h1>
+	  <ul id="recent_posts">
+	  
+	      <li class="post">
+	        <a href="iOS.html"><strong>iOS&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Cocoapods.html"><strong>Cocoapods&nbsp;(7)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Shell.html"><strong>Shell&nbsp;(3)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="SSH.html"><strong>SSH&nbsp;(2)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Fastlane.html"><strong>Fastlane&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Jenkins-1.html"><strong>Jenkins&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Ruby.html"><strong>Ruby&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="RaspberryPi.html"><strong>RaspberryPi&nbsp;(1)</strong></a>
+	        
+	        
+	        
+	      </li>
+	  
+	      <li class="post">
+	        <a href="Xcode.html"><strong>Xcode&nbsp;(2)</strong></a>
+	        
+	        
+	        
+	      </li>
+	   
+	  </ul>
+	</section>
+	<section>
+	  <h1>Recent Posts</h1>
+	  <ul id="recent_posts">
+	  
+	      
+		      <li class="post">
+		        <a href="15934342416600.html">FRP 笔记</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15933946041998.html">Ruby 笔记</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15923835113038.html">Xcode命令</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15923777936483.html">Shell 笔记</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15747536824820.html">Cocoapods之`pod`命令</a>
+		      </li>
+	     
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	  
+	      
+	   
+	  </ul>
+	</section>
+	
+</aside> </div></div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 -  -
+  <span class="credit">Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a> &nbsp;&nbsp; Theme by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+  
+/* PrismJS 1.14.0
+https://prismjs.com/download.html#themes=prism-solarizedlight&languages=markup+css+clike+javascript */
+/*
+ Solarized Color Schemes originally by Ethan Schoonover
+ http://ethanschoonover.com/solarized
+
+ Ported for PrismJS by Hector Matos
+ Website: https://krakendev.io
+ Twitter Handle: https://twitter.com/allonsykraken)
+*/
+
+/*
+SOLARIZED HEX
+--------- -------
+base03    #002b36
+base02    #073642
+base01    #586e75
+base00    #657b83
+base0     #839496
+base1     #93a1a1
+base2     #eee8d5
+base3     #fdf6e3
+yellow    #b58900
+orange    #cb4b16
+red       #dc322f
+magenta   #d33682
+violet    #6c71c4
+blue      #268bd2
+cyan      #2aa198
+green     #859900
+*/
+
+code[class*="language-"],
+pre[class*="language-"] {
+  color: #657b83; /* base00 */
+  font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+  text-align: left;
+  white-space: pre;
+  word-spacing: normal;
+  word-break: normal;
+  word-wrap: normal;
+
+  line-height: 1.5;
+
+  -moz-tab-size: 4;
+  -o-tab-size: 4;
+  tab-size: 4;
+
+  -webkit-hyphens: none;
+  -moz-hyphens: none;
+  -ms-hyphens: none;
+  hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+  background: #073642; /* base02 */
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+  background: #073642; /* base02 */
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+  padding: 1em;
+  margin: .5em 0;
+  overflow: auto;
+  border-radius: 0.3em;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+  background-color: #fdf6e3; /* base3 */
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+  padding: .1em;
+  border-radius: .3em;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+  color: #93a1a1; /* base1 */
+}
+
+.token.punctuation {
+  color: #586e75; /* base01 */
+}
+
+.namespace {
+  opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+  color: #268bd2; /* blue */
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.url,
+.token.inserted {
+  color: #2aa198; /* cyan */
+}
+
+.token.entity {
+  color: #657b83; /* base00 */
+  background: #eee8d5; /* base2 */
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+  color: #859900; /* green */
+}
+
+.token.function,
+.token.class-name {
+  color: #b58900; /* yellow */
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+  color: #cb4b16; /* orange */
+}
+
+.token.important,
+.token.bold {
+  font-weight: bold;
+}
+.token.italic {
+  font-style: italic;
+}
+
+.token.entity {
+  cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+  
+    
+
+
+</body>
+</html>

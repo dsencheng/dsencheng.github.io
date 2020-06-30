@@ -1,0 +1,1673 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Dsen]]></title>
+  <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
+  <link href="https://dsencheng.github.io/"/>
+  <updated>2020-06-30T14:51:47+08:00</updated>
+  <id>https://dsencheng.github.io/</id>
+  <author>
+    <name><![CDATA[]]></name>
+    
+  </author>
+  <generator uri="http://www.coderforart.com/">CoderForArt</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[FRP 笔记]]></title>
+    <link href="https://dsencheng.github.io/15934342416600.html"/>
+    <updated>2020-06-29T20:37:21+08:00</updated>
+    <id>https://dsencheng.github.io/15934342416600.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://github.com/fatedier/frp/blob/master/README_zh.md">中文文档</a></p>
+
+<span id="more"></span><!-- more -->
+
+<h4 id="toc_0">1.下载</h4>
+
+<pre><code class="language-text"># 树莓派需要对应的版本
+wget https://github.com/fatedier/frp/releases/download/v0.33.0/frp_0.33.0_linux_amd64.tar.gz
+</code></pre>
+
+<h4 id="toc_1">2.解压缩</h4>
+
+<pre><code class="language-text">tar -zxvf frp_0.33.0_linux_amd64.tar.gz
+</code></pre>
+
+<h4 id="toc_2">3.修改文件夹名字</h4>
+
+<pre><code class="language-text">mv frp_0.33.0_linux_amd64 frp
+</code></pre>
+
+<h4 id="toc_3">3.1 或者复制一份目录及文件</h4>
+
+<pre><code class="language-text">cp frp_0.33.0_linux_amd64 frp
+</code></pre>
+
+<h4 id="toc_4">4.进入目录开始操作</h4>
+
+<pre><code class="language-text">cd frp
+</code></pre>
+
+<h1 id="toc_5">通过 ssh 访问内网机器</h1>
+
+<p>1.将对应版本的 frps 及 frps.ini 放到具有公网 IP 的机器上。<br/>
+2.修改 frps.ini 文件</p>
+
+<pre><code class="language-text"># frps.ini
+[common]
+bind_port = 7000
+</code></pre>
+
+<p>3.启动 frps</p>
+
+<pre><code class="language-text">./frps -c ./frps.ini
+</code></pre>
+
+<p>4.将 frpc 及 frpc.ini 放到处于内网环境的机器上。<br/>
+5.修改 frpc.ini 文件 ，假设 frps 所在服务器的公网 IP 为 x.x.x.x</p>
+
+<pre><code class="language-text"># frpc.ini
+[common]
+server_addr = x.x.x.x
+server_port = 7000
+
+[ssh]
+type = tcp
+local_ip = 127.0.0.1
+local_port = 22
+remote_port = 6000
+</code></pre>
+
+<p>6.启动 frpc </p>
+
+<pre><code class="language-text">./frpc -c ./frpc.ini
+</code></pre>
+
+<p>7.通过 ssh 访问内网机器</p>
+
+<pre><code class="language-text">ssh login_name@x.x.x.x -p 6000
+</code></pre>
+
+<h1 id="toc_6">开机启动frpc服务，同样可以启动frps服务【注意路径和文件名】。</h1>
+
+<pre><code class="language-text">sudo vim /etc/systemd/system/frpc.service
+</code></pre>
+
+<p>按如下修改</p>
+
+<pre><code class="language-text">[Unit]
+Description=frpc daemon
+After=syslog.target  network.target
+Wants=network.target
+
+[Service]
+Type=simple
+ExecStart=/usr/sbin/frp/frpc -c /etc/frp/frpc.ini
+Restart= always
+RestartSec=1min
+ExecStop=/usr/bin/killall frpc
+
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>使用<code>sudo systemctl enable frpc.service</code>启用</p>
+
+<pre><code class="language-text">//启动命令
+sudo systemctl start frpc
+//停止命令
+sudo systemctl stop frpc
+//重启命令
+sudo systemctl restart frpc
+//查看状态
+sudo systemctl status frpc
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Ruby 笔记]]></title>
+    <link href="https://dsencheng.github.io/15933946041998.html"/>
+    <updated>2020-06-29T09:36:44+08:00</updated>
+    <id>https://dsencheng.github.io/15933946041998.html</id>
+    <content type="html"><![CDATA[
+<p>内部使用外部传入的参数</p>
+
+<pre><code class="language-text">xxx do |options|
+    desc = options[:m]
+    puts desc
+    
+调用时
+
+xxx m:&quot;hello&quot;
+
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Xcode命令]]></title>
+    <link href="https://dsencheng.github.io/15923835113038.html"/>
+    <updated>2020-06-17T16:45:11+08:00</updated>
+    <id>https://dsencheng.github.io/15923835113038.html</id>
+    <content type="html"><![CDATA[
+<p>命令行-单元测试</p>
+
+<pre><code class="language-text">使用Cocoapods有workspace 必须加-workspace，注意使用引号及完整的文件名， [-only-testing:&lt;test-identifier&gt;] test-identifier格式说明 TestTarget[/TestClass[/TestMethod]]
+
+xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39;
+xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests&#39;
+xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests/LoginTests/testLoginExample&#39;
+
+省略了class
+xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests/testLoginExample&#39;
+
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Shell 笔记]]></title>
+    <link href="https://dsencheng.github.io/15923777936483.html"/>
+    <updated>2020-06-17T15:09:53+08:00</updated>
+    <id>https://dsencheng.github.io/15923777936483.html</id>
+    <content type="html"><![CDATA[
+<p>获取podspec版本号</p>
+
+<pre><code class="language-text">VersionString=`grep -E &#39;s.version.*=&#39; xxx.podspec`
+VersionString=${VersionString##*=}
+VersionNumber=`tr -d &quot;&#39;&quot; &lt;&lt;&lt;&quot;$VersionString&quot;`
+echo &quot;current version is ${VersionNumber}&quot;
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cocoapods之`pod`命令]]></title>
+    <link href="https://dsencheng.github.io/15747536824820.html"/>
+    <updated>2019-11-26T15:34:42+08:00</updated>
+    <id>https://dsencheng.github.io/15747536824820.html</id>
+    <content type="html"><![CDATA[
+<p><code>pod init</code><br/>
+初始化</p>
+
+<p><code>pod install</code><br/>
+安装/更新库</p>
+
+<p><code>pod lib lint</code><br/>
+验证lib合法性</p>
+
+<span id="more"></span><!-- more -->
+
+<p><code>pod lib lint --verbose --use-libraries --allow-warnings -- sources=&#39;私有仓库repo地址,https://github.com/CocoaPods/Specs&#39;</code><br/>
+验证多仓库lib</p>
+
+<p><code>pod spec lint</code><br/>
+验证spec合法性</p>
+
+<p><code>pod spec lint --verbose --use-libraries --allow-warnings -- sources=&#39;私有仓库repo地址,https://github.com/CocoaPods/Specs&#39;</code><br/>
+验证多仓库spec</p>
+
+<p><code>pod repo push DCSpecs name.podspec --use-libraries --allow-warnings</code><br/>
+向DCSpecs推送DCServices库</p>
+
+<p><code>pod repo push MCLib MCAppKit.podspec --verbose --use-libraries --allow-warnings</code><br/>
+强制推送</p>
+
+<p>以上命令均可选参数，<br/>
+<code>--use-libraries</code>使用静态库<br/>
+<code>--allow-warnings</code>允许警告</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cocoapods之`Podfile`文件]]></title>
+    <link href="https://dsencheng.github.io/15747536460432.html"/>
+    <updated>2019-11-26T15:34:06+08:00</updated>
+    <id>https://dsencheng.github.io/15747536460432.html</id>
+    <content type="html"><![CDATA[
+<pre><code class="language-text">#swift为动态库
+use_frameworks!
+#最低版本号
+platform :ios, &#39;9.0&#39;
+#忽略库里的警告
+inhibit_all_warnings!
+
+target &#39;DCServices_Example&#39; do
+  pod &#39;DCServices&#39;, :path =&gt; &#39;../&#39;
+
+  target &#39;DCServices_Tests&#39; do
+    inherit! :search_paths
+
+    
+  end
+end
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cocoapods之`.podspec`文件]]></title>
+    <link href="https://dsencheng.github.io/15747477473465.html"/>
+    <updated>2019-11-26T13:55:47+08:00</updated>
+    <id>https://dsencheng.github.io/15747477473465.html</id>
+    <content type="html"><![CDATA[
+<pre><code class="language-text">#名字
+s.name             = &#39;Chat2Love&#39;
+#版本号，更新发布内容最好更新版本号
+s.version          = &#39;0.1.0&#39;
+#简介说明
+s.summary          = &#39;A short description of Chat2Love.&#39;
+#详细说明
+s.description      = &#39;&#39;
+#主页，通常是github项目地址
+s.homepage         = &#39;https://github.com/dsencheng/Chat2Love&#39;
+#屏幕快照链接
+# s.screenshots     = &#39;www.example.com/screenshots_1&#39;, &#39;www.example.com/screenshots_2&#39;
+#协议
+s.license          = { :type =&gt; &#39;MIT&#39;, :file =&gt; &#39;LICENSE&#39; }
+#作者
+s.author           = { &#39;dsencheng&#39; =&gt; &#39;dsencheng@gmail.com&#39; }
+#源码地址
+s.source           = { :git =&gt; &#39;https://github.com/dsencheng/Chat2Love.git&#39;, :tag =&gt; s.version.to_s }
+#社交信息
+# s.social_media_url = &#39;https://twitter.com/&lt;TWITTER_USERNAME&gt;&#39;
+#开发版本
+s.ios.deployment_target = &#39;8.0&#39;
+#暴露的文件，举例：`/*.h` 仅暴露.h文件。 `/*.{h,m} ` 仅暴露.h和.m文件
+s.source_files = &#39;Chat2Love/Classes/**/*&#39;
+#资源文件
+# s.resource_bundles = {
+#   &#39;Chat2Love&#39; =&gt; [&#39;Chat2Love/Assets/*.png&#39;]
+# }
+#暂未用到
+# s.public_header_files = &#39;Pod/Classes/**/*.h&#39;
+#需要使用到的系统库
+# s.frameworks = &#39;UIKit&#39;, &#39;MapKit&#39;
+# 需要依赖的三方库，支持指定版本,不支持指定地址。可在podfile文件中指定地址。
+# s.dependency &#39;AFNetworking&#39;, &#39;~&gt; 2.3&#39;
+#静态库
+#s.static_framework = true
+# 依赖的系统静态库
+#s.library = &#39;c++&#39;, &#39;resolv&#39;
+# build setting中的配置
+#s.ios.pod_target_xcconfig = { &#39;OTHER_LDFLAGS&#39; =&gt; &#39;-lObjC&#39;, &#39;ENABLE_BITCODE&#39; =&gt; false, }
+# 子库,会有不同的文件夹
+#  s.subspec &#39;Sub&#39; do | b |
+#      b.source_files = &#39;Chat2Love/Classes/**/*&#39;
+#   end
+# 引用其他的库，不建议样写，pod中引用framework文件会报错。
+# s.ios.vendored_frameworks = &#39;Ali/Classes/AliRTCSdk.framework&#39;,&#39;Ali/Classes/UTDID.framework&#39;
+# 引用其他的库，建议写法
+#  s.subspec &#39;AliRTC&#39; do | sub_rtc |
+#      sub_rtc.ios.vendored_frameworks = &#39;Ali/Classes/AliRTCSdk.framework&#39;,&#39;Ali/Classes/UTDID.framework&#39;
+#   end
+
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cocoapods之私有库发布及使用]]></title>
+    <link href="https://dsencheng.github.io/15747423574103.html"/>
+    <updated>2019-11-26T12:25:57+08:00</updated>
+    <id>https://dsencheng.github.io/15747423574103.html</id>
+    <content type="html"><![CDATA[
+<p>本文以github为例<br/>
+1、打开你的github主页，选择 <code>New repository</code> .</p>
+
+<blockquote>
+<p>a. <code>Repository name</code> 填写 <code>DCSpecs</code>。<br/>
+b. <code>Description</code> 可以不填写。<br/>
+c. 选择 <code>Private</code> 或 <code>Public</code>。<br/>
+d. 勾选 <code>Initialize this repository with a README</code>。<br/>
+e. 点击 <code>Create repository</code> 按钮。</p>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<p>2、打开终端，进入目录，执行命令</p>
+
+<pre><code class="language-text">pod repo add DCSpecs https://github.com/dsencheng/DCSpecs.git
+</code></pre>
+
+<p>3、执行成功后，可以进入目录查看 <code>~./cocoapods/repos/</code> ，是否有<code>DCSpecs</code>文件夹。</p>
+
+<p>4、在<code>DCServices.podspec</code>文件目录，推送私有库。</p>
+
+<pre><code class="language-text">pod repo push DCSpecs DCServices.podspec
+</code></pre>
+
+<blockquote>
+<p><code>DCServices</code>是<code>code</code>。<br/>
+<code>DCSpecs</code> 是管理和记录。它会记录<code>DCServices</code>的<code>0.1.0</code>，<code>0.1.1</code> ... <code>1.5.3</code>。<br/>
+写命令时，注意区分<code>DCServices</code> 和 <code>DCSpecs</code></p>
+</blockquote>
+
+<p>5、在项目中引入私有库。打开你开发的项目，如果没有<code>Podfile</code>，请先初始化。添加内容</p>
+
+<pre><code class="language-text">source &#39;https://cdn.cocoapods.org/&#39;
+source &#39;https://github.com/dsencheng/DCSpecs.git&#39;
+
+platform :ios, ‘9.0’
+
+target “your_target_name”   
+    do
+        pod &#39;DCServices&#39;
+    end
+</code></pre>
+
+<p>打开终端在当前项目目录执行<code>pod install</code>完成!</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cocoapods之私有库代码同步]]></title>
+    <link href="https://dsencheng.github.io/15747367843901.html"/>
+    <updated>2019-11-26T10:53:04+08:00</updated>
+    <id>https://dsencheng.github.io/15747367843901.html</id>
+    <content type="html"><![CDATA[
+<p>本文项目名<code>DCServices</code>,仓库为github。</p>
+
+<p>1、打开你的github主页，选择 <code>New repository</code> .</p>
+
+<blockquote>
+<p>a. <code>Repository name</code> 填写 <code>DCServices</code>。<br/>
+b. <code>Description</code> 可以不填写。<br/>
+c. 选择 <code>Private</code> 。<br/>
+d. 点击 <code>Create repository</code> 按钮。</p>
+
+<h6 id="toc_0">注:不需要勾选 <code>Initialize this repository with a README</code>。</h6>
+</blockquote>
+
+<span id="more"></span><!-- more -->
+
+<p>1.首次提交代码。之前已经创建好 <code>DCServices</code> 私有库，打开终端进入项目目录。</p>
+
+<pre><code class="language-text">~/GitHub/DCServices git add -A  
+~/GitHub/DCServices git commit -m &quot;首次提交&quot;                                                                                               
+[master 1b2baff] 首次提交
+ 34 files changed, 1396 insertions(+), 4 deletions(-)
+ create mode 100644 DCServices/Classes/DCTest.h
+ create mode 100644 DCServices/Classes/DCTest.m
+ ...
+ ...
+create mode 100644 Example/Pods/Target Support Files/Pods-DCServices_Tests/Pods-DCServices_Tests.release.xcconfig
+~/GitHub/DCServices git tag 0.1.0                                                                                                              
+~/GitHub/DCServices git remote add origin https://github.com/dsencheng/DCServices.git                                                    
+~/GitHub/DCServices git push -u origin master --tag                                                                                           
+Enumerating objects: 86, done.
+Counting objects: 100% (86/86), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (77/77), done.
+Writing objects: 100% (86/86), 28.19 KiB | 1.23 MiB/s, done.
+Total 86 (delta 20), reused 0 (delta 0)
+remote: Resolving deltas: 100% (20/20), done.
+To https://github.com/dsencheng/DCServices.git
+ * [new branch]      master -&gt; master
+ * [new tag]         0.1.0 -&gt; 0.1.0
+Branch &#39;master&#39; set up to track remote branch &#39;master&#39; from &#39;origin&#39;.
+</code></pre>
+
+<p>2、这时刷新你的github项目主页,已经发生了变化。接下来创建一些其他文件，比如创建一个 <code>DCServerKit.h</code> 文件，文件路径 <code>...\DCServices\Classes\</code>。在.h文件里添加之前创建的测试文件 <code>#import &quot;DCTest.h&quot;</code>。</p>
+
+<p>3、打开终端，进入<code>Example</code> 目录，执行命令。</p>
+
+<pre><code class="language-text">~/GitHub/DCServices/Example pod install                                                                                              
+Analyzing dependencies
+Downloading dependencies
+Generating Pods project
+Integrating client project
+Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.
+</code></pre>
+
+<p>4、修改 <code>DCViewController.m</code> 文件，运行查看结果。</p>
+
+<pre><code class="language-text">#import &lt;DCTest.h&gt; 改为 #import &lt;DCServerKit.h&gt;
+</code></pre>
+
+<p>5、打开 <code>DCServices.podspec</code> 文件，增加版本号。版本号的作用，在Podfile文件中， <code>pod &#39;xxx&#39;, ~&gt; 2.1.0</code> 可以指定某个版本。</p>
+
+<pre><code class="language-text">s.version          = &#39;0.1.0&#39;
+修改位
+s.version          = &#39;0.1.1&#39;
+</code></pre>
+
+<p>6、执行 <code>pod lib lint</code> 验证库是否有错误或警告，并修复问题。</p>
+
+<p>7、同步代码，注意<code>git tag 0.1.1</code> 命令保持数字和 <code>s.version = &#39;0.1.1&#39;</code> 一致。</p>
+
+<pre><code class="language-text">~/GitHub/DCServices git add -A                                                                                                     
+~/GitHub/DCServices git commit -m &quot;0.1.1版本&quot;                                                                                         
+[master 29e9131] 0.1.1版本
+ 5 files changed, 135 insertions(+), 116 deletions(-)
+ create mode 100644 DCServices/Classes/DCServerKit.h
+~/GitHub/DCServices git tag 0.1.1                                                                                                           
+~/GitHub/DCServices git push origin master --tag                                                                                      
+Enumerating objects: 28, done.
+Counting objects: 100% (28/28), done.
+Delta compression using up to 4 threads
+Compressing objects: 100% (14/14), done.
+Writing objects: 100% (15/15), 2.58 KiB | 879.00 KiB/s, done.
+Total 15 (delta 9), reused 0 (delta 0)
+remote: Resolving deltas: 100% (9/9), completed with 9 local objects.
+To https://github.com/dsencheng/DCServices.git
+   1b2baff..29e9131  master -&gt; master
+ * [new tag]         0.1.1 -&gt; 0.1.1
+</code></pre>
+
+<p>8、执行 <code>pod spec lint</code> 验证spec文件是否有错误，并修复问题。</p>
+
+<p>9、验证成功后，执行 <code>pod repo push DCSpecs DCServices.podspec</code> 向管理repo推送更新.</p>
+
+<p>踩坑指南<br/>
+1、如果你是私有库，通常都会报警告, 这个警告可以忽略。</p>
+
+<pre><code class="language-text">WARN  | url: The URL (https://github.com/dsencheng/DCServices) is not reachable.
+</code></pre>
+
+<p>比如 </p>
+
+<pre><code class="language-text">pod spec lint --allow-warnings
+pod repo push DCSpecs DCServices.podspec --allow-warnings
+</code></pre>
+
+<p>2、如果私有库中包含静态库，需要增加 <code>--use-libraries</code> 参数。 比如</p>
+
+<pre><code class="language-text">pod repo push DCSpecs DCServices.podspec --use-libraries --allow-warnings
+</code></pre>
+
+<p>3、如果私有库libA依赖私有库modelB，该如何解决呢？</p>
+
+<blockquote>
+<p>第一步，在 <code>Podfile</code> 中添加 <code>source</code></p>
+
+<pre><code class="language-text">source &#39;https://cdn.cocoapods.org/&#39;
+source &#39;https://github.com/dsencheng/DCSpecs.git&#39;
+</code></pre>
+
+<p>第二步，验证时也增加<code>source</code>, 参数 <code>--use-libraries</code>包含静态库，参数<code>--allow-warnings</code>忽略警告，参数<code>--verbose</code>输出详细信息。</p>
+
+<pre><code class="language-text">pod lib lint --sources=https://github.com/dsencheng/DCSpecs.git,https://cdn.cocoapods.org/ --use-libraries --allow-warnings --verbose
+</code></pre>
+</blockquote>
+
+<p>4、强制推送 <code>--force</code></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Cocoapods之创建私有库]]></title>
+    <link href="https://dsencheng.github.io/15747347938087.html"/>
+    <updated>2019-11-26T10:19:53+08:00</updated>
+    <id>https://dsencheng.github.io/15747347938087.html</id>
+    <content type="html"><![CDATA[
+<p>本文以创建名为&quot;DCServices&quot;的私有库为例。<br/>
+1.打开任意终端工具，进入你的工作目录，输入命令 <code>pod lib create DCServices</code>，按照提示回答问题，即可完成lib项目的创建工作。</p>
+
+<span id="more"></span><!-- more -->
+
+<pre><code class="language-text">~/GitHub pod lib create DCServices                                                                                                                         
+Cloning `https://github.com/CocoaPods/pod-template.git` into `DCServices`.
+Configuring DCServices template.
+
+------------------------------
+
+To get you started we need to ask a few questions, this should only take a minute.
+
+If this is your first time we recommend running through with the guide:
+ - https://guides.cocoapods.org/making/using-pod-lib-create.html
+ ( hold cmd and click links to open in a browser. )
+
+
+What platform do you want to use?? [ iOS / macOS ]
+ &gt; ios
+
+What language do you want to use?? [ Swift / ObjC ]
+ &gt; objc
+
+Would you like to include a demo application with your library? [ Yes / No ]
+ &gt; yes
+
+Which testing frameworks will you use? [ Specta / Kiwi / None ]
+ &gt; none
+
+Would you like to do view based testing? [ Yes / No ]
+ &gt; no
+
+What is your class prefix?
+ &gt; DC
+
+Running pod install on your new library.
+
+Analyzing dependencies
+Downloading dependencies
+Installing DCServices (0.1.0)
+Generating Pods project
+Integrating client project
+
+[!] Please close any current Xcode sessions and use `DCServices.xcworkspace` for this project from now on.
+Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.
+
+ Ace! you&#39;re ready to go!
+ We will start you off by opening your project in Xcode
+  open &#39;DCServices/Example/DCServices.xcworkspace&#39;
+
+To learn more about the template see `https://github.com/CocoaPods/pod-template.git`.
+To learn more about creating a new pod, see `https://guides.cocoapods.org/making/making-a-cocoapod`.
+</code></pre>
+
+<p>2、创建完成后会自动打开Xcode工程，依次展开左侧列表 <code>Pods</code> &gt; <code>Development Pods</code> &gt; <code>DCServices</code> ,找到 <code>ReplaceMe.m</code> 文件后删除它。</p>
+
+<p>3、在 <code>DCServices</code> 中创建名为 <code>DCTest</code> 的.h和.m文件，存放路径选择 <code>...\DCServices\Classes\</code> ，完成后添加测试方法。</p>
+
+<pre><code class="language-text">DCTest.h 文件
+---
+@interface DCTest : NSObject
+
+- (void)test;
+
+@end
+
+DCTest.m 文件
+--
+@implementation DCTest
+
+-(void)test {
+    NSLog(@&quot;test&quot;);
+}
+
+@end
+
+</code></pre>
+
+<p>4、 回到终端，进入 <code>DCServices/Example</code> , 执行 <code>pod install</code>。</p>
+
+<pre><code class="language-text">~/GitHub cd DCServices/Example                                                                                                                                  
+~/GitHub/DCServices/Example pod install                                                                                                       
+Analyzing dependencies
+Downloading dependencies
+Generating Pods project
+Integrating client project
+Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.
+</code></pre>
+
+<p>5、打开 <code>Example for DCServices</code> 中的 <code>DCViewController.m</code> 文件，导入<code>DCTest.h</code>,并使用测试方法。</p>
+
+<pre><code class="language-text">#import &quot;DCViewController.h&quot;
+#import &lt;DCTest.h&gt;
+
+@interface DCViewController ()
+
+@end
+
+@implementation DCViewController
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    // Do any additional setup after loading the view, typically from a nib.
+    DCTest *obj = [DCTest new];
+    [obj test];
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+@end
+</code></pre>
+
+<p>6、选择模拟器或真机运行，Console窗口中输出 &#39;test&#39;，到此项目创建完成。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Xcode问题]]></title>
+    <link href="https://dsencheng.github.io/15744090741838.html"/>
+    <updated>2019-11-22T15:51:14+08:00</updated>
+    <id>https://dsencheng.github.io/15744090741838.html</id>
+    <content type="html"><![CDATA[
+<p>1.Xcode 11创建Category文件时，会添加 <code>#import &lt;Appkit/Appkit.h&gt;</code>，导致项目编译出错。</p>
+
+<pre><code class="language-text">解决办法：打开目录 `/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/File Templates/Source/Objective-C File.xctemplate/CategoryNSObject`， 
+把.h.m文件复制出来，打开文件，删除对应的代码，然后替换源文件。这样下次创建Category文件时，就不会在出现`#import &lt;Appkit/Appkit.h&gt;`了。
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[(转自 秋水逸冰)一键配置SS + BBR]]></title>
+    <link href="https://dsencheng.github.io/15687070926620.html"/>
+    <updated>2019-09-17T15:58:12+08:00</updated>
+    <id>https://dsencheng.github.io/15687070926620.html</id>
+    <content type="html"><![CDATA[
+<p>本文转载自：<a href="https://teddysun.com/486.html">https://teddysun.com/486.html</a></p>
+
+<h2 id="toc_0">本脚本适用环境</h2>
+
+<p>系统支持：CentOS 6+，Debian 7+，Ubuntu 12+<br/>
+内存要求：≥128M</p>
+
+<h2 id="toc_1">关于本脚本</h2>
+
+<p>1、一键安装 Shadowsocks-Python， ShadowsocksR， Shadowsocks-Go， Shadowsocks-libev 版（四选一）服务端；<br/>
+2、各版本的启动脚本及配置文件名不再重合；<br/>
+<span id="more"></span><!-- more --></p>
+
+<p>3、每次运行可安装一种版本；<br/>
+4、支持以多次运行来安装多个版本，且各个版本可以共存（注意端口号需设成不同）；<br/>
+5、若已安装多个版本，则卸载时也需多次运行（每次卸载一种）；</p>
+
+<h2 id="toc_2">默认配置</h2>
+
+<p>服务器端口：自己设定（如不设定，默认从 9000-19999 之间随机生成）<br/>
+密码：自己设定（如不设定，默认为 teddysun.com）<br/>
+加密方式：自己设定（如不设定，Python 和 libev 版默认为 aes-256-gcm，R 和 Go 版默认为 aes-256-cfb）<br/>
+协议（protocol）：自己设定（如不设定，默认为 origin）（仅限 ShadowsocksR 版）<br/>
+混淆（obfs）：自己设定（如不设定，默认为 plain）（仅限 ShadowsocksR 版）<br/>
+备注：脚本默认创建单用户配置文件，如需配置多用户，请手动修改相应的配置文件后重启即可。</p>
+
+<h2 id="toc_3">客户端下载</h2>
+
+<p>常规版 Windows 客户端<br/>
+<a href="https://github.com/shadowsocks/shadowsocks-windows/releases">https://github.com/shadowsocks/shadowsocks-windows/releases</a></p>
+
+<p>ShadowsocksR 版 Windows 客户端<br/>
+<a href="https://github.com/shadowsocksrr/shadowsocksr-csharp/releases">https://github.com/shadowsocksrr/shadowsocksr-csharp/releases</a></p>
+
+<h2 id="toc_4">使用方法</h2>
+
+<p>使用root用户登录，依次运行以下命令：</p>
+
+<pre><code class="language-text">$ wget --no-check-certificate -O shadowsocks-all.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh
+$ chmod +x shadowsocks-all.sh
+$ ./shadowsocks-all.sh 2&gt;&amp;1 | tee shadowsocks-all.log
+</code></pre>
+
+<p>安装完成后，脚本提示如下</p>
+
+<pre><code class="language-text">Congratulations, your_shadowsocks_version install completed!
+Your Server IP        :your_server_ip
+Your Server Port      :your_server_port
+Your Password         :your_password
+Your Encryption Method:your_encryption_method
+
+Your QR Code: (For Shadowsocks Windows, OSX, Android and iOS clients)
+ ss://your_encryption_method:your_password@your_server_ip:your_server_port
+Your QR Code has been saved as a PNG file path:
+ your_path.png
+
+Welcome to visit:https://teddysun.com/486.html
+Enjoy it!
+</code></pre>
+
+<h2 id="toc_5">卸载方法</h2>
+
+<p>若已安装多个版本，则卸载时也需多次运行（每次卸载一种）<br/>
+使用root用户登录，运行以下命令：</p>
+
+<pre><code class="language-text">./shadowsocks-all.sh uninstall
+</code></pre>
+
+<h2 id="toc_6">启动脚本</h2>
+
+<p>启动脚本后面的参数含义，从左至右依次为：启动，停止，重启，查看状态。</p>
+
+<pre><code class="language-text">Shadowsocks-Python 版：
+/etc/init.d/shadowsocks-python start | stop | restart | status
+
+ShadowsocksR 版：
+/etc/init.d/shadowsocks-r start | stop | restart | status
+
+Shadowsocks-Go 版：
+/etc/init.d/shadowsocks-go start | stop | restart | status
+
+Shadowsocks-libev 版：
+/etc/init.d/shadowsocks-libev start | stop | restart | status
+
+</code></pre>
+
+<h2 id="toc_7">各版本默认配置文件</h2>
+
+<pre><code class="language-text">Shadowsocks-Python 版：
+/etc/shadowsocks-python/config.json
+
+ShadowsocksR 版：
+/etc/shadowsocks-r/config.json
+
+Shadowsocks-Go 版：
+/etc/shadowsocks-go/config.json
+
+Shadowsocks-libev 版：
+/etc/shadowsocks-libev/config.json
+
+</code></pre>
+
+<h2 id="toc_8">BBR plus</h2>
+
+<pre><code class="language-text">wget &quot;https://github.com/chiakge/Linux-NetSpeed/raw/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh 
+</code></pre>
+
+<h1 id="toc_9">BBR</h1>
+
+<h2 id="toc_10">使用BBR加速器</h2>
+
+<p>让访问速度加速，飞起来！使用 BBR 加速工具。</p>
+
+<h2 id="toc_11">安装 BBR</h2>
+
+<pre><code class="language-text">wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh
+</code></pre>
+
+<h2 id="toc_12">获取读写权限</h2>
+
+<pre><code class="language-text">chmod +x bbr.sh
+</code></pre>
+
+<h2 id="toc_13">启动BBR安装</h2>
+
+<pre><code class="language-text">./bbr.sh
+</code></pre>
+
+<p>接着按任意键，开始安装，坐等一会。安装完成一会之后它会提示我们是否重新启动vps，我们输入 y 确定重启服务器。</p>
+
+<p>重新启动之后，输入 lsmod | grep bbr 如果看到 tcp_bbr 就说明 BBR 已经启动了。</p>
+
+<p>再访问一下 Youtube，1080p 超高清，很顺畅不卡顿！</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Fastlane]]></title>
+    <link href="https://dsencheng.github.io/15682807277815.html"/>
+    <updated>2019-09-12T17:32:07+08:00</updated>
+    <id>https://dsencheng.github.io/15682807277815.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://docs.fastlane.tools/"><strong>Fastlane官方文档</strong></a></p>
+
+<p>1、安装</p>
+
+<pre><code class="language-text">sudo gem install fastlane -NV
+
+错误-1: 
+You don&#39;t have write permissions into the /usr/bin directory.
+解法方法：
+sudo gem install fastlane -n /usr/local/bin
+</code></pre>
+
+<span id="more"></span><!-- more -->
+
+<p>2、初始化,根据情况选择。可以选择自定义，稍后自己编辑文件。</p>
+
+<pre><code class="language-text">fastlane init
+</code></pre>
+
+<p>3、执行</p>
+
+<pre><code class="language-text">fastlane custom
+
+fastlane有多种执行方式，可以直接使用actions，custom是自定义的lane
+</code></pre>
+
+<h4 id="toc_0">Fastlane文件示例</h4>
+
+<p><strong>Appfile</strong> </p>
+
+<pre><code class="language-text">app_identifier &quot;com.interotc.opensdk&quot; 
+apple_id &quot;dsencheng@gmail.com&quot; 
+team_id &quot;G9AP62BQZD&quot;
+
+</code></pre>
+
+<p><strong>Fastfile</strong>  <a href="https://docs.fastlane.tools/actions/">文档链接</a></p>
+
+<pre><code class="language-text">default_platform(:ios)
+
+platform :ios do
+  desc &quot;fastlane 打包测试&quot;
+  lane :AppStore do
+    cocoapods
+    increment_build_number
+    scan
+    gym
+    deliver
+    testflight
+  end
+end
+</code></pre>
+
+<h4 id="toc_1">插件</h4>
+
+<pre><code class="language-text">蒲公英fastlane插件
+fastlane add_plugin pgyer
+
+Facebook测试脚本
+brew install xctool
+</code></pre>
+
+<p>参考文章<br/>
+<a href="https://juejin.im/post/5a7b10bb6fb9a0636263bfd5#heading-14">iOS 持续交付之 Fastlane</a><br/>
+<a href="https://www.pgyer.com/doc/view/fastlane">使用 Fastlane 上传 App 到蒲公英</a></p>
+
+<h5 id="toc_2">问题记录</h5>
+
+<pre><code class="language-text"> increment_build_number 报错
+</code></pre>
+
+<p>解决方法</p>
+
+<blockquote>
+<p>build settings &gt; Current project version 设置为整数</p>
+</blockquote>
+
+<hr/>
+
+<pre><code class="language-text">$ bundle exec fastlane beta update_description:&quot;大多数更新说明文字描述&quot;
+
+[!] Could not find action, lane or variable &#39;option&#39;. Check out the documentation for more details: https://docs.fastlane.tools/actions
+</code></pre>
+
+<blockquote>
+<p>这个问题很广泛，解决方法也不同。</p>
+
+<h5 id="toc_3">情况一,不熟悉<code>Ruby</code>语法。</h5>
+
+<p>执行<code>fastlane</code>时，需要传递更新说明参数，但编写<code>Fastfile</code>时丢失参数<code>option</code>，导致报错。</p>
+</blockquote>
+
+<pre><code class="language-text">default_platform(:ios)
+
+platform :ios do
+  desc &quot;打包测试&quot;
+  # lane :beta do 
+  # 这里需要补代码 |options| ，默认是没有的
+  lane :beta do |options|
+    #更新说明
+    update_description = option[:update_description]
+  end
+end
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[expect 中处理重定向]]></title>
+    <link href="https://dsencheng.github.io/15682637412780.html"/>
+    <updated>2019-09-12T12:49:01+08:00</updated>
+    <id>https://dsencheng.github.io/15682637412780.html</id>
+    <content type="html"><![CDATA[
+<p>先说结果，下面这个expect脚本会执行错误，其原因是spawn不能响应Linux中的重定向，也就 <strong>2&gt;&amp;1</strong> 这个部分。</p>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log   //执行错误
+</code></pre>
+
+<p>通过Google在Stack Overflow上找到了解决方法。修改如下：</p>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  spawn bash -c &quot;./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log&quot;
+</code></pre>
+
+<p><a href="https://stackoverflow.com/questions/41046258/bash-command-redirection-in-expect-script-failing-with-permission-denied-spawn">原址链接</a></p>
+
+<span id="more"></span><!-- more -->
+
+<p>——————————————————————————</p>
+
+<h2 id="toc_0">下面是啰嗦，可以不看。</h2>
+
+<p>在vps上安装ss(翻墙)时，使用root用户登录，运行以下命令：</p>
+
+<pre><code class="language-text">  wget --no-check-certificate -O shadowsocks.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+  chmod +x shadowsocks.sh
+  ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+</code></pre>
+
+<p>在ssh登录时，网上抄了一份expect脚本来自动登录，例如：</p>
+
+<h4 id="toc_1">注1：如果你想使用，请不要照抄，很可能执行失败</h4>
+
+<pre><code class="language-text">  #!/usr/bin/expect -f
+  set user 用户名
+  set host IP地址
+  set password 密码
+
+  spawn ssh $user@$host
+  expect {
+      &quot;yes/no&quot; {
+          send &quot;yes\r&quot;
+          exp_continue
+        }
+      &quot;password:&quot; {
+        send &quot;$password\r&quot; 
+      }
+  }
+ interact
+</code></pre>
+
+<p>之后就想安装ss的3条命令，也可以这样执行啊，然后自己就写了一个expect脚本，保存为   <strong><em>ss.exp</em></strong>  </p>
+
+<h4 id="toc_2">注2：如果你想使用，请不要照抄，很可能执行失败</h4>
+
+<pre><code class="language-text">#!/usr/bin/expect -f
+set timeout -1
+spawn wget --no-check-certificate  https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
+
+expect &quot;#&quot;
+spawn chmod +x shadowsocks.sh
+expect &quot;#&quot;
+spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+
+
+expect {
+    &quot;*Default password*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;*Default port*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;*Which cipher you&#39;d select*&quot; {
+        send &quot;7\n&quot;
+        exp_continue
+    }
+    &quot;*Press any key to start*&quot; {
+        send &quot;\n&quot;
+        exp_continue
+    }
+    &quot;#&quot; {
+        send &quot;\r&quot;
+    }
+}
+interact
+</code></pre>
+
+<p>好，写完了，上传到vps上，同样用expect写的上传脚本</p>
+
+<pre><code class="language-text">#!/usr/bin/expect -f
+set pwd 密码
+
+spawn scp 本地文件名 访问地址的用户名@IP地址:/目录
+#例：spawn scp ss.exp root@127.0.0.1:/root
+expect &quot;password*&quot;
+send &quot;$pwd\r&quot;
+
+interact
+</code></pre>
+
+<p>Linux执行安装expect的命令</p>
+
+<pre><code class="language-text">sudo apt-get install expect
+</code></pre>
+
+<p>安装完成后，执行命令</p>
+
+<pre><code class="language-text">expect ss.exp //这是刚刚上传的文件
+</code></pre>
+
+<p>报错，会提示</p>
+
+<blockquote>
+<p>shadowsocks.sh argument error 什么的,懒得补错误提示了。</p>
+</blockquote>
+
+<p>找了好久，才发现</p>
+
+<pre><code class="language-text">./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
+</code></pre>
+
+<p>原来这个命令中的 <strong>2&gt;&amp;1</strong> ，叫重定向，而expect好像不支持Linux中的重定向。<br/>
+经过2天的Google后终于找到了文章开头的处理方法。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mac设置多个SSH]]></title>
+    <link href="https://dsencheng.github.io/15682636653993.html"/>
+    <updated>2019-09-12T12:47:45+08:00</updated>
+    <id>https://dsencheng.github.io/15682636653993.html</id>
+    <content type="html"><![CDATA[
+<h5 id="toc_0">1.前因</h5>
+
+<p>个人常用github，公司使用gitee，为了不同环境的使用方便。下文以这两个网站示例设置多个SSH。</p>
+
+<h5 id="toc_1">2.生成SSH公钥私钥</h5>
+
+<pre><code class="language-text">//1.进入ssh目录
+$ cd ~/.ssh 
+//2.创建公私钥，输入对应gitee、github邮箱
+$ ssh-keygen -t rsa -C &quot;youremail@email.com&quot; 
+Generating public/private rsa key pair.
+//3.输入区分名字,例如 github_id_rsa 、 gitee_rsa
+Enter file in which to save the key (/Users/dsen/.ssh/id_rsa):github_id_rsa
+//4.设置密码，我这里为了方便，没有使用密码，直接按回车enter,
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in github_id_rsa.
+Your public key has been saved in github_id_rsa.pub.
+The key fingerprint is:
+SHA256:mvlMQCBQqa1TQjtSduYPIqJbxRJidpqAwj9bR5KQ02E youremail@email.com
+The key&#39;s randomart image is:
++---[RSA 2048]----+
+|+ooo=Eo          |
+|====+= .         |
+|****. +          |
+|*==o=o .         |
+|+=.++oo S        |
+|+ ..  .=         |
+| +    + .        |
+|.      +         |
+|        o        |
++----[SHA256]-----+
+
+</code></pre>
+
+<span id="more"></span><!-- more -->
+
+<h5 id="toc_2">3.创建config文件</h5>
+
+<p>在 <code>~/.ssh</code> 目录创建一个<code>config</code>文件</p>
+
+<pre><code class="language-text">vim config
+或
+touch config
+</code></pre>
+
+<h5 id="toc_3">4.config文件写入内容</h5>
+
+<pre><code class="language-text"># github
+  Host github.com
+  HostName github.com
+# github对应的email或者用户名
+  User xxxxx@gmail.com
+  PreferredAuthentications publickey
+# github对应的私钥完整路径,没有pub后缀
+  IdentityFile ~/.ssh/github_id_rsa
+
+# gitee
+  Host gitee.com
+# gitee对应的email
+  User xxxx@163.com
+  PreferredAuthentications publickey
+# gitee对应的私钥完整路径,没有pub后缀
+  IdentityFile ~/.ssh/gitee_id_rsa
+</code></pre>
+
+<h5 id="toc_4">5.配置网站SSH公钥</h5>
+
+<p>a.打开网址，填写公钥标题，用来识别。<br/>
+<a href="https://github.com/settings/keys">https://github.com/settings/keys</a><br/>
+<a href="https://gitee.com/profile/sshkeys">https://gitee.com/profile/sshkeys</a><br/>
+b.填写公钥内容。</p>
+
+<pre><code class="language-text">//查看公钥，把输出的内容全部填入的网站SSH公钥内容中，ssh-rsa开头，email结尾。
+$ cat github_id_rsa.pub
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTa570Bo0BptLJKbXxVrMfe7xv6I9dFY7GTh7LQcaaYe9G7miT0HuX+PS1eu4qmYAeY7HmEsHFGOfOkcq+d5CYYLabUFCuW0BtQEgniQuUr9Aumr9R6nhUbyQ+ldFAUkOqmxP3upUSPbilCzfQ2hBpAik2zZ2yeiDTBKXXq5HU1c4W9c3pbTetUYr36QgfBo6XuK8zlt24DwNmjplOasUhiejK68KVBgmsPuIeU71b8aZcdn9oTF0BIjapLQ0n4F180Oexp0PHvojN8k13oglgkb+ljtrPa8tPbb4xd+j0gr3DM8aG+kF704yuTKwKlVIARZpbgdzc4SSaH0+zr4yN youremail@email.com
+</code></pre>
+
+<h5 id="toc_5">6. 测试</h5>
+
+<pre><code class="language-text">ssh -T git@github.com
+//成功
+Hi xxx! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
+
+ssh -T git@gitee.com       
+//成功                                                                                                                       
+Hi xxx! You&#39;ve successfully authenticated, but GITEE.COM does not provide shell access.
+</code></pre>
+
+<h5 id="toc_6">7.错误</h5>
+
+<pre><code class="language-text">$ ssh -T git@gitee.com
+Permission denied, please try again
+</code></pre>
+
+<blockquote>
+<ol>
+<li>检查命令、config文件是否拼写错误。2.检查网站是否配置公钥。3.若<code>~/.ssh</code>目录存在<code>known_hosts</code>文件，打开 <code>known_hosts</code> ,删除对应的ip、网址记录。</li>
+</ol>
+</blockquote>
+
+<pre><code class="language-text">WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
+</code></pre>
+
+<blockquote>
+<p>ssh-keygen -R &quot;you server hostname or ip&quot;</p>
+</blockquote>
+
+<h5 id="toc_7">参考链接：</h5>
+
+<p><a href="https://juejin.im/post/5bf6092a6fb9a04a0279fb6a">Mac生成多个ssh并配置不同域名</a></p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Mac 终端 terminal 命令行 iTerm2 访问外网]]></title>
+    <link href="https://dsencheng.github.io/15682635419676.html"/>
+    <updated>2019-09-12T12:45:41+08:00</updated>
+    <id>https://dsencheng.github.io/15682635419676.html</id>
+    <content type="html"><![CDATA[
+<h5 id="toc_0">此文不含 Shadowsocks 配置。</h5>
+
+<p>Mac下常用访问外网软件是小飞机，即Shadowsocks。<br/>
+配置完成后，打开网页就可以访问google等网站。<br/>
+作为一个码农，经常使用termainl、iterm2等终端工具访问外网，更新包等操作，这时就无法直接访问外网了。</p>
+
+<p>下面就是如何在终端内使用Shadowsocks的访问外网操作。</p>
+
+<h6 id="toc_1">点击小飞机 -- 复制终端代理命令，或直接使用下面的命令。</h6>
+
+<p><code>export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;</code></p>
+
+<h6 id="toc_2">此命令仅当前终端窗口有效。比如iTerm可以多开窗口，其他窗口不会生效。</h6>
+
+<span id="more"></span><!-- more -->
+
+<p>如果你需要一直有效，可以参考以下链接<br/>
+<a href="%5Bhttps://kerminate.me/2018/10/22/mac-%E7%BB%88%E7%AB%AF%E5%AE%9E%E7%8E%B0%E7%BF%BB%E5%A2%99/%5D(https://kerminate.me/2018/10/22/mac-%E7%BB%88%E7%AB%AF%E5%AE%9E%E7%8E%B0%E7%BF%BB%E5%A2%99/)">mac 终端实现翻墙</a><br/>
+<a href="%5Bhttps://segmentfault.com/a/1190000016126554%5D(https://segmentfault.com/a/1190000016126554)">Mac命令行终端下使用shadowsocks翻墙</a></p>
+
+<pre><code class="language-text">$ curl cip.cc                                                     
+IP  : 122.14.xx.xx
+地址  : 中国  北京
+运营商 : rhtd.net
+
+数据二 : 北京市 | 北京融合通达网络科技有限公司
+
+数据三 : 中国北京北京市 | 联通
+
+URL : http://www.cip.cc/122.14.xx.xx
+
+$ export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;
+
+$ curl cip.cc                                                     
+IP  : 66.112.xx.xx
+地址  : 美国  加利福尼亚州  洛杉矶
+运营商 : it7.net
+
+数据二 : 美国
+
+数据三 : 美国加利福尼亚洛杉矶
+
+URL : http://www.cip.cc/66.112.xx.xx
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[正确设置WKWebView的UserAgent指南]]></title>
+    <link href="https://dsencheng.github.io/15681188779301.html"/>
+    <updated>2019-09-10T20:34:37+08:00</updated>
+    <id>https://dsencheng.github.io/15681188779301.html</id>
+    <content type="html"><![CDATA[
+<p>开发者在使用<code>WKWebView</code>时会遇到需要自定义<code>UserAgent</code>的情况，比如web需要区分iOS、Android、WeChat等等。<br/>
+网上也有这大量如何修改<code>UserAgent</code>的方法，但总是会出现<code>UserAgent</code>无效的情况，比如<a href="https://awesome-tips.gitbook.io/ios/webview/content">iOS12 设置 WKWebView 的 UserAgent</a></p>
+
+<p>掉进坑里无数次后发现，系统早已准备好，只是我没有发现，擦干菜鸟的泪水。。。</p>
+
+<span id="more"></span><!-- more -->
+
+<h4 id="toc_0">系统需要高于 iOS9</h4>
+
+<h6 id="toc_1">WKWebView正确设置、修改UserAgent</h6>
+
+<pre><code class="language-text">WKWebViewConfiguration* webViewConfig = WKWebViewConfiguration.new;
+NSLog(@&quot;修改前 = %@&quot;,webViewConfig.applicationNameForUserAgent);
+//正确设置UserAgent的代码
+webViewConfig.applicationNameForUserAgent = @&quot;我是自定义Agent&quot;;
+NSLog(@&quot;修改后 = %@&quot;,webViewConfig.applicationNameForUserAgent);
+//正确使用设计的初始化方法，不要使用其他初始化方法。
+WKWebView* webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:webViewConfig];
+//注意：下面这句代码是查看，不是设置UserAgent
+[webView evaluateJavaScript:@&quot;navigator.userAgent&quot; completionHandler:^(NSString * _Nullable originUserAgent, NSError * _Nullable error) {
+    NSLog(@&quot;完整UserAgent = %@&quot;,originUserAgent);
+}];
+</code></pre>
+
+<h6 id="toc_2">输出</h6>
+
+<pre><code class="language-text">修改前 = Mobile/16A404
+修改后 = 我是自定义Agent
+完整UserAgent = Mozilla/5.0 (iPhone; CPU iPhone OS 12_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) 我是自定义Agent
+</code></pre>
+
+<p>你可能会好奇 <code>Mobile/16A404</code> 是什么？ <br/>
+我也没有找到具体含义，如果你知道可以告诉我。<br/>
+<strong>友情提醒</strong>，<code>applicationNameForUserAgent</code> 应该追加，不是直接赋值。   </p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Jenkins]]></title>
+    <link href="https://dsencheng.github.io/15656647494619.html"/>
+    <updated>2019-08-13T10:52:29+08:00</updated>
+    <id>https://dsencheng.github.io/15656647494619.html</id>
+    <content type="html"><![CDATA[
+<h1 id="toc_0">准备工作</h1>
+
+<ol>
+<li>开发环境，如Java、Ruby、MacOS等。</li>
+<li>开发工具，如Xcode、Android Studio、IntelliJ IDEA等。</li>
+<li>证书管理，如推送证书、商店证书、手机配置文件等。</li>
+<li>其他依赖工具，如Git、Fastlane、Cocoapods、Maven等。</li>
+</ol>
+
+<p><strong>准备完成后，创建新项目或使用已有项目，打包一次验证是否可以成功打包。</strong></p>
+
+<span id="more"></span><!-- more -->
+
+<h1 id="toc_1">安装</h1>
+
+<h4 id="toc_2"><a href="https://www.jenkins.io/zh/doc/book/installing/">Jenkins中文安装文档</a></h4>
+
+<p>1、<strong>推荐安装方式</strong>，安装完成自动运行。<strong>不推荐PKG方式安装</strong></p>
+
+<pre><code class="language-text">brew install jenkins-lts
+
+# 启动/停止/重启
+
+brew services start jenkins-lts
+brew services stop jenkins-lts
+brew services restart jenkins-lts
+</code></pre>
+
+<p>2、简单方式，下载jenkins-lts.war，cd到文件所在目录，使用命令启动</p>
+
+<pre><code class="language-text">java -jar jenkins-lts.war
+</code></pre>
+
+<p>3、浏览器访问: <a href="http://localhost:8080">http://localhost:8080</a> 或者 <a href="http://10.0.1.147:8080">http://10.0.1.147:8080</a> 按引导教程完成配置。若局域网内无法访问，参考下面的问题记录。</p>
+
+<h1 id="toc_3">Jenkins构建</h1>
+
+<ol>
+<li>创建一个FreeStyle的任务。</li>
+<li>新任务的配置工作。</li>
+<li>构建。</li>
+</ol>
+
+<p><strong>任务配置介绍</strong></p>
+
+<pre><code class="language-text">1.General
+    设置文件存留天数、数量等。
+2.源码管理
+    git、svn
+3.构建触发器
+    提供webhook，轮询，定时等触发构建条件，便于打包自动化。
+4.构建环境
+    设置构建的参数、打包证书(需要插件)等。
+5.构建
+    提供shell、插件等多种构建方式，可以执行多个构建方式，并且有顺序。比如先执行shell，然后执行插件构建。
+6.构建后操作
+    提供通知，邮件，推送等构建完成后任务。
+</code></pre>
+
+<h4 id="toc_4">Jenkins新建任务</h4>
+
+<p>1.创建名为ITOSDK的自由风格任务。<br/>
+2.</p>
+
+<h1 id="toc_5">Jenkins插件</h1>
+
+<p>安装完成后建议重启<br/>
+汉化插件：Localization: Chinese (Simplified) <br/>
+证书管理插件：Keychains and Provisioning Profiles Management<br/>
+Xcode打包插件：Xcode integration</p>
+
+<h1 id="toc_6">问题记录</h1>
+
+<h4 id="toc_7">无法更新插件</h4>
+
+<p>管理Jenkins &gt; 插件管理 &gt; 高级 <br/>
+把<code>URL</code>里的地址<code>https</code>改为<code>http</code> </p>
+
+<hr/>
+
+<h4 id="toc_8">局域网内，无法通过ip+port访问</h4>
+
+<p>关闭Jenkins服务，打开文件夹 <code>/usr/local/Cellar/jenkins/</code>,找到<code>homebrew.mxcl.jenkins.pist</code>这个文件.</p>
+
+<pre><code class="language-text">--httpListenAddress=127.0.0.1
+修改为
+--httpListenAddress=0.0.0.0
+</code></pre>
+
+<p>启动Jenkins，局域网其他用户就可以访问了。</p>
+
+<hr/>
+
+<h4 id="toc_9">fastlane: command not found</h4>
+
+<p>参照安装方法添加路径<code>sudo gem install fastlane -n /usr/local/bin</code>，在Jenkins &gt; 节点管理 &gt; 配置(右侧⚙图标) &gt; 设置环境变量。<br/>
+查看当前环境变量,</p>
+
+<pre><code class="language-text">echo $PATH
+</code></pre>
+
+<hr/>
+
+<h3 id="toc_10">git fetch 443</h3>
+
+<blockquote>
+<p>使用私有库</p>
+</blockquote>
+
+<pre><code class="language-text">Started by user dsen
+Running as SYSTEM
+Building in workspace /Users/Shared/Jenkins/Home/workspace/PrivateTest
+using credential 380f80e8-7d4d-4bfd-8505-e739d1f1c86f
+ &gt; git rev-parse --is-inside-work-tree # timeout=10
+Fetching changes from the remote Git repository
+ &gt; git config remote.origin.url https://gitee.com/gdyh21/PrivateTest.git # timeout=10
+Fetching upstream changes from https://gitee.com/gdyh21/PrivateTest.git
+ &gt; git --version # timeout=10
+using GIT_ASKPASS to set credentials 
+ &gt; git fetch --tags --force --progress https://gitee.com/gdyh21/PrivateTest.git +refs/heads/*:refs/remotes/origin/* # timeout=2
+ERROR: Timeout after 2 minutes
+ERROR: Error fetching remote repo &#39;origin&#39;
+hudson.plugins.git.GitException: Failed to fetch from https://gitee.com/gdyh21/PrivateTest.git
+    at hudson.plugins.git.GitSCM.fetchFrom(GitSCM.java:894)
+    at hudson.plugins.git.GitSCM.retrieveChanges(GitSCM.java:1161)
+    at hudson.plugins.git.GitSCM.checkout(GitSCM.java:1192)
+    at hudson.scm.SCM.checkout(SCM.java:504)
+    at hudson.model.AbstractProject.checkout(AbstractProject.java:1208)
+    at hudson.model.AbstractBuild$AbstractBuildExecution.defaultCheckout(AbstractBuild.java:574)
+    at jenkins.scm.SCMCheckoutStrategy.checkout(SCMCheckoutStrategy.java:86)
+    at hudson.model.AbstractBuild$AbstractBuildExecution.run(AbstractBuild.java:499)
+    at hudson.model.Run.execute(Run.java:1815)
+    at hudson.model.FreeStyleBuild.run(FreeStyleBuild.java:43)
+    at hudson.model.ResourceController.execute(ResourceController.java:97)
+    at hudson.model.Executor.run(Executor.java:429)
+Caused by: hudson.plugins.git.GitException: Command &quot;git fetch --tags --force --progress https://gitee.com/gdyh21/PrivateTest.git +refs/heads/*:refs/remotes/origin/*&quot; returned status code 143:
+stdout: 
+stderr: 
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl.launchCommandIn(CliGitAPIImpl.java:2042)
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl.launchCommandWithCredentials(CliGitAPIImpl.java:1761)
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl.access$400(CliGitAPIImpl.java:72)
+    at org.jenkinsci.plugins.gitclient.CliGitAPIImpl$1.execute(CliGitAPIImpl.java:442)
+    at hudson.plugins.git.GitSCM.fetchFrom(GitSCM.java:892)
+    ... 11 more
+ERROR: Error fetching remote repo &#39;origin&#39;
+Finished: FAILURE
+</code></pre>
+
+<p>PKG卸载<br/>
+&#39;/Library/Application Support/Jenkins/Uninstall.command&#39;</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[制作一个CocoaPods私有库]]></title>
+    <link href="https://dsencheng.github.io/15622122724549.html"/>
+    <updated>2019-07-04T11:51:12+08:00</updated>
+    <id>https://dsencheng.github.io/15622122724549.html</id>
+    <content type="html"><![CDATA[
+<p>1、在GitHub上创建一个空仓库，不要初始化。<code>PrivatePods</code> 是你的私有库名字。如果已经初始化，下面创建lib要在对应的目录里执行。</p>
+
+<pre><code class="language-text">https://github.com/your_github_name/PrivatePods.git
+</code></pre>
+
+<p>2、打开终端，进入到要建立私有库工程的目录，执行下面的命令 。执行命令过程中会询问几个问题，按自己所需回答。</p>
+
+<pre><code class="language-text">pod lib create PrivatePods
+</code></pre>
+
+<span id="more"></span><!-- more -->
+
+<p>3、创建完成后，会自动打开项目。</p>
+
+<pre><code class="language-text">1.删除`ReplaceMe.m`文件。
+2.添加一个测试类，写一个测试方法。注意，文件要放到 PrivatePods/PrivatePods/Classes 目录中。
+例如：
+ATest.h
++(void)testMethod;
+ATest.m
++(void)testMethod {
+    NSLog(@&quot;%s&quot;, __func__);
+}
+如果有已存在源码，文件也放入 /Classes 文件下。
+</code></pre>
+
+<p>4、打开终端，进入<code>Example</code>文件夹，执行<code>pod install</code>，安装依赖项。</p>
+
+<pre><code class="language-text">这里需要注意的是，只要新增加类、资源文件或依赖的第三方库都需要重新运行`pod install`来进行更新。
+</code></pre>
+
+<p>5、在 <code>XXViewController.m</code>中引用测试类 <code>#import &quot;ATest.h&quot;</code>，运行看是否符合预期结果. <code>+[ATest testMethod]</code></p>
+
+<p>6、提交源码到GitHub，并打tag，不使用tag会出现问题。这里尽量使用命令行，一些软件是不支持添加tag的。<code>0.1.0</code> 版本号保持和<code>DCPrivatePods.podspec</code>的<code>s.version = &#39;0.1.0&#39;</code>保持一致。</p>
+
+<pre><code class="language-text">$ git add -A 
+$ git commit -m &quot;0.1.0 发布&quot;
+$ git tag 0.1.0
+$ git push remote origin master --tag
+
+其他命令
+$ git remote add origin https://github.com/your_github_name/repo_name.git
+$ git pull origin master
+$ git push -u origin master
+$ git tag push
+</code></pre>
+
+<p>7、打开终端，执行命令，验证<code>podspec</code>文件。</p>
+
+<pre><code class="language-text">pod spec lint   
+PrivatePods.podspec passed validation.
+注意:
+pod lib lint 是验证pod库。
+pod spec lint 是验证podspec文件。
+</code></pre>
+
+<p>直到验证成功，如果有任何的error，都需要解决掉。warn 可以使用下面的命令忽略。</p>
+
+<p>私有库可能出现URL警告，可增加 <code>--allow-warnings</code> 忽略警告。</p>
+
+<pre><code class="language-text">- WARN  | url: The URL (https://github.com/your_github_name/repo_name.git) is not reachable. 
+</code></pre>
+
+<p>9、发布私有库。在github上创建一个新的仓库。例如：</p>
+
+<pre><code class="language-text">https://github.com/your_git_name/MyPrivateSpecs.git
+</code></pre>
+
+<blockquote>
+<h6 id="toc_0">注意:创建时勾选初始化，空仓库是没有master分支的。会提示如下错误</h6>
+
+<pre><code class="language-text">您的配置中指定要合并远程的引用 &#39;refs/heads/master&#39;，
+但是没有获取到这个引用。
+</code></pre>
+</blockquote>
+
+<p>创建完成后执行命令。</p>
+
+<pre><code class="language-text">$ pod repo add MyPrivateSpecs https://github.com/your_github_name/MyPrivateSpecs.git
+</code></pre>
+
+<p>执行成功后，可以进入目录查看 <code>~./cocoapods/repos/</code> ，看到<code>MyPrivateSpecs</code>文件夹是说明成功了。</p>
+
+<blockquote>
+<h5 id="toc_1">这个仓库是管理你的私有库，你可能创建一个或多个代码库，每个代码库又会不断的迭代发布新的版本。那么这个Spec就像记录表一样，记录你的所有代码私有库，以及每个版本。使用时，在你的项目Podfile文件中添加<code>source &#39;spec仓库地址&#39;</code>，然后<code>pod &#39;私有库的名字&#39;</code> ,就可以使用了。</h5>
+</blockquote>
+
+<p>发布你的私有库，如果没通过可以尝试加<code>--allow-warnings</code>忽略警告.</p>
+
+<pre><code class="language-text">$ pod repo push MyPrivateSpecs DCPrivatePods.podspec
+</code></pre>
+
+<p>10、在自己项目中引用私有库，执行<code>pod install</code>完成!</p>
+
+<pre><code class="language-text">source &#39;https://github.com/CocoaPods/Specs.git&#39;
+source &#39;https://github.com/your_github_name/MyPrivateSpecs.git&#39;
+platform :ios, ‘8.0’
+
+target “your_target_name” do
+    pod &#39;DCPrivatePods&#39;
+end
+</code></pre>
+
+<p>11、私有库依赖另一个私有库时, <code>lint</code>、<code>push</code>操作可能需要增加<code>--sources</code>参数。用法如下：</p>
+
+<pre><code class="language-text">pod lib lint --sources=https://github.com/dsencheng/DCSpecs.git,https://cdn.cocoapods.org/ --use-libraries --allow-warnings --verbose
+</code></pre>
+
+<h2 id="toc_2">问题记录</h2>
+
+<ul>
+<li>在私有库中，引入第三方framework报如下错误</li>
+</ul>
+
+<pre><code class="language-text">    ld: framework not found AliRTCSdk
+</code></pre>
+
+<blockquote>
+<p>解决办法:写完整路径。 </p>
+</blockquote>
+
+<pre><code class="language-text">`s.vendored_frameworks = &#39;AliModule/Classes/AliRTCSdk.framework&#39;`
+</code></pre>
+
+<hr/>
+
+<ul>
+<li>验证私有库时报错</li>
+</ul>
+
+<pre><code class="language-text">ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code. You can use `--verbose` for more information.
+</code></pre>
+
+<blockquote>
+<p>解决办法</p>
+</blockquote>
+
+<hr/>
+
+<ul>
+<li>报错信息</li>
+</ul>
+
+<pre><code class="language-text">Showing All Messages
+:-1: Multiple commands produce &#39;/Users/dsen/Library/Developer/Xcode/DerivedData/Ali-dufrvubbsfygbsfskqpkqsmffkhv/Build/Products/Debug-iphonesimulator/Ali/Ali.framework/Info.plist&#39;:
+1) Target &#39;Ali&#39; (project &#39;Pods&#39;) has copy command from &#39;/Users/dsen/GitHub/Ali/Ali/Classes/UTDID.framework/Info.plist&#39; to &#39;/Users/dsen/Library/Developer/Xcode/DerivedData/Ali-dufrvubbsfygbsfskqpkqsmffkhv/Build/Products/Debug-iphonesimulator/Ali/Ali.framework/Info.plist&#39;
+2) Target &#39;Ali&#39; (project &#39;Pods&#39;) has process command with output &#39;/Users/dsen/Library/Developer/Xcode/DerivedData/Ali-dufrvubbsfygbsfskqpkqsmffkhv/Build/Products/Debug-iphonesimulator/Ali/Ali.framework/Info.plist&#39;
+</code></pre>
+
+<blockquote>
+<p>解决办法</p>
+</blockquote>
+
+<pre><code class="language-text">去掉 Pods &gt; Project &gt; Build Setting &gt; Valid Architectures &gt; x86_64 
+</code></pre>
+
+<hr/>
+
+<ul>
+<li>报错信息 </li>
+</ul>
+
+<pre><code class="language-text">does not contain bitcode. You must rebuild it with bitcode enabled (Xcode setting ENABLE_BITCODE)
+</code></pre>
+
+<blockquote>
+<p>解决办法</p>
+</blockquote>
+
+<pre><code class="language-text">在xxx_Example 中修改 enable bitcode = false
+</code></pre>
+
+<hr/>
+
+<ul>
+<li>报错信息</li>
+</ul>
+
+<pre><code class="language-text">no rule to process file
+</code></pre>
+
+<blockquote>
+<p>解决办法</p>
+
+<pre><code class="language-text">s.source_files = &#39;AliModule/Classes/**/*&#39;
+修改为
+s.source_files = &#39;AliModule/Classes/**/*.{h,m}&#39;
+忽略其他类型文件
+</code></pre>
+</blockquote>
+
+<hr/>
+
+<ul>
+<li>报错信息</li>
+</ul>
+
+<pre><code class="language-text">ERROR | [iOS] file patterns: The `vendored_frameworks` pattern did not match any file.
+</code></pre>
+
+<blockquote>
+<p>解决办法:暂无</p>
+</blockquote>
+
+<hr/>
+
+<ul>
+<li>报错信息</li>
+</ul>
+
+<pre><code class="language-text">[!] Unable to find a specification for `DCView` depended upon by `DCLib`
+
+You have either:
+ * out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`.
+ * mistyped the name or version.
+ * not added the source repo that hosts the Podspec to your Podfile.
+</code></pre>
+
+<blockquote>
+<p>解决办法</p>
+</blockquote>
+
+<p>写错了 <code>source</code>,应该写Spec的地址，错写了lib库的地址。</p>
+
+<hr/>
+
+<ul>
+<li><code>pod lib lint</code>出现i386 x86_64模拟器问题</li>
+</ul>
+
+<blockquote>
+<p>1 加命令参数<code>pod lib lint --skip-import-validation</code> </p>
+
+<p>2 podspec添加参数<br/>
+<code>s.pod_target_xcconfig = { &#39;VALID_ARCHS[sdk=iphonesimulator*]&#39; =&gt; &#39;&#39; }</code></p>
+
+<p><code>s.pod_target_xcconfig = {<br/>
+        &#39;ARCHS[sdk=iphonesimulator*]&#39; =&gt; &#39;$(ARCHS_STANDARD_64_BIT)&#39;<br/>
+    }</code></p>
+</blockquote>
+
+]]></content>
+  </entry>
+  
+</feed>
