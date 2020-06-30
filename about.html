@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  Xcode - Dsen
+  Dsen
   
 
   </title>
@@ -80,133 +80,16 @@ $(document).ready(function(event) {
     <div id="content"> 
 <div class="blog-index">
 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15923835113038.html">Xcode命令</a></h1>
-			<p class="meta"><time datetime="2020-06-17T16:45:11+08:00" 
-			pubdate data-updated="true">2020/06/17 16:45 下午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>命令行-单元测试</p>
-
-<pre><code class="language-text">使用Cocoapods有workspace 必须加-workspace，注意使用引号及完整的文件名， [-only-testing:&lt;test-identifier&gt;] test-identifier格式说明 TestTarget[/TestClass[/TestMethod]]
-
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39;
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests&#39;
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests/LoginTests/testLoginExample&#39;
-
-省略了class
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests/testLoginExample&#39;
-
-</code></pre>
-
-
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15744090741838.html">Xcode问题</a></h1>
-			<p class="meta"><time datetime="2019-11-22T15:51:14+08:00" 
-			pubdate data-updated="true">2019/11/22 15:51 下午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>1.Xcode 11创建Category文件时，会添加 <code>#import &lt;Appkit/Appkit.h&gt;</code>，导致项目编译出错。</p>
-
-<pre><code class="language-text">解决办法：打开目录 `/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/File Templates/Source/Objective-C File.xctemplate/CategoryNSObject`， 
-把.h.m文件复制出来，打开文件，删除对应的代码，然后替换源文件。这样下次创建Category文件时，就不会在出现`#import &lt;Appkit/Appkit.h&gt;`了。
-</code></pre>
-
-
-		</div>
-
-		
-
-	</article>
   
 	<div class="pagination">
 	
 <a href="archives.html">Blog Archives</a>
-	 
+	 <a class="next" href="all.html">Newer &rarr;</a>  
 	    
 	</div>
 </div>
  <aside class="sidebar"> 
 
-	<section>
-	  <h1>Categories</h1>
-	  <ul id="recent_posts">
-	  
-	      <li class="post">
-	        <a href="iOS.html"><strong>iOS&nbsp;(1)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Cocoapods.html"><strong>Cocoapods&nbsp;(7)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Shell.html"><strong>Shell&nbsp;(3)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="SSH.html"><strong>SSH&nbsp;(2)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Fastlane.html"><strong>Fastlane&nbsp;(1)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Jenkins-1.html"><strong>Jenkins&nbsp;(1)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Ruby.html"><strong>Ruby&nbsp;(1)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="RaspberryPi.html"><strong>RaspberryPi&nbsp;(1)</strong></a>
-	        
-	        
-	        
-	      </li>
-	  
-	      <li class="post">
-	        <a href="Xcode.html"><strong>Xcode&nbsp;(2)</strong></a>
-	        
-	        
-	        
-	      </li>
-	   
-	  </ul>
-	</section>
 	<section>
 	  <h1>Recent Posts</h1>
 	  <ul id="recent_posts">
