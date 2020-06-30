@@ -4,7 +4,7 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2020-06-30T15:02:14+08:00</updated>
+  <updated>2020-06-30T15:04:50+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -868,15 +868,13 @@ brew install xctool
 
 <h5 id="toc_2">问题记录</h5>
 
-<pre><code class="language-text"> increment_build_number 报错
+<pre><code class="language-text">increment_build_number 报错
 </code></pre>
 
-<p>解决方法</p>
-
 <blockquote>
-<p>build settings &gt; Current project version 设置为整数</p>
+<p>解决方法: build settings &gt; Current project version 设置为整数</p>
 </blockquote>
-
+<br>
 <hr/>
 
 <pre><code class="language-text">$ bundle exec fastlane beta update_description:&quot;大多数更新说明文字描述&quot;
@@ -890,9 +888,9 @@ brew install xctool
 <h5 id="toc_3">情况一,不熟悉<code>Ruby</code>语法。</h5>
 
 <p>执行<code>fastlane</code>时，需要传递更新说明参数，但编写<code>Fastfile</code>时丢失参数<code>option</code>，导致报错。</p>
-</blockquote>
 
-<pre><code class="language-text">default_platform(:ios)
+<pre><code class="language-text"># 示例
+default_platform(:ios)
 
 platform :ios do
   desc &quot;打包测试&quot;
@@ -904,6 +902,36 @@ platform :ios do
   end
 end
 </code></pre>
+</blockquote>
+
+<hr/>
+
+<p>20200630更新</p>
+
+<p><strong>Xcode管理Provisioning Profile文件，打包上传到蒲公英后，出现部分设备下载后黑色图标，点击提示‘无法安装’。</strong></p>
+
+<blockquote>
+<p>增加打包参数 <code>export_xcargs: &quot;-allowProvisioningUpdates&quot;</code><br/>
+<a href="https://docs.fastlane.tools/codesigning/xcode-project/">fastlane文档链接</a></p>
+
+<pre><code class="language-text"># 示例
+platform :ios do
+  desc &quot;Description of what the lane does&quot;
+  lane :sdkdemo do
+  desc &quot;开始打包&quot;
+  gym(
+    scheme: &quot;SDKDemo&quot;,
+    output_name: &quot;SDKDemo.ipa&quot;,
+    clean: true,
+    export_method: &quot;ad-hoc&quot;,
+    export_xcargs: &quot;-allowProvisioningUpdates&quot;,
+    )
+  desc &quot;上传到蒲公英&quot;
+  pgyer(api_key: &quot;xxx&quot;, user_key: &quot;xxx&quot;)
+  end
+end
+</code></pre>
+</blockquote>
 
 ]]></content>
   </entry>
