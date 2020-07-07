@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  Cocoapods - Dsen
+  【转载】树莓派配置v2ray客户端 - Dsen
   
 
   </title>
@@ -78,261 +78,175 @@ $(document).ready(function(event) {
 </nav>
   <div id="main">
     <div id="content"> 
-<div class="blog-index">
+<div>
+	<article class="hentry" role="article">
+	<header>
+			  	<h1 class="entry-title">【转载】树莓派配置v2ray客户端</h1>
+				<p class="meta"><time datetime="2020-07-02T17:57:09+08:00" pubdate data-updated="true">2020/07/02 17:57 下午</time></p>
+			 </header>
+		  	<div class="entry-content">
+			  	<p>点击打开<a href="https://www.ichenfei.com/2019/11/24/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8v2ray%E5%AE%A2%E6%88%B7%E7%AB%AF/">原文链接</a>，本文有修改。</p>
 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747536824820.html">Cocoapods之`pod`命令</a></h1>
-			<p class="meta"><time datetime="2019-11-26T15:34:42+08:00" 
-			pubdate data-updated="true">2019/11/26 15:34 下午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p><code>pod init</code><br/>
-初始化</p>
+<h2 id="toc_0">下载安装</h2>
 
-<p><code>pod install</code><br/>
-安装/更新库</p>
+<p>使用一键安装脚本安装，参考v2ray官方教程-下载安装</p>
 
-<p><code>pod lib lint</code><br/>
-验证lib合法性</p>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15747536824820.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747536460432.html">Cocoapods之`Podfile`文件</a></h1>
-			<p class="meta"><time datetime="2019-11-26T15:34:06+08:00" 
-			pubdate data-updated="true">2019/11/26 15:34 下午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<pre><code class="language-text">#swift为动态库
-use_frameworks!
-#最低版本号
-platform :ios, &#39;9.0&#39;
-#忽略库里的警告
-inhibit_all_warnings!
-
-target &#39;DCServices_Example&#39; do
-  pod &#39;DCServices&#39;, :path =&gt; &#39;../&#39;
-
-  target &#39;DCServices_Tests&#39; do
-    inherit! :search_paths
-
-    
-  end
-end
+<pre><code class="language-text">bash &lt;(curl -L -s https://install.direct/go.sh)
 </code></pre>
 
+<p>可能会出现网络错误<code>Failed to fetch release information. Please check your network or try again.</code></p>
 
-		</div>
+<p>这就需要从github下载安装包, 先从<a href="https://github.com/v2ray/v2ray-core/releases">v2ray-core/releases</a>将安装包v2ray-linux-arm.zip下载到树莓派, 使用--local参数从本地安装</p>
 
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747477473465.html">Cocoapods之`.podspec`文件</a></h1>
-			<p class="meta"><time datetime="2019-11-26T13:55:47+08:00" 
-			pubdate data-updated="true">2019/11/26 13:55 下午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<pre><code class="language-text">#名字
-s.name             = &#39;Chat2Love&#39;
-#版本号，更新发布内容最好更新版本号
-s.version          = &#39;0.1.0&#39;
-#简介说明
-s.summary          = &#39;A short description of Chat2Love.&#39;
-#详细说明
-s.description      = &#39;&#39;
-#主页，通常是github项目地址
-s.homepage         = &#39;https://github.com/dsencheng/Chat2Love&#39;
-#屏幕快照链接
-# s.screenshots     = &#39;www.example.com/screenshots_1&#39;, &#39;www.example.com/screenshots_2&#39;
-#协议
-s.license          = { :type =&gt; &#39;MIT&#39;, :file =&gt; &#39;LICENSE&#39; }
-#作者
-s.author           = { &#39;dsencheng&#39; =&gt; &#39;dsencheng@gmail.com&#39; }
-#源码地址
-s.source           = { :git =&gt; &#39;https://github.com/dsencheng/Chat2Love.git&#39;, :tag =&gt; s.version.to_s }
-#社交信息
-# s.social_media_url = &#39;https://twitter.com/&lt;TWITTER_USERNAME&gt;&#39;
-#开发版本
-s.ios.deployment_target = &#39;8.0&#39;
-#暴露的文件，举例：`/*.h` 仅暴露.h文件。 `/*.{h,m} ` 仅暴露.h和.m文件
-s.source_files = &#39;Chat2Love/Classes/**/*&#39;
-#资源文件
-# s.resource_bundles = {
-#   &#39;Chat2Love&#39; =&gt; [&#39;Chat2Love/Assets/*.png&#39;]
-# }
-#暂未用到
-# s.public_header_files = &#39;Pod/Classes/**/*.h&#39;
-#需要使用到的系统库
-# s.frameworks = &#39;UIKit&#39;, &#39;MapKit&#39;
-# 需要依赖的三方库，支持指定版本,不支持指定地址。可在podfile文件中指定地址。
-# s.dependency &#39;AFNetworking&#39;, &#39;~&gt; 2.3&#39;
-#静态库
-#s.static_framework = true
-# 依赖的系统静态库
-#s.library = &#39;c++&#39;, &#39;resolv&#39;
-# build setting中的配置
-#s.ios.pod_target_xcconfig = { &#39;OTHER_LDFLAGS&#39; =&gt; &#39;-lObjC&#39;, &#39;ENABLE_BITCODE&#39; =&gt; false, }
-# 子库,会有不同的文件夹
-#  s.subspec &#39;Sub&#39; do | b |
-#      b.source_files = &#39;Chat2Love/Classes/**/*&#39;
-#   end
-# 引用其他的库，不建议样写，pod中引用framework文件会报错。
-# s.ios.vendored_frameworks = &#39;Ali/Classes/AliRTCSdk.framework&#39;,&#39;Ali/Classes/UTDID.framework&#39;
-# 引用其他的库，建议写法
-#  s.subspec &#39;AliRTC&#39; do | sub_rtc |
-#      sub_rtc.ios.vendored_frameworks = &#39;Ali/Classes/AliRTCSdk.framework&#39;,&#39;Ali/Classes/UTDID.framework&#39;
-#   end
+<pre><code class="language-text">wget https://github.com/v2ray/v2ray-core/releases/download/v4.25.1/v2ray-linux-arm.zip
+wget -O v2ray_install.sh  https://install.direct/go.sh
+chmod +x v2ray_install.sh
+sudo ./v2ray_install.sh --local v2ray-linux-arm.zip
 
 </code></pre>
 
-
-		</div>
-
-		
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747423574103.html">Cocoapods之私有库发布及使用</a></h1>
-			<p class="meta"><time datetime="2019-11-26T12:25:57+08:00" 
-			pubdate data-updated="true">2019/11/26 12:25 下午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>本文以github为例<br/>
-1、打开你的github主页，选择 <code>New repository</code> .</p>
+<h2 id="toc_1">配置v2ray客户端</h2>
 
 <blockquote>
-<p>a. <code>Repository name</code> 填写 <code>DCSpecs</code>。<br/>
-b. <code>Description</code> 可以不填写。<br/>
-c. 选择 <code>Private</code> 或 <code>Public</code>。<br/>
-d. 勾选 <code>Initialize this repository with a README</code>。<br/>
-e. 点击 <code>Create repository</code> 按钮。</p>
+<p><strong>建议</strong>:如果已经有<a href="https://github.com/yanue/V2rayU">V2rayU</a>一类的客户端，且已有代理服务器，可以打开V2rayU客户端菜单<code>服务器设置</code>选择你已有的服务器，选择<code>导入模式</code>，复制配置好的json。在<code>cat &gt; /etc/v2ray/config.json &lt;&lt; EOF</code> 命令后直接粘贴。</p>
 </blockquote>
 
+<pre><code class="language-text">sudo su - root
+cat &gt; /etc/v2ray/config.json &lt;&lt; EOF
+{
+  &quot;inbounds&quot;: [{
+    &quot;port&quot;: 1080,
+    &quot;listen&quot;: &quot;127.0.0.1&quot;,
+    &quot;protocol&quot;: &quot;socks&quot;,
+    &quot;settings&quot;: {
+      &quot;udp&quot;: true
+    }
+  }],
+  &quot;outbounds&quot;: [{
+    &quot;protocol&quot;: &quot;vmess&quot;,
+    &quot;settings&quot;: {
+      &quot;vnext&quot;: [{
+        &quot;address&quot;: &quot;server ip&quot;,
+        &quot;port&quot;: 10086,
+        &quot;users&quot;: [{ &quot;id&quot;: &quot;b831381d-6324-4d53-ad4f-8cda48b30811&quot; }]
+      }]
+    }
+  },{
+    &quot;protocol&quot;: &quot;freedom&quot;,
+    &quot;tag&quot;: &quot;direct&quot;,
+    &quot;settings&quot;: {}
+  }],
+  &quot;routing&quot;: {
+    &quot;domainStrategy&quot;: &quot;IPOnDemand&quot;,
+    &quot;rules&quot;: [{
+      &quot;type&quot;: &quot;field&quot;,
+      &quot;ip&quot;: [&quot;geoip:private&quot;],
+      &quot;outboundTag&quot;: &quot;direct&quot;
+    }]
+  }
+}
+EOF
 
 
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15747423574103.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747367843901.html">Cocoapods之私有库代码同步</a></h1>
-			<p class="meta"><time datetime="2019-11-26T10:53:04+08:00" 
-			pubdate data-updated="true">2019/11/26 10:53 上午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>本文项目名<code>DCServices</code>,仓库为github。</p>
-
-<p>1、打开你的github主页，选择 <code>New repository</code> .</p>
-
-<blockquote>
-<p>a. <code>Repository name</code> 填写 <code>DCServices</code>。<br/>
-b. <code>Description</code> 可以不填写。<br/>
-c. 选择 <code>Private</code> 。<br/>
-d. 点击 <code>Create repository</code> 按钮。</p>
-
-<h6 id="toc_0">注:不需要勾选 <code>Initialize this repository with a README</code>。</h6>
-</blockquote>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15747367843901.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747347938087.html">Cocoapods之创建私有库</a></h1>
-			<p class="meta"><time datetime="2019-11-26T10:19:53+08:00" 
-			pubdate data-updated="true">2019/11/26 10:19 上午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>本文以创建名为&quot;DCServices&quot;的私有库为例。<br/>
-1.打开任意终端工具，进入你的工作目录，输入命令 <code>pod lib create DCServices</code>，按照提示回答问题，即可完成lib项目的创建工作。</p>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15747347938087.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15622122724549.html">制作一个CocoaPods私有库</a></h1>
-			<p class="meta"><time datetime="2019-07-04T11:51:12+08:00" 
-			pubdate data-updated="true">2019/07/04 11:51 上午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>1、在GitHub上创建一个空仓库，不要初始化。<code>PrivatePods</code> 是你的私有库名字。如果已经初始化，下面创建lib要在对应的目录里执行。</p>
-
-<pre><code class="language-text">https://github.com/your_github_name/PrivatePods.git
+# address改为服务端ip， port改为服务端端口, id改为服务端用户ID
 </code></pre>
 
-<p>2、打开终端，进入到要建立私有库工程的目录，执行下面的命令 。执行命令过程中会询问几个问题，按自己所需回答。</p>
+<h2 id="toc_2">开启v2ray服务</h2>
 
-<pre><code class="language-text">pod lib create PrivatePods
+<pre><code class="language-text">sudo systemctl start v2ray
+
+#查看v2ray服务状态, Active: active (running)代表程序运行中
+sudo systemctl status v2ray
+
+ v2ray.service - V2Ray Service
+   Loaded: loaded (/etc/systemd/system/v2ray.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2020-07-02 17:12:24 CST; 57min ago
+     Docs: https://www.v2ray.com/
+           https://www.v2fly.org/
+ Main PID: 1303 (v2ray)
+    Tasks: 9 (limit: 2200)
+   Memory: 6.9M
+   CGroup: /system.slice/v2ray.service
+           └─1303 /usr/bin/v2ray/v2ray -config /etc/v2ray/config.json
 </code></pre>
 
+<h2 id="toc_3">使用ProxyChains-NG配置全局代理</h2>
 
+<pre><code class="language-text">git clone https://github.com/rofl0r/proxychains-ng.git
+cd /home/pi/proxychains-ng/
+./configure &amp;&amp; make &amp;&amp; make install
+</code></pre>
 
-		</div>
+<p>添加配置:</p>
 
-		 
-		 <footer>
-      	<a rel="full-article" href="15622122724549.html#more">read more &rarr;</a>
-    	</footer>
-    	
+<pre><code class="language-text">cp ./src/proxychains.conf /etc/proxychains.conf
 
-	</article>
-  
-	<div class="pagination">
-	
-<a href="archives.html">Blog Archives</a>
-	 
+vim /etc/proxychains.conf
+
+# 将最后的 socks4 127.0.0.1 9095 改为 socks5  127.0.0.1 1080
+</code></pre>
+
+<p>在需要使用代理的命令前面加上proxychains4, 如下</p>
+
+<pre><code class="language-text">curl ip.sb
+xxx.xxx.xxx.xxx
+# 这里应该是你当前的ip
+
+proxychains4 curl ip.sb
+x.x.x.x
+# 这里是代理的ip
+</code></pre>
+
+<p>Chrome浏览器使用代理</p>
+
+<pre><code class="language-text">1. 首先通过命令行启动Chrome浏览器
+
+chromium-browser --proxy-server=&quot;https=socks5://127.0.0.1:1080;http=socks5://127.0.0.1:1080&quot;
+
+注：这种方式不可以在SSH中启动，因SSH中无界面导致失败。
+</code></pre>
+
+			</div>
+
+		
+	  
+		<footer>
+		 <p class="meta">
+
+			<strong>Categories:</strong>&nbsp; 
+			<span class="categories">
+			
+			    <a class='category' href='RaspberryPi.html'>RaspberryPi</a>&nbsp;
+			 
+			</span>
+		    </p>
+		    <p class="meta">
+		      
+		 </p>
 	    
-	</div>
+		<div class="sharing">
+		  <script src="https://utteranc.es/client.js"
+        repo="dsencheng/dsencheng.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script> 
+          
+
+          
+
+		</div>
+
+	    <p class="meta">
+	    
+	    
+	        <a class="basic-alignment right" href="15936592764846.html" 
+	        title="Next Post: 树莓派环境安装">树莓派环境安装 &raquo;</a>
+	    
+	    </p>
+	  </footer>
+	</article>
 </div>
  <aside class="sidebar"> 
 
@@ -495,6 +409,8 @@ d. 点击 <code>Create repository</code> 按钮。</p>
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">

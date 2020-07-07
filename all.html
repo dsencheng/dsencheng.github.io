@@ -82,6 +82,159 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15936838298753.html">【转载】树莓派配置v2ray客户端</a></h1>
+			<p class="meta"><time datetime="2020-07-02T17:57:09+08:00" 
+			pubdate data-updated="true">2020/07/02 17:57 下午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p>点击打开<a href="https://www.ichenfei.com/2019/11/24/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8v2ray%E5%AE%A2%E6%88%B7%E7%AB%AF/">原文链接</a>，本文有修改。</p>
+
+<h2 id="toc_0">下载安装</h2>
+
+<p>使用一键安装脚本安装，参考v2ray官方教程-下载安装</p>
+
+<pre><code class="language-text">bash &lt;(curl -L -s https://install.direct/go.sh)
+</code></pre>
+
+<p>可能会出现网络错误<code>Failed to fetch release information. Please check your network or try again.</code></p>
+
+<p>这就需要从github下载安装包, 先从<a href="https://github.com/v2ray/v2ray-core/releases">v2ray-core/releases</a>将安装包v2ray-linux-arm.zip下载到树莓派, 使用--local参数从本地安装</p>
+
+<pre><code class="language-text">wget https://github.com/v2ray/v2ray-core/releases/download/v4.25.1/v2ray-linux-arm.zip
+wget -O v2ray_install.sh  https://install.direct/go.sh
+chmod +x v2ray_install.sh
+sudo ./v2ray_install.sh --local v2ray-linux-arm.zip
+
+</code></pre>
+
+<h2 id="toc_1">配置v2ray客户端</h2>
+
+<blockquote>
+<p><strong>建议</strong>:如果已经有<a href="https://github.com/yanue/V2rayU">V2rayU</a>一类的客户端，且已有代理服务器，可以打开V2rayU客户端菜单<code>服务器设置</code>选择你已有的服务器，选择<code>导入模式</code>，复制配置好的json。在<code>cat &gt; /etc/v2ray/config.json &lt;&lt; EOF</code> 命令后直接粘贴。</p>
+</blockquote>
+
+<pre><code class="language-text">sudo su - root
+cat &gt; /etc/v2ray/config.json &lt;&lt; EOF
+{
+  &quot;inbounds&quot;: [{
+    &quot;port&quot;: 1080,
+    &quot;listen&quot;: &quot;127.0.0.1&quot;,
+    &quot;protocol&quot;: &quot;socks&quot;,
+    &quot;settings&quot;: {
+      &quot;udp&quot;: true
+    }
+  }],
+  &quot;outbounds&quot;: [{
+    &quot;protocol&quot;: &quot;vmess&quot;,
+    &quot;settings&quot;: {
+      &quot;vnext&quot;: [{
+        &quot;address&quot;: &quot;server ip&quot;,
+        &quot;port&quot;: 10086,
+        &quot;users&quot;: [{ &quot;id&quot;: &quot;b831381d-6324-4d53-ad4f-8cda48b30811&quot; }]
+      }]
+    }
+  },{
+    &quot;protocol&quot;: &quot;freedom&quot;,
+    &quot;tag&quot;: &quot;direct&quot;,
+    &quot;settings&quot;: {}
+  }],
+  &quot;routing&quot;: {
+    &quot;domainStrategy&quot;: &quot;IPOnDemand&quot;,
+    &quot;rules&quot;: [{
+      &quot;type&quot;: &quot;field&quot;,
+      &quot;ip&quot;: [&quot;geoip:private&quot;],
+      &quot;outboundTag&quot;: &quot;direct&quot;
+    }]
+  }
+}
+EOF
+
+
+# address改为服务端ip， port改为服务端端口, id改为服务端用户ID
+</code></pre>
+
+<h2 id="toc_2">开启v2ray服务</h2>
+
+<pre><code class="language-text">sudo systemctl start v2ray
+
+#查看v2ray服务状态, Active: active (running)代表程序运行中
+sudo systemctl status v2ray
+
+ v2ray.service - V2Ray Service
+   Loaded: loaded (/etc/systemd/system/v2ray.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2020-07-02 17:12:24 CST; 57min ago
+     Docs: https://www.v2ray.com/
+           https://www.v2fly.org/
+ Main PID: 1303 (v2ray)
+    Tasks: 9 (limit: 2200)
+   Memory: 6.9M
+   CGroup: /system.slice/v2ray.service
+           └─1303 /usr/bin/v2ray/v2ray -config /etc/v2ray/config.json
+</code></pre>
+
+<h2 id="toc_3">使用ProxyChains-NG配置全局代理</h2>
+
+<pre><code class="language-text">git clone https://github.com/rofl0r/proxychains-ng.git
+cd /home/pi/proxychains-ng/
+./configure &amp;&amp; make &amp;&amp; make install
+</code></pre>
+
+<p>添加配置:</p>
+
+<pre><code class="language-text">cp ./src/proxychains.conf /etc/proxychains.conf
+
+vim /etc/proxychains.conf
+
+# 将最后的 socks4 127.0.0.1 9095 改为 socks5  127.0.0.1 1080
+</code></pre>
+
+<p>在需要使用代理的命令前面加上proxychains4, 如下</p>
+
+<pre><code class="language-text">curl ip.sb
+xxx.xxx.xxx.xxx
+# 这里应该是你当前的ip
+
+proxychains4 curl ip.sb
+x.x.x.x
+# 这里是代理的ip
+</code></pre>
+
+<p>Chrome浏览器使用代理</p>
+
+<pre><code class="language-text">1. 首先通过命令行启动Chrome浏览器
+
+chromium-browser --proxy-server=&quot;https=socks5://127.0.0.1:1080;http=socks5://127.0.0.1:1080&quot;
+
+注：这种方式不可以在SSH中启动，因SSH中无界面导致失败。
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
+		  	<h1 class="entry-title"><a href="15936592764846.html">树莓派环境安装</a></h1>
+			<p class="meta"><time datetime="2020-07-02T11:07:56+08:00" 
+			pubdate data-updated="true">2020/07/02 11:07 上午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<p><a href="https://installvirtual.com/how-to-install-python-3-8-on-raspberry-pi-raspbian/">如何在RaspberryPi上安装Python 3.8</a></p>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15934342416600.html">FRP 笔记</a></h1>
 			<p class="meta"><time datetime="2020-06-29T20:37:21+08:00" 
 			pubdate data-updated="true">2020/06/29 20:37 下午</time></p>
@@ -340,62 +493,6 @@ e. 点击 <code>Create repository</code> 按钮。</p>
     	
 
 	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747367843901.html">Cocoapods之私有库代码同步</a></h1>
-			<p class="meta"><time datetime="2019-11-26T10:53:04+08:00" 
-			pubdate data-updated="true">2019/11/26 10:53 上午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>本文项目名<code>DCServices</code>,仓库为github。</p>
-
-<p>1、打开你的github主页，选择 <code>New repository</code> .</p>
-
-<blockquote>
-<p>a. <code>Repository name</code> 填写 <code>DCServices</code>。<br/>
-b. <code>Description</code> 可以不填写。<br/>
-c. 选择 <code>Private</code> 。<br/>
-d. 点击 <code>Create repository</code> 按钮。</p>
-
-<h6 id="toc_0">注:不需要勾选 <code>Initialize this repository with a README</code>。</h6>
-</blockquote>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15747367843901.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
- 
-	<article>
-		 <header>
-		  	<h1 class="entry-title"><a href="15747347938087.html">Cocoapods之创建私有库</a></h1>
-			<p class="meta"><time datetime="2019-11-26T10:19:53+08:00" 
-			pubdate data-updated="true">2019/11/26 10:19 上午</time></p>
-		 </header>
-	  	<div class="entry-content">
-		  	
-		  	<p>本文以创建名为&quot;DCServices&quot;的私有库为例。<br/>
-1.打开任意终端工具，进入你的工作目录，输入命令 <code>pod lib create DCServices</code>，按照提示回答问题，即可完成lib项目的创建工作。</p>
-
-
-
-		</div>
-
-		 
-		 <footer>
-      	<a rel="full-article" href="15747347938087.html#more">read more &rarr;</a>
-    	</footer>
-    	
-
-	</article>
   
 	<div class="pagination">
 	 <a class="prev" href="all_1.html">&larr; Older</a> 
@@ -460,7 +557,7 @@ d. 点击 <code>Create repository</code> 按钮。</p>
 	      </li>
 	  
 	      <li class="post">
-	        <a href="RaspberryPi.html"><strong>RaspberryPi&nbsp;(1)</strong></a>
+	        <a href="RaspberryPi.html"><strong>RaspberryPi&nbsp;(3)</strong></a>
 	        
 	        
 	        
@@ -481,6 +578,18 @@ d. 点击 <code>Create repository</code> 按钮。</p>
 	  
 	      
 		      <li class="post">
+		        <a href="15936838298753.html">【转载】树莓派配置v2ray客户端</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
+		        <a href="15936592764846.html">树莓派环境安装</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15934342416600.html">FRP 笔记</a>
 		      </li>
 	     
@@ -498,16 +607,6 @@ d. 点击 <code>Create repository</code> 按钮。</p>
 	     
 	  
 	      
-		      <li class="post">
-		        <a href="15923777936483.html">Shell 笔记</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15747536824820.html">Cocoapods之`pod`命令</a>
-		      </li>
-	     
 	  
 	      
 	  

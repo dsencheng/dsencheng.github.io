@@ -4,7 +4,7 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2020-06-30T15:04:50+08:00</updated>
+  <updated>2020-06-30T18:02:52+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -12,6 +12,147 @@
   </author>
   <generator uri="http://www.coderforart.com/">CoderForArt</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[【转载】树莓派配置v2ray客户端]]></title>
+    <link href="https://dsencheng.github.io/15936838298753.html"/>
+    <updated>2020-07-02T17:57:09+08:00</updated>
+    <id>https://dsencheng.github.io/15936838298753.html</id>
+    <content type="html"><![CDATA[
+<p>点击打开<a href="https://www.ichenfei.com/2019/11/24/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8v2ray%E5%AE%A2%E6%88%B7%E7%AB%AF/">原文链接</a>，本文有修改。</p>
+
+<h2 id="toc_0">下载安装</h2>
+
+<p>使用一键安装脚本安装，参考v2ray官方教程-下载安装</p>
+
+<pre><code class="language-text">bash &lt;(curl -L -s https://install.direct/go.sh)
+</code></pre>
+
+<p>可能会出现网络错误<code>Failed to fetch release information. Please check your network or try again.</code></p>
+
+<p>这就需要从github下载安装包, 先从<a href="https://github.com/v2ray/v2ray-core/releases">v2ray-core/releases</a>将安装包v2ray-linux-arm.zip下载到树莓派, 使用--local参数从本地安装</p>
+
+<pre><code class="language-text">wget https://github.com/v2ray/v2ray-core/releases/download/v4.25.1/v2ray-linux-arm.zip
+wget -O v2ray_install.sh  https://install.direct/go.sh
+chmod +x v2ray_install.sh
+sudo ./v2ray_install.sh --local v2ray-linux-arm.zip
+
+</code></pre>
+
+<h2 id="toc_1">配置v2ray客户端</h2>
+
+<blockquote>
+<p><strong>建议</strong>:如果已经有<a href="https://github.com/yanue/V2rayU">V2rayU</a>一类的客户端，且已有代理服务器，可以打开V2rayU客户端菜单<code>服务器设置</code>选择你已有的服务器，选择<code>导入模式</code>，复制配置好的json。在<code>cat &gt; /etc/v2ray/config.json &lt;&lt; EOF</code> 命令后直接粘贴。</p>
+</blockquote>
+
+<pre><code class="language-text">sudo su - root
+cat &gt; /etc/v2ray/config.json &lt;&lt; EOF
+{
+  &quot;inbounds&quot;: [{
+    &quot;port&quot;: 1080,
+    &quot;listen&quot;: &quot;127.0.0.1&quot;,
+    &quot;protocol&quot;: &quot;socks&quot;,
+    &quot;settings&quot;: {
+      &quot;udp&quot;: true
+    }
+  }],
+  &quot;outbounds&quot;: [{
+    &quot;protocol&quot;: &quot;vmess&quot;,
+    &quot;settings&quot;: {
+      &quot;vnext&quot;: [{
+        &quot;address&quot;: &quot;server ip&quot;,
+        &quot;port&quot;: 10086,
+        &quot;users&quot;: [{ &quot;id&quot;: &quot;b831381d-6324-4d53-ad4f-8cda48b30811&quot; }]
+      }]
+    }
+  },{
+    &quot;protocol&quot;: &quot;freedom&quot;,
+    &quot;tag&quot;: &quot;direct&quot;,
+    &quot;settings&quot;: {}
+  }],
+  &quot;routing&quot;: {
+    &quot;domainStrategy&quot;: &quot;IPOnDemand&quot;,
+    &quot;rules&quot;: [{
+      &quot;type&quot;: &quot;field&quot;,
+      &quot;ip&quot;: [&quot;geoip:private&quot;],
+      &quot;outboundTag&quot;: &quot;direct&quot;
+    }]
+  }
+}
+EOF
+
+
+# address改为服务端ip， port改为服务端端口, id改为服务端用户ID
+</code></pre>
+
+<h2 id="toc_2">开启v2ray服务</h2>
+
+<pre><code class="language-text">sudo systemctl start v2ray
+
+#查看v2ray服务状态, Active: active (running)代表程序运行中
+sudo systemctl status v2ray
+
+ v2ray.service - V2Ray Service
+   Loaded: loaded (/etc/systemd/system/v2ray.service; enabled; vendor preset: enabled)
+   Active: active (running) since Thu 2020-07-02 17:12:24 CST; 57min ago
+     Docs: https://www.v2ray.com/
+           https://www.v2fly.org/
+ Main PID: 1303 (v2ray)
+    Tasks: 9 (limit: 2200)
+   Memory: 6.9M
+   CGroup: /system.slice/v2ray.service
+           └─1303 /usr/bin/v2ray/v2ray -config /etc/v2ray/config.json
+</code></pre>
+
+<h2 id="toc_3">使用ProxyChains-NG配置全局代理</h2>
+
+<pre><code class="language-text">git clone https://github.com/rofl0r/proxychains-ng.git
+cd /home/pi/proxychains-ng/
+./configure &amp;&amp; make &amp;&amp; make install
+</code></pre>
+
+<p>添加配置:</p>
+
+<pre><code class="language-text">cp ./src/proxychains.conf /etc/proxychains.conf
+
+vim /etc/proxychains.conf
+
+# 将最后的 socks4 127.0.0.1 9095 改为 socks5  127.0.0.1 1080
+</code></pre>
+
+<p>在需要使用代理的命令前面加上proxychains4, 如下</p>
+
+<pre><code class="language-text">curl ip.sb
+xxx.xxx.xxx.xxx
+# 这里应该是你当前的ip
+
+proxychains4 curl ip.sb
+x.x.x.x
+# 这里是代理的ip
+</code></pre>
+
+<p>Chrome浏览器使用代理</p>
+
+<pre><code class="language-text">1. 首先通过命令行启动Chrome浏览器
+
+chromium-browser --proxy-server=&quot;https=socks5://127.0.0.1:1080;http=socks5://127.0.0.1:1080&quot;
+
+注：这种方式不可以在SSH中启动，因SSH中无界面导致失败。
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[树莓派环境安装]]></title>
+    <link href="https://dsencheng.github.io/15936592764846.html"/>
+    <updated>2020-07-02T11:07:56+08:00</updated>
+    <id>https://dsencheng.github.io/15936592764846.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://installvirtual.com/how-to-install-python-3-8-on-raspberry-pi-raspbian/">如何在RaspberryPi上安装Python 3.8</a></p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[FRP 笔记]]></title>
@@ -1444,256 +1585,6 @@ Finished: FAILURE
 
 <p>PKG卸载<br/>
 &#39;/Library/Application Support/Jenkins/Uninstall.command&#39;</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[制作一个CocoaPods私有库]]></title>
-    <link href="https://dsencheng.github.io/15622122724549.html"/>
-    <updated>2019-07-04T11:51:12+08:00</updated>
-    <id>https://dsencheng.github.io/15622122724549.html</id>
-    <content type="html"><![CDATA[
-<p>1、在GitHub上创建一个空仓库，不要初始化。<code>PrivatePods</code> 是你的私有库名字。如果已经初始化，下面创建lib要在对应的目录里执行。</p>
-
-<pre><code class="language-text">https://github.com/your_github_name/PrivatePods.git
-</code></pre>
-
-<p>2、打开终端，进入到要建立私有库工程的目录，执行下面的命令 。执行命令过程中会询问几个问题，按自己所需回答。</p>
-
-<pre><code class="language-text">pod lib create PrivatePods
-</code></pre>
-
-<span id="more"></span><!-- more -->
-
-<p>3、创建完成后，会自动打开项目。</p>
-
-<pre><code class="language-text">1.删除`ReplaceMe.m`文件。
-2.添加一个测试类，写一个测试方法。注意，文件要放到 PrivatePods/PrivatePods/Classes 目录中。
-例如：
-ATest.h
-+(void)testMethod;
-ATest.m
-+(void)testMethod {
-    NSLog(@&quot;%s&quot;, __func__);
-}
-如果有已存在源码，文件也放入 /Classes 文件下。
-</code></pre>
-
-<p>4、打开终端，进入<code>Example</code>文件夹，执行<code>pod install</code>，安装依赖项。</p>
-
-<pre><code class="language-text">这里需要注意的是，只要新增加类、资源文件或依赖的第三方库都需要重新运行`pod install`来进行更新。
-</code></pre>
-
-<p>5、在 <code>XXViewController.m</code>中引用测试类 <code>#import &quot;ATest.h&quot;</code>，运行看是否符合预期结果. <code>+[ATest testMethod]</code></p>
-
-<p>6、提交源码到GitHub，并打tag，不使用tag会出现问题。这里尽量使用命令行，一些软件是不支持添加tag的。<code>0.1.0</code> 版本号保持和<code>DCPrivatePods.podspec</code>的<code>s.version = &#39;0.1.0&#39;</code>保持一致。</p>
-
-<pre><code class="language-text">$ git add -A 
-$ git commit -m &quot;0.1.0 发布&quot;
-$ git tag 0.1.0
-$ git push remote origin master --tag
-
-其他命令
-$ git remote add origin https://github.com/your_github_name/repo_name.git
-$ git pull origin master
-$ git push -u origin master
-$ git tag push
-</code></pre>
-
-<p>7、打开终端，执行命令，验证<code>podspec</code>文件。</p>
-
-<pre><code class="language-text">pod spec lint   
-PrivatePods.podspec passed validation.
-注意:
-pod lib lint 是验证pod库。
-pod spec lint 是验证podspec文件。
-</code></pre>
-
-<p>直到验证成功，如果有任何的error，都需要解决掉。warn 可以使用下面的命令忽略。</p>
-
-<p>私有库可能出现URL警告，可增加 <code>--allow-warnings</code> 忽略警告。</p>
-
-<pre><code class="language-text">- WARN  | url: The URL (https://github.com/your_github_name/repo_name.git) is not reachable. 
-</code></pre>
-
-<p>9、发布私有库。在github上创建一个新的仓库。例如：</p>
-
-<pre><code class="language-text">https://github.com/your_git_name/MyPrivateSpecs.git
-</code></pre>
-
-<blockquote>
-<h6 id="toc_0">注意:创建时勾选初始化，空仓库是没有master分支的。会提示如下错误</h6>
-
-<pre><code class="language-text">您的配置中指定要合并远程的引用 &#39;refs/heads/master&#39;，
-但是没有获取到这个引用。
-</code></pre>
-</blockquote>
-
-<p>创建完成后执行命令。</p>
-
-<pre><code class="language-text">$ pod repo add MyPrivateSpecs https://github.com/your_github_name/MyPrivateSpecs.git
-</code></pre>
-
-<p>执行成功后，可以进入目录查看 <code>~./cocoapods/repos/</code> ，看到<code>MyPrivateSpecs</code>文件夹是说明成功了。</p>
-
-<blockquote>
-<h5 id="toc_1">这个仓库是管理你的私有库，你可能创建一个或多个代码库，每个代码库又会不断的迭代发布新的版本。那么这个Spec就像记录表一样，记录你的所有代码私有库，以及每个版本。使用时，在你的项目Podfile文件中添加<code>source &#39;spec仓库地址&#39;</code>，然后<code>pod &#39;私有库的名字&#39;</code> ,就可以使用了。</h5>
-</blockquote>
-
-<p>发布你的私有库，如果没通过可以尝试加<code>--allow-warnings</code>忽略警告.</p>
-
-<pre><code class="language-text">$ pod repo push MyPrivateSpecs DCPrivatePods.podspec
-</code></pre>
-
-<p>10、在自己项目中引用私有库，执行<code>pod install</code>完成!</p>
-
-<pre><code class="language-text">source &#39;https://github.com/CocoaPods/Specs.git&#39;
-source &#39;https://github.com/your_github_name/MyPrivateSpecs.git&#39;
-platform :ios, ‘8.0’
-
-target “your_target_name” do
-    pod &#39;DCPrivatePods&#39;
-end
-</code></pre>
-
-<p>11、私有库依赖另一个私有库时, <code>lint</code>、<code>push</code>操作可能需要增加<code>--sources</code>参数。用法如下：</p>
-
-<pre><code class="language-text">pod lib lint --sources=https://github.com/dsencheng/DCSpecs.git,https://cdn.cocoapods.org/ --use-libraries --allow-warnings --verbose
-</code></pre>
-
-<h2 id="toc_2">问题记录</h2>
-
-<ul>
-<li>在私有库中，引入第三方framework报如下错误</li>
-</ul>
-
-<pre><code class="language-text">    ld: framework not found AliRTCSdk
-</code></pre>
-
-<blockquote>
-<p>解决办法:写完整路径。 </p>
-</blockquote>
-
-<pre><code class="language-text">`s.vendored_frameworks = &#39;AliModule/Classes/AliRTCSdk.framework&#39;`
-</code></pre>
-
-<hr/>
-
-<ul>
-<li>验证私有库时报错</li>
-</ul>
-
-<pre><code class="language-text">ERROR | [iOS] xcodebuild: Returned an unsuccessful exit code. You can use `--verbose` for more information.
-</code></pre>
-
-<blockquote>
-<p>解决办法</p>
-</blockquote>
-
-<hr/>
-
-<ul>
-<li>报错信息</li>
-</ul>
-
-<pre><code class="language-text">Showing All Messages
-:-1: Multiple commands produce &#39;/Users/dsen/Library/Developer/Xcode/DerivedData/Ali-dufrvubbsfygbsfskqpkqsmffkhv/Build/Products/Debug-iphonesimulator/Ali/Ali.framework/Info.plist&#39;:
-1) Target &#39;Ali&#39; (project &#39;Pods&#39;) has copy command from &#39;/Users/dsen/GitHub/Ali/Ali/Classes/UTDID.framework/Info.plist&#39; to &#39;/Users/dsen/Library/Developer/Xcode/DerivedData/Ali-dufrvubbsfygbsfskqpkqsmffkhv/Build/Products/Debug-iphonesimulator/Ali/Ali.framework/Info.plist&#39;
-2) Target &#39;Ali&#39; (project &#39;Pods&#39;) has process command with output &#39;/Users/dsen/Library/Developer/Xcode/DerivedData/Ali-dufrvubbsfygbsfskqpkqsmffkhv/Build/Products/Debug-iphonesimulator/Ali/Ali.framework/Info.plist&#39;
-</code></pre>
-
-<blockquote>
-<p>解决办法</p>
-</blockquote>
-
-<pre><code class="language-text">去掉 Pods &gt; Project &gt; Build Setting &gt; Valid Architectures &gt; x86_64 
-</code></pre>
-
-<hr/>
-
-<ul>
-<li>报错信息 </li>
-</ul>
-
-<pre><code class="language-text">does not contain bitcode. You must rebuild it with bitcode enabled (Xcode setting ENABLE_BITCODE)
-</code></pre>
-
-<blockquote>
-<p>解决办法</p>
-</blockquote>
-
-<pre><code class="language-text">在xxx_Example 中修改 enable bitcode = false
-</code></pre>
-
-<hr/>
-
-<ul>
-<li>报错信息</li>
-</ul>
-
-<pre><code class="language-text">no rule to process file
-</code></pre>
-
-<blockquote>
-<p>解决办法</p>
-
-<pre><code class="language-text">s.source_files = &#39;AliModule/Classes/**/*&#39;
-修改为
-s.source_files = &#39;AliModule/Classes/**/*.{h,m}&#39;
-忽略其他类型文件
-</code></pre>
-</blockquote>
-
-<hr/>
-
-<ul>
-<li>报错信息</li>
-</ul>
-
-<pre><code class="language-text">ERROR | [iOS] file patterns: The `vendored_frameworks` pattern did not match any file.
-</code></pre>
-
-<blockquote>
-<p>解决办法:暂无</p>
-</blockquote>
-
-<hr/>
-
-<ul>
-<li>报错信息</li>
-</ul>
-
-<pre><code class="language-text">[!] Unable to find a specification for `DCView` depended upon by `DCLib`
-
-You have either:
- * out-of-date source repos which you can update with `pod repo update` or with `pod install --repo-update`.
- * mistyped the name or version.
- * not added the source repo that hosts the Podspec to your Podfile.
-</code></pre>
-
-<blockquote>
-<p>解决办法</p>
-</blockquote>
-
-<p>写错了 <code>source</code>,应该写Spec的地址，错写了lib库的地址。</p>
-
-<hr/>
-
-<ul>
-<li><code>pod lib lint</code>出现i386 x86_64模拟器问题</li>
-</ul>
-
-<blockquote>
-<p>1 加命令参数<code>pod lib lint --skip-import-validation</code> </p>
-
-<p>2 podspec添加参数<br/>
-<code>s.pod_target_xcconfig = { &#39;VALID_ARCHS[sdk=iphonesimulator*]&#39; =&gt; &#39;&#39; }</code></p>
-
-<p><code>s.pod_target_xcconfig = {<br/>
-        &#39;ARCHS[sdk=iphonesimulator*]&#39; =&gt; &#39;$(ARCHS_STANDARD_64_BIT)&#39;<br/>
-    }</code></p>
-</blockquote>
 
 ]]></content>
   </entry>
