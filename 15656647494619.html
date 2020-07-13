@@ -140,32 +140,28 @@ brew services restart jenkins-lts
     设置构建的参数、打包证书(需要插件)等。
 5.构建
     提供shell、插件等多种构建方式，可以执行多个构建方式，并且有顺序。比如先执行shell，然后执行插件构建。
+    注:我这里是调用fastlane来完成。fastlane的工作内容就是打包，Jenkins这里就是提供了一个网页的壳。
 6.构建后操作
     提供通知，邮件，推送等构建完成后任务。
 </code></pre>
 
-<h4 id="toc_4">Jenkins新建任务</h4>
-
-<p>1.创建名为ITOSDK的自由风格任务。<br/>
-2.</p>
-
-<h1 id="toc_5">Jenkins插件</h1>
+<h1 id="toc_4">Jenkins插件</h1>
 
 <p>安装完成后建议重启<br/>
 汉化插件：Localization: Chinese (Simplified) <br/>
 证书管理插件：Keychains and Provisioning Profiles Management<br/>
 Xcode打包插件：Xcode integration</p>
 
-<h1 id="toc_6">问题记录</h1>
+<h1 id="toc_5">问题记录</h1>
 
-<h4 id="toc_7">无法更新插件</h4>
+<h4 id="toc_6">无法更新插件</h4>
 
 <p>管理Jenkins &gt; 插件管理 &gt; 高级 <br/>
 把<code>URL</code>里的地址<code>https</code>改为<code>http</code> </p>
 
 <hr/>
 
-<h4 id="toc_8">局域网内，无法通过ip+port访问</h4>
+<h4 id="toc_7">局域网内，无法通过ip+port访问</h4>
 
 <p>关闭Jenkins服务，打开文件夹 <code>/usr/local/Cellar/jenkins/</code>,找到<code>homebrew.mxcl.jenkins.pist</code>这个文件.</p>
 
@@ -178,7 +174,7 @@ Xcode打包插件：Xcode integration</p>
 
 <hr/>
 
-<h4 id="toc_9">fastlane: command not found</h4>
+<h4 id="toc_8">fastlane: command not found</h4>
 
 <p>参照安装方法添加路径<code>sudo gem install fastlane -n /usr/local/bin</code>，在Jenkins &gt; 节点管理 &gt; 配置(右侧⚙图标) &gt; 设置环境变量。<br/>
 查看当前环境变量,</p>
@@ -188,7 +184,7 @@ Xcode打包插件：Xcode integration</p>
 
 <hr/>
 
-<h3 id="toc_10">git fetch 443</h3>
+<h3 id="toc_9">git fetch 443</h3>
 
 <blockquote>
 <p>使用私有库</p>
