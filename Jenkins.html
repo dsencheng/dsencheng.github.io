@@ -82,6 +82,119 @@ $(document).ready(function(event) {
 
 	<article>
 		 <header>
+		  	<h1 class="entry-title"><a href="15960887152430.html">Jenkins 配置</a></h1>
+			<p class="meta"><time datetime="2020-07-30T13:58:35+08:00" 
+			pubdate data-updated="true">2020/07/30 13:58 下午</time></p>
+		 </header>
+	  	<div class="entry-content">
+		  	
+		  	<h4 id="toc_0">当前环境为Mac OS</h4>
+
+<h4 id="toc_1">在 <code>Build with Parameters</code> 时显示当前的pod版本号，并可以在打包时修改。效果如下：</h4>
+
+<pre><code class="language-text">![-w410](media/15960887152430/15960902123521.jpg)
+</code></pre>
+
+<p>首先安装 <a href="https://plugins.jenkins.io/uno-choice/">Active Choices Plugins</a>，安装完成后打开项目 -&gt; 配置 -&gt; 勾选参数化构建过程 -&gt; 添加参数 -&gt; Active Choices Parameter, 填写 <code>Name</code>，勾选 <code>Groovy Script</code>, 在<code>Script</code>填写脚本</p>
+
+<pre><code class="language-text">//这里使用项目的绝对路径(absolute path)
+def shell = [&#39;/bin/bash&#39;, &#39;-c&#39;, &quot;grep -E &#39;s.version.*=&#39; /Users/你的用户名(YourName)/.jenkins/workspace/iOS-SDK/Demo/ITOPOD/ITOSDK.podspec&quot;]
+
+def process = shell.execute()
+List&lt;String&gt; versions = new ArrayList&lt;String&gt;()
+versions.add(process.text + &#39;:selected&#39;)
+
+return versions
+</code></pre>
+
+<p>在 <code>Fallback Script</code> 填写 </p>
+
+<pre><code class="language-text">return [&#39;error&#39;]
+</code></pre>
+
+<p><code>Choice Type</code> 选择 <code>Radio Buttons</code></p>
+
+<p><img src="media/15960887152430/15960900655226.jpg" alt=""/></p>
+
+<p>现在已经完成了显示版本号，接下来比较简单，添加一个字符参数即可。如图：<br/>
+<img src="media/15960887152430/15960903221998.jpg" alt="" style="width:736px;"/></p>
+
+<p>点击 <code>保存</code> 后就完成了！</p>
+
+<h4 id="toc_2">构建Shell</h4>
+
+<p>这里补充自己写的构建shell脚本，读者可以参考。</p>
+
+<pre><code class="language-text">export LANG=en_US.UTF-8
+
+#如果填写了PodSpec版本号，修改版本值
+if [ $PodSpecVersion ];then
+echo &quot;输入版本号:$PodSpecVersion&quot;
+sed -i &#39;&#39; -e &quot;s/s.version .*$/s.version          = \&#39;${PodSpecVersion}\&#39;/1&quot; Demo/ITOPOD/ITOSDK.podspec
+fi
+# 获取podspec版本
+VersionNumber=`grep -E &#39;s.version.*=&#39; Demo/ITOPOD/ITOSDK.podspec | tr -d &quot;&#39;a-z= &quot; | sed &quot;s/\.//1&quot;`
+
+echo ${VersionNumber}
+
+if [ ! $VersionNumber ];then
+echo &quot;获取版本号错误&quot;
+exit -1
+fi
+
+# === 打包 === #
+
+# 进入目录
+cd ITOSDK_Proj
+# 安装依赖库
+pod install
+# 运行单元测试
+#xcodebuild test -workspace &#39;ITOSDK_Proj.xcworkspace&#39; -scheme &#39;ITOSDK_Proj&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8&#39; -only-testing:&#39;ITOSDKTests&#39;
+
+# 执行打包脚本
+xcodebuild -workspace &#39;ITOSDK_Proj.xcworkspace&#39; -scheme Pack_Full
+# 返回上级目录
+cd ..
+# 删除并替换文件
+rm -rf Demo/ITOPOD/ITOSDK/* 
+mv -f ITOSDK_Proj/Z_PackedFramework/ITOSDK.framework Demo/ITOPOD/ITOSDK/ITOSDK.framework
+
+# 进入demo项目文件夹
+cd Demo/ITOSDKDemo/
+# 安装依赖库
+pod install
+# demo项目build
+xcodebuild -workspace &#39;ITOSDKDemo.xcworkspace&#39; -scheme &#39;ITOSDKDemo&#39;
+
+# 返回项目目录
+cd ../..
+# zip压缩包Demo文件夹
+ZipName=&#39;ITOSDK&amp;DEMO-带双录-V&#39;${VersionNumber}
+zip -r -q ${ZipName}.zip Demo
+# 移动文件到指定文件目录
+rm -rf ~/Desktop/iOSSDK/*
+mv ${ZipName}.zip ~/Desktop/iOSSDK/
+#列出文件
+ls ~/Desktop/iOSSDK
+
+
+# 上传SVN
+#svn update
+#svn commit -m “提交sdk和demo压缩包“ ${ZipName}.zip Demo
+# 删除本地文件
+
+# 通知相关人员
+</code></pre>
+
+
+		</div>
+
+		
+
+	</article>
+ 
+	<article>
+		 <header>
 		  	<h1 class="entry-title"><a href="15656647494619.html">Jenkins</a></h1>
 			<p class="meta"><time datetime="2019-08-13T10:52:29+08:00" 
 			pubdate data-updated="true">2019/08/13 10:52 上午</time></p>
@@ -160,7 +273,7 @@ $(document).ready(function(event) {
 	      </li>
 	  
 	      <li class="post">
-	        <a href="Jenkins-1.html"><strong>Jenkins&nbsp;(1)</strong></a>
+	        <a href="Jenkins.html"><strong>Jenkins&nbsp;(2)</strong></a>
 	        
 	        
 	        
@@ -195,6 +308,12 @@ $(document).ready(function(event) {
 	  
 	      
 		      <li class="post">
+		        <a href="15960887152430.html">Jenkins 配置</a>
+		      </li>
+	     
+	  
+	      
+		      <li class="post">
 		        <a href="15936838298753.html">【转载】树莓派配置v2ray客户端</a>
 		      </li>
 	     
@@ -214,12 +333,6 @@ $(document).ready(function(event) {
 	      
 		      <li class="post">
 		        <a href="15933946041998.html">Ruby 笔记</a>
-		      </li>
-	     
-	  
-	      
-		      <li class="post">
-		        <a href="15923835113038.html">Xcode命令</a>
 		      </li>
 	     
 	  

@@ -7,7 +7,7 @@
   <meta charset="utf-8">
   <title>
     
-  Cocoapods之`pod`命令 - Dsen
+  Jenkins 配置 - Dsen
   
 
   </title>
@@ -81,39 +81,107 @@ $(document).ready(function(event) {
 <div>
 	<article class="hentry" role="article">
 	<header>
-			  	<h1 class="entry-title">Cocoapods之`pod`命令</h1>
-				<p class="meta"><time datetime="2019-11-26T15:34:42+08:00" pubdate data-updated="true">2019/11/26 15:34 下午</time></p>
+			  	<h1 class="entry-title">Jenkins 配置</h1>
+				<p class="meta"><time datetime="2020-07-30T13:58:35+08:00" pubdate data-updated="true">2020/07/30 13:58 下午</time></p>
 			 </header>
 		  	<div class="entry-content">
-			  	<p><code>pod init</code><br/>
-初始化</p>
+			  	<h4 id="toc_0">当前环境为Mac OS</h4>
 
-<p><code>pod install</code><br/>
-安装/更新库</p>
+<h4 id="toc_1">在 <code>Build with Parameters</code> 时显示当前的pod版本号，并可以在打包时修改。效果如下：</h4>
 
-<p><code>pod lib lint</code><br/>
-验证lib合法性</p>
+<pre><code class="language-text">![-w410](media/15960887152430/15960902123521.jpg)
+</code></pre>
 
-<span id="more"></span><!-- more -->
+<p>首先安装 <a href="https://plugins.jenkins.io/uno-choice/">Active Choices Plugins</a>，安装完成后打开项目 -&gt; 配置 -&gt; 勾选参数化构建过程 -&gt; 添加参数 -&gt; Active Choices Parameter, 填写 <code>Name</code>，勾选 <code>Groovy Script</code>, 在<code>Script</code>填写脚本</p>
 
-<p><code>pod lib lint --verbose --use-libraries --allow-warnings -- sources=&#39;私有仓库repo地址,https://github.com/CocoaPods/Specs&#39;</code><br/>
-验证多仓库lib</p>
+<pre><code class="language-text">//这里使用项目的绝对路径(absolute path)
+def shell = [&#39;/bin/bash&#39;, &#39;-c&#39;, &quot;grep -E &#39;s.version.*=&#39; /Users/你的用户名(YourName)/.jenkins/workspace/iOS-SDK/Demo/ITOPOD/ITOSDK.podspec&quot;]
 
-<p><code>pod spec lint</code><br/>
-验证spec合法性</p>
+def process = shell.execute()
+List&lt;String&gt; versions = new ArrayList&lt;String&gt;()
+versions.add(process.text + &#39;:selected&#39;)
 
-<p><code>pod spec lint --verbose --use-libraries --allow-warnings -- sources=&#39;私有仓库repo地址,https://github.com/CocoaPods/Specs&#39;</code><br/>
-验证多仓库spec</p>
+return versions
+</code></pre>
 
-<p><code>pod repo push DCSpecs name.podspec --use-libraries --allow-warnings</code><br/>
-向DCSpecs推送DCServices库</p>
+<p>在 <code>Fallback Script</code> 填写 </p>
 
-<p><code>pod repo push MCLib MCAppKit.podspec --verbose --use-libraries --allow-warnings</code><br/>
-强制推送</p>
+<pre><code class="language-text">return [&#39;error&#39;]
+</code></pre>
 
-<p>以上命令均可选参数，<br/>
-<code>--use-libraries</code>使用静态库<br/>
-<code>--allow-warnings</code>允许警告</p>
+<p><code>Choice Type</code> 选择 <code>Radio Buttons</code></p>
+
+<p><img src="media/15960887152430/15960900655226.jpg" alt=""/></p>
+
+<p>现在已经完成了显示版本号，接下来比较简单，添加一个字符参数即可。如图：<br/>
+<img src="media/15960887152430/15960903221998.jpg" alt="" style="width:736px;"/></p>
+
+<p>点击 <code>保存</code> 后就完成了！</p>
+
+<h4 id="toc_2">构建Shell</h4>
+
+<p>这里补充自己写的构建shell脚本，读者可以参考。</p>
+
+<pre><code class="language-text">export LANG=en_US.UTF-8
+
+#如果填写了PodSpec版本号，修改版本值
+if [ $PodSpecVersion ];then
+echo &quot;输入版本号:$PodSpecVersion&quot;
+sed -i &#39;&#39; -e &quot;s/s.version .*$/s.version          = \&#39;${PodSpecVersion}\&#39;/1&quot; Demo/ITOPOD/ITOSDK.podspec
+fi
+# 获取podspec版本
+VersionNumber=`grep -E &#39;s.version.*=&#39; Demo/ITOPOD/ITOSDK.podspec | tr -d &quot;&#39;a-z= &quot; | sed &quot;s/\.//1&quot;`
+
+echo ${VersionNumber}
+
+if [ ! $VersionNumber ];then
+echo &quot;获取版本号错误&quot;
+exit -1
+fi
+
+# === 打包 === #
+
+# 进入目录
+cd ITOSDK_Proj
+# 安装依赖库
+pod install
+# 运行单元测试
+#xcodebuild test -workspace &#39;ITOSDK_Proj.xcworkspace&#39; -scheme &#39;ITOSDK_Proj&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8&#39; -only-testing:&#39;ITOSDKTests&#39;
+
+# 执行打包脚本
+xcodebuild -workspace &#39;ITOSDK_Proj.xcworkspace&#39; -scheme Pack_Full
+# 返回上级目录
+cd ..
+# 删除并替换文件
+rm -rf Demo/ITOPOD/ITOSDK/* 
+mv -f ITOSDK_Proj/Z_PackedFramework/ITOSDK.framework Demo/ITOPOD/ITOSDK/ITOSDK.framework
+
+# 进入demo项目文件夹
+cd Demo/ITOSDKDemo/
+# 安装依赖库
+pod install
+# demo项目build
+xcodebuild -workspace &#39;ITOSDKDemo.xcworkspace&#39; -scheme &#39;ITOSDKDemo&#39;
+
+# 返回项目目录
+cd ../..
+# zip压缩包Demo文件夹
+ZipName=&#39;ITOSDK&amp;DEMO-带双录-V&#39;${VersionNumber}
+zip -r -q ${ZipName}.zip Demo
+# 移动文件到指定文件目录
+rm -rf ~/Desktop/iOSSDK/*
+mv ${ZipName}.zip ~/Desktop/iOSSDK/
+#列出文件
+ls ~/Desktop/iOSSDK
+
+
+# 上传SVN
+#svn update
+#svn commit -m “提交sdk和demo压缩包“ ${ZipName}.zip Demo
+# 删除本地文件
+
+# 通知相关人员
+</code></pre>
 
 			</div>
 
@@ -125,7 +193,7 @@ $(document).ready(function(event) {
 			<strong>Categories:</strong>&nbsp; 
 			<span class="categories">
 			
-			    <a class='category' href='Cocoapods.html'>Cocoapods</a>&nbsp;
+			    <a class='category' href='Jenkins.html'>Jenkins</a>&nbsp;
 			 
 			</span>
 		    </p>
@@ -149,12 +217,9 @@ $(document).ready(function(event) {
 
 	    <p class="meta">
 	    
-	        <a class="basic-alignment left" href="15923777936483.html" 
-	        title="Previous Post: Shell 笔记">&laquo; Shell 笔记</a>
 	    
-	    
-	        <a class="basic-alignment right" href="15747536460432.html" 
-	        title="Next Post: Cocoapods之`Podfile`文件">Cocoapods之`Podfile`文件 &raquo;</a>
+	        <a class="basic-alignment right" href="15936838298753.html" 
+	        title="Next Post: 【转载】树莓派配置v2ray客户端">【转载】树莓派配置v2ray客户端 &raquo;</a>
 	    
 	    </p>
 	  </footer>
@@ -321,6 +386,8 @@ $(document).ready(function(event) {
 
 
 
+
+<script src="asset/prism.js"></script>
 
 
 <style type="text/css">
