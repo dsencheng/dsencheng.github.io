@@ -96,19 +96,15 @@ VersionNumber=`tr -d &quot;&#39;&quot; &lt;&lt;&lt;&quot;$VersionString&quot;`
 echo &quot;current version is ${VersionNumber}&quot;
 </code></pre>
 
-<p>20200730更新<br/>
-经过几天的Jenkins折腾，借助管道，获取版本号的命令现在仅需要一行.<br/>
-首先使用<code>grep</code>命令，读取文件内容并过滤到<code>s.version</code>这一行；然后使用<code>tr</code>命令去掉单引号、字母、空格、等号；最后使用<code>sed</code>命令，替换第一个点。</p>
-
-<pre><code class="language-text">grep -E &#39;s.version.*=&#39; xxx/xxx.podspec | tr -d &quot;&#39;a-z= &quot; | sed &quot;s/\.//1&quot;
-
-3.3.3
-</code></pre>
 
 
 		</div>
 
-		
+		 
+		 <footer>
+      	<a rel="full-article" href="15923777936483.html#more">read more &rarr;</a>
+    	</footer>
+    	
 
 	</article>
  
