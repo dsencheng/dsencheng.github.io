@@ -1,0 +1,965 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+    
+  使用Python写iOS Word文档 - Dsen
+  
+  </title>
+  
+  
+  <link href="atom.xml" rel="alternate" title="Dsen" type="application/atom+xml">
+    <link rel="stylesheet" href="asset/css/foundation.min.css" />
+    <link rel="stylesheet" href="asset/css/docs.css" />
+    <script src="asset/js/vendor/modernizr.js"></script>
+    <script src="asset/js/vendor/jquery.js"></script>
+ 
+<script type="text/javascript">
+  function before_search(){
+    var searchVal = 'site:dsencheng.github.io ' + document.getElementById('search_input').value;
+    document.getElementById('search_q').value = searchVal;
+    return true;
+  }
+</script>
+  </head>
+  <body class="antialiased hide-extras">
+    
+    <div class="marketing off-canvas-wrap" data-offcanvas>
+      <div class="inner-wrap">
+
+
+<nav class="top-bar docs-bar hide-for-small" data-topbar>
+
+
+  <section class="top-bar-section">
+  <div class="row">
+      <div style="position: relative;width:100%;"><div style="position: absolute; width:100%;">
+        <ul id="main-menu" class="left">
+        
+        <li id=""><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li id=""><a target="_self" href="index.html">Home</a></li>
+        
+        <li id=""><a target="_self" href="about.html">About</a></li>
+        
+        </ul>
+
+        <ul class="right" id="search-wrap">
+          <li>
+<form target="_blank" onsubmit="return before_search();" action="https://google.com/search" method="get">
+    <input type="hidden" id="search_q" name="q" value="" />
+    <input tabindex="1" type="search" id="search_input"  placeholder="Search"/>
+</form>
+</li>
+          </ul>
+      </div></div>
+  </div>
+  </section>
+
+</nav>
+
+        <nav class="tab-bar show-for-small">
+  <a href="javascript:void(0)" class="left-off-canvas-toggle menu-icon">
+    <span> &nbsp; Dsen</span>
+  </a>
+</nav>
+
+<aside class="left-off-canvas-menu">
+      <ul class="off-canvas-list">
+        
+        <li><a target="_self" href="archives.html">Archives</a></li>
+        
+        <li><a target="_self" href="index.html">Home</a></li>
+        
+        <li><a target="_self" href="about.html">About</a></li>
+        
+
+    <li><label>Categories</label></li>
+
+        
+            <li><a href="iOS.html">iOS</a></li>
+        
+            <li><a href="Cocoapods.html">Cocoapods</a></li>
+        
+            <li><a href="Shell.html">Shell</a></li>
+        
+            <li><a href="SSH.html">SSH</a></li>
+        
+            <li><a href="Fastlane.html">Fastlane</a></li>
+        
+            <li><a href="Jenkins.html">Jenkins</a></li>
+        
+            <li><a href="Ruby.html">Ruby</a></li>
+        
+            <li><a href="RaspberryPi.html">RaspberryPi</a></li>
+        
+            <li><a href="Xcode.html">Xcode</a></li>
+        
+            <li><a href="Python.html">Python</a></li>
+         
+
+      </ul>
+    </aside>
+
+<a class="exit-off-canvas" href="#"></a>
+
+
+        <section id="main-content" role="main" class="scroll-container">
+        
+       
+
+ <script type="text/javascript">
+  $(function(){
+    $('#menu_item_index').addClass('is_active');
+  });
+</script>
+<div class="row">
+  <div class="large-8 medium-8 columns">
+      <div class="markdown-body article-wrap">
+       <div class="article">
+          
+          <h1>使用Python写iOS Word文档</h1>
+     
+        <div class="read-more clearfix">
+          <span class="date">2020/08/24</span>
+
+          <span>posted in&nbsp;</span> 
+          
+              <span class="posted-in"><a href='Python.html'>Python</a></span>
+           
+         
+          <span class="comments">
+            
+
+            
+          </span>
+
+        </div>
+      </div><!-- article -->
+
+      <div class="article-content">
+      <p>背景：公司要求把项目中的每一个方法都编写入技术文档里。基本格式如下：</p>
+
+<pre><code class="language-text">方法功能描述
+
+方法定义
+类名:
+UIView
+方法名:
+layoutSubviews
+方法入参:
+无
+抛出异常:
+无
+方法返回值:
+void
+方法逻辑
+
+</code></pre>
+
+<p>同事从网上找了一份Python代码，代码分析错误比较多，自己改了一份，可以应付大部分情况。<br/>
+<strong>llvm或Xcode的语法分析没找到，还望知道的读者不吝赐教。</strong><br/>
+<span id="more"></span><!-- more --></p>
+
+<p>iOS开发语言分<code>objective-c</code>和<code>swift</code>，所以语法分析也要写两份。<br/>
+首先从<code>objective-c</code>开始。</p>
+
+<p>OC语言的方法声明:</p>
+
+<pre><code class="language-text">- (instancetype)initWithFrame:(CGRect)frame
+</code></pre>
+
+<ul>
+<li>方法由 <code>+</code> 或 <code>-</code> 两个符号开头，表示类方法和实例方法。</li>
+<li><code>(instancetype)</code>表示返回值类型，没有返回值表示为<code>(void)</code>。</li>
+<li><code>initWithFrame:</code>是方法名字。</li>
+<li><code>(CGRect)frame</code>是方法需要的参数。</li>
+</ul>
+
+<p>由于需要统计所有的方法，因为<code>.h</code>文件方法不全，所以直接从<code>.m</code>文件分析。</p>
+
+<h5 id="toc_0">1、解析出<code>.m</code>文件中的所有方法名</h5>
+
+<p><code>.m</code>文件里的方法无论分几行，开头是由<code>+(</code> 或 <code>-(</code> ，结尾是 <code>{</code> ，也就是方法实现的第一个大括号，这样解析方法名的逻辑就锁定了。<strong><em>此处极小概率会把运算符号解析。</em></strong></p>
+
+<pre><code class="language-text">def getOCFileMethdLineCountArray(iOSUrlFilePath):
+    arr = []
+    iOSUrlFile_object = open(iOSUrlFilePath, &#39;r&#39;)
+    methodName = &#39;&#39;
+  
+    try: 
+        for lineIdx,line in enumerate(iOSUrlFile_object):
+
+            # 仅判断符号条件的方法
+            if line.startswith(&#39;+(&#39;) or line.startswith(&#39;-(&#39;) or line.startswith(&#39;+ (&#39;) or line.startswith(&#39;- (&#39;) :
+                methodName += line
+                # 匹配到方法的大括号
+                if &#39;{&#39; in methodName:
+                    arr.append((os.path.basename(iOSUrlFilePath).split(&#39;.&#39;)[0] ,methodName))
+                    methodName = &#39;&#39;
+
+                    
+    finally:
+        iOSUrlFile_object.close()
+    return arr
+</code></pre>
+
+<h5 id="toc_1">2、解析出完整方法中的各项说明</h5>
+
+<p>按照文档要求，需要解析出<code>方法名</code>，<code>返回值</code>，<code>方法参数</code>3个内容。<br/>
+这里罗列了一些常见的方法实现。</p>
+
+<pre><code class="language-text">-(NSString *)bankCard:(Int)card apiKey:(NSString *)apiKey secretKey:(NSString *)secretKey cardImageUrl:(NSString * _Nonnull)imageUrl block:(cardOCRBlock _Nullable)completion {
+-(NSString *)stringUrlEncodeing:(NSString *)str {
+-(id)init{
+-(void)cancelRequest {
+- (id)initWithFrame:(CGRect)frame{
+- (void)updateWithConfig: (void(^)(Config *config))block  {
+- (NSMutableArray&lt;UIButton *&gt; *)itemBtns{
+- (void)layoutSubviews {
+- (void(^)(TestModel * ))initWithBlock:(void(^)(NSString*))block{
+</code></pre>
+
+<p>如果从头部解析，复杂度比较高。从尾部开始反而会比较简单，像贪吃蛇一样，一点一点从尾部吃掉内容。</p>
+
+<pre><code class="language-text">def anyliseOC(text):
+    
+    methodName = &#39;&#39;
+    params = []
+    returnValue = &#39;&#39;
+
+    # 去掉关键字
+    repArray = [&#39;_Nonnull&#39;,&#39;_Nullable&#39;,&#39;__nullable&#39;,&#39;__nonnull&#39;,&#39;+&#39;,&#39;-&#39;]
+    ss1 = text.replace(&#39;{&#39;,&#39;&#39;)
+    for rep in repArray:
+        ss1 = ss1.replace(rep,&#39;&#39;)
+    # 反向解析参数
+    rfIndex = ss1.rfind(&#39;:&#39;)
+    if rfIndex != -1:
+        while rfIndex != -1:
+            # 最后的参数部分
+            pas = ss1[rfIndex+1:].strip()
+            # 去掉参数类型的左右两端小括号
+            pas = pas.replace(&#39;(&#39;,&#39;&#39;,1)
+            rIdx = pas.rfind(&#39;)&#39;)
+            if rIdx != -1:
+                pas = pas[:rIdx] + pas[rIdx+1:]
+            # 多个空格合并成一个空格,执行2次空格替换。
+            pas = pas.replace(&#39;  &#39;,&#39; &#39;).replace(&#39;  &#39;,&#39; &#39;).strip()
+            # 添加参数数组中
+            params.insert(0,pas)
+
+            # 截掉解析过的尾部
+            ss1 = ss1[:rfIndex+1].strip()
+            # 最后方法名。向前解析，是否遇到空格或右括号
+            spIndex = ss1.rfind(&#39; &#39;,0,rfIndex)
+            spIndex1 = ss1.rfind(&#39;)&#39;,0, rfIndex)
+            # 先找到有括号
+            if spIndex1 &gt; spIndex:
+                spIndex = spIndex1
+            # 解析到方法名
+            if spIndex != -1:
+                fc = ss1[spIndex+1:rfIndex+1]
+                methodName = fc + methodName 
+
+            # 截掉解析过的尾部
+            ss1 = ss1[:spIndex+1]
+
+            # 开始下一次解析
+            rfIndex = ss1.rfind(&#39;:&#39;)
+            
+        
+    else:
+        # 没有参数的方法
+        # 方法名。向前解析，是否遇到空格或右括号
+            ss1 = ss1.strip()
+            spIndex = ss1.rfind(&#39; &#39;)
+            spIndex1 = ss1.rfind(&#39;)&#39;)
+            # 先找到有括号
+            if spIndex1 &gt; spIndex:
+                spIndex = spIndex1
+            # 解析到方法名
+            if spIndex != -1:
+                fc = ss1[spIndex+1:]
+                methodName = fc + methodName 
+            
+            # 截掉解析过的尾部
+            ss1 = ss1[:spIndex]
+            
+    # 返回值处理两端的括号，最后的* 
+    returnValue = ss1.strip()
+    if returnValue.startswith(&#39;(&#39;):
+        returnValue = returnValue[1:].strip()
+    if returnValue.endswith(&#39;)&#39;):
+        returnValue = returnValue[:-1].strip()
+    if returnValue.endswith(&#39;*&#39;):
+        returnValue = returnValue[:-1].strip()
+    print(&#39;方法名：{}&#39;.format(methodName))
+    print(&#39;参数：{}&#39;.format(params))
+    print(&#39;返回值：{}&#39;.format(returnValue))
+
+</code></pre>
+
+<h5 id="toc_2">4、解析swift文件中的所有方法。</h5>
+
+<p><code>swift</code>语法中，<code>func</code>为关键字。直接搬运同事的代码，稍作修改。这里采用从头到尾读取解析。像<code>init</code> ，<code>deinit</code>这类没有<code>func</code>关键字的方法无法准确识别，略有瑕疵。</p>
+
+<pre><code class="language-text">def getSwiftFileMethdLineCountArray(iOSUrlFilePath):
+    arr = []
+
+    iOSUrlFile_object = open(iOSUrlFilePath, &#39;r&#39;)
+    # methodName = &#39;&#39;
+    
+    fc1 = re.compile(r&#39;[,:=]+&#39;)
+    try: 
+        lines = enumerate(iOSUrlFile_object)
+        classLine = &#39;&#39;
+        startClass = False
+        funcLine = &#39;&#39;
+        startFunc = False
+        for lineIdx,line in lines:
+            # 去除空格,换行符,制表符
+            # line = &quot;&quot;.join(line.split())
+            #判断是否是空行或注释行
+            if not len(line)  or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;/*&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39; *&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;&gt;&gt;&gt;&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;//&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;*/&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;///&#39;):  
+                continue
+            else:
+                line = line.replace(&#39;  &#39;,&#39;&#39;)
+                
+                if  line.startswith(&#39;init&#39;) or \
+                    line.startswith(&#39;deinit&#39;) or \
+                    &quot; init&quot; in line or \
+                    &quot;init &quot; in line or \
+                    &quot;func &quot; in line or \
+                    &quot; func&quot; in line or \
+                    &quot;func\n&quot; in line or \
+                    startFunc :
+                    # 如果init前面含有符号,这应该是使用，而不是声明。
+                    indexf = line.find(&#39; init&#39;)
+                    if indexf &lt; 0:
+                        indexf = line.find(&#39;init &#39;)
+                    if indexf &gt;= 0 and re.search(fc1,line[:indexf]) is not None :
+                        continue
+
+                    funcLine += line.replace(&#39;\n&#39;,&#39; &#39;).replace(&#39;  &#39;,&#39;&#39;)
+                    if line.find(&#39;{&#39;) &lt; 0:
+                        startFunc = True
+                        continue
+                    else:
+                        startFunc = False
+                        arr.append((os.path.basename(iOSUrlFilePath).split(&#39;.&#39;)[0] ,funcLine))
+                        funcLine = &#39;&#39;
+    finally:
+        iOSUrlFile_object.close()
+    return arr
+
+</code></pre>
+
+<h5 id="toc_3">5、解析<code>swift</code>方法中的各项内容</h5>
+
+<p><code>swift</code>方法使用<code>func</code>关键字，方法说明和各项参数都是放在<code>()</code>之内，返回值是在 <code>-&gt;</code>到 <code>{</code> 符号之间，所以这里从头尾到中间的方式读取解析。</p>
+
+<blockquote>
+<p><strong>这里的方法名分析比较简易，没有去掉参数，有需要的读者还需进一步补充逻辑。</strong></p>
+</blockquote>
+
+<pre><code class="language-text">def anyliseSwift(oriText):
+    
+    # 去除方法名中的一些关键字
+    oriText = oriText.replace(&#39;@escaping&#39;,&#39;&#39;).replace(&#39;public&#39;,&#39;&#39;)\
+        .replace(&#39;override&#39;,&#39;&#39;).replace(&#39;required&#39;,&#39;&#39;).replace(&#39;open&#39;,&#39;&#39;)\
+            .replace(&#39;private&#39;,&#39;&#39;).replace(&#39;convenience&#39;,&#39;&#39;).strip()
+    # 获取方法完整名。
+    funcName = u&#39;&#39;
+    beganIndex = oriText.find(&#39;func &#39;)
+    endIndex = oriText.find(&#39;{&#39;)
+    if beganIndex != -1 :
+        # 加上func字符串长度
+        funcName = oriText[beganIndex + 5:endIndex].strip()
+    else:
+        # 没有func开头的方法名不在额外处理
+        funcName = oriText[:endIndex].strip()
+
+    # 获取返回值
+    retIndex = oriText.rfind(&#39;-&gt;&#39;)
+    retValue = u&quot;无&quot;
+    if retIndex != -1:
+        retValue = oriText[retIndex+2:endIndex].strip()
+    # 这里会因为闭包解析出错，小括号会被拆分,造成左右不等量，处理一下。
+    if retValue.count(&#39;(&#39;) != retValue.count(&#39;)&#39;):
+        retValue = u&quot;无&quot;
+        retIndex = endIndex
+
+    # 获取参数
+    pStart = oriText.find(&#39;(&#39;)
+    pEnd = oriText.rfind(&#39;)&#39;,0, retIndex)
+    fullParam = oriText[pStart+1:pEnd].strip()
+    params = fullParam.split(&#39;,&#39;)
+    if len(params[0]) == 0:
+        params[0] = u&#39;无&#39;
+    else:
+        #格式化每个参数
+        for i,p in enumerate(params):
+            # 去掉开头的下划线，去掉第一个分号，双空格替换成一个。
+            if p.startswith(&#39;_&#39;):
+                p = p[1:]
+            p = p.strip().replace(&#39;:&#39;,&#39; &#39;,1).replace(&#39;  &#39;,&#39; &#39;)
+            # 去掉方法中的参数说明。
+            if len(p.split(&#39; &#39;)) == 3:
+                idx = p.find(&#39; &#39;)
+                p = p[idx:].strip()
+            params[i] = p
+    
+    return (funcName,params,retValue)
+
+</code></pre>
+
+<h5 id="toc_4">6、生成Word文档。</h5>
+
+<pre><code class="language-text"># 方法的固定功能说明。
+def generateSumary(oriText,className):
+    if oriText.find(&#39;init&#39;) &gt;= 0:
+        return u&quot;类初始化。&quot;
+    elif oriText.lower().find(&#39;viewdidload&#39;) &gt;= 0:
+        return u&quot;页面加载完成。&quot;
+    elif oriText.lower().find(&#39;viewdidappear&#39;) &gt;= 0:
+        return &quot;页面已经显示。&quot;
+    elif oriText.lower().find(&#39;viewwillappear&#39;) &gt;= 0:
+        return &quot;页面将要显示。&quot;
+    elif oriText.lower().find(&#39;viewwilldisappear&#39;) &gt;= 0:
+        return u&quot;页面将要消失。&quot;
+    elif oriText.lower().find(&#39;viewdiddisappear&#39;) &gt;= 0:
+        return u&quot;页面已经消失。&quot;
+    else:
+        return u&quot;&quot;
+
+# 设置段落格式
+def setText(doc,text,size,bold):
+    p1 = doc.add_paragraph()
+    p1.paragraph_format.first_line_indent = Cm(0.74)  
+    p1.paragraph_format.line_spacing = 1.5 # 1.5倍行距 
+    l1 = p1.add_run(text)
+    l1.font.size = size
+    l1.font.name = u&quot;宋体&quot;
+    l1.bold = bold
+        
+
+# 具体内容添加
+def addDetail(doc,text1,textArr):
+    setText(doc,text1,Pt(14),True)
+    for text in textArr:
+        # print(text+&#39;\n&#39;)
+        setText(doc,text,Pt(14),False)
+
+# 将源文件分析完成后，输出到目标目录下
+def writeToWord(sourcePath,outPath):
+    # 创建空文档
+    document = Document()
+    document.styles[&#39;Normal&#39;].font.name = u&#39;宋体&#39;
+    document.styles[&#39;Normal&#39;]._element.rPr.rFonts.set(qn(&#39;w:eastAsia&#39;), u&#39;宋体&#39;)
+    # 添加标题，设置级别level，0为Title，1或省略为Heading 1，0&lt;=level&lt;=9
+    # document.add_heading(&#39;Document Title&#39;, 0)
+
+    path = sourcePath+&#39;&#39;
+    arrT = []
+
+    for dirpath, dirname, filenames in os.walk(path):   
+        for filename in filenames:
+            if &#39;.m&#39; in filename or &#39;.mm&#39; in filename:
+                filePath = os.path.join(dirpath, filename)
+                MacroWithCountDicts = getOCFileMethdLineCountArray(filePath)
+                print(&#39;=====================&#39;)
+                print(&#39;{} 有 {} 个方法&#39;.format(filename,len(MacroWithCountDicts)))
+                arrT += MacroWithCountDicts
+
+            elif &#39;.swift&#39; in filename:
+                filePath = os.path.join(dirpath, filename)
+                MacroWithCountDicts = getSwiftFileMethdLineCountArray(filePath)
+                print(&#39;=====================&#39;)
+                print(&#39;{} 有 {} 个方法&#39;.format(filename,len(MacroWithCountDicts)))
+                arrT += MacroWithCountDicts
+
+
+    print(&quot;********************************&quot;)
+    print(&quot;一共有 {} 个方法&quot;.format(len(arrT)))
+    print(&quot;********************************&quot;)
+    for result in arrT:
+        fullFuncName = result[1]
+        allMsg = []
+        if fullFuncName.strip().startswith(&#39;+&#39;) or fullFuncName.strip().startswith(&#39;-&#39;):
+            allMsg = anyliseOC(fullFuncName)
+        else:
+            allMsg = anyliseSwift(fullFuncName)
+
+        className = result[0]
+        funcName = allMsg[0]
+        paras = allMsg[1]
+        returnStr = allMsg[2]
+        # # 函数名设置为4级标题
+        document.add_heading(funcName,level=4)
+
+        # #功能设置为5级标题
+        document.add_heading(u&quot;方法功能描述&quot;,level=5)
+
+        setText(document,generateSumary(funcName,className),Pt(14),False)
+
+        # 方法定义设置为5级标题
+        document.add_heading(u&quot;方法定义&quot;,level=5)
+        addDetail(document,u&quot;类名:&quot;,[className])
+        addDetail(document,u&quot;方法名:&quot;,[funcName])
+        addDetail(document,u&quot;方法入参:&quot;,paras)
+        addDetail(document,u&quot;抛出异常:&quot;,[u&quot;无&quot;])
+        addDetail(document,u&quot;方法返回值:&quot;,[returnStr])
+
+        # 方法的逻辑设置为5级标题
+        document.add_heading(u&quot;方法逻辑&quot;,level=5)
+        # 一些固定方法填充内容。
+        # if &#39;NSCoder&#39; in funcName:
+        #     setText(document,u&quot;调用fatalError方法。&quot;,Pt(14),False)
+        # elif &#39;init&#39; in funcName:
+        #     setText(document,u&quot;父类初始化，&quot;,Pt(14),False)
+        # else:
+        setText(document,u&quot;&quot;,Pt(14),False)
+
+    try:
+        document.save(outPath+&quot;生成iOS方法文档.docx&quot;)
+    except Exception:
+        print(u&quot;检查下当前目录是否存在,是否包含/&quot;)
+    else:
+        print(u&quot;完成,请打开&quot;+outPath+u&quot;目录下的文件&quot;)
+        
+  
+</code></pre>
+
+<p>虽然这份Python代码还有诸多缺陷，但已达到预计实现的90%以上，没有在继续完善。如果没有达到你的要求，自己动手补充一下吧！欢迎反馈补充。</p>
+
+
+    
+
+      </div>
+
+      <div class="row">
+        <div class="large-6 columns">
+        <p class="text-left" style="padding:15px 0px;">
+      
+        </p>
+        </div>
+        <div class="large-6 columns">
+      <p class="text-right" style="padding:15px 0px;">
+      
+          <a  href="15960887152430.html" 
+          title="Next Post: Jenkins 配置">Jenkins 配置 &raquo;</a>
+      
+      </p>
+        </div>
+      </div>
+      <div class="comments-wrap">
+        <div class="share-comments">
+          <script src="https://utteranc.es/client.js"
+        repo="dsencheng/dsencheng.github.io"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script> 
+
+          
+
+          
+        </div>
+      </div>
+    </div><!-- article-wrap -->
+  </div><!-- large 8 -->
+
+
+
+
+ <div class="large-4 medium-4 columns">
+  <div class="hide-for-small">
+    <div id="sidebar" class="sidebar">
+          <div id="site-info" class="site-info">
+            
+                <h1>Dsen</h1>
+                <div class="site-des">https://dsencheng.github.io/</div>
+                <div class="social">
+
+
+
+
+
+
+
+
+
+<a target="_blank" class="github" target="_blank" href="https://github.com/dsencheng" title="GitHub">GitHub</a>
+<a target="_blank" class="email" href="mailto:dsencheng@gmail.com" title="Email">Email</a>
+  <a target="_blank" class="rss" href="atom.xml" title="RSS">RSS</a>
+                
+              	 </div>
+          	</div>
+
+             
+
+              <div id="site-categories" class="side-item ">
+                <div class="side-header">
+                  <h2>Categories</h2>
+                </div>
+                <div class="side-content">
+
+      	<p class="cat-list">
+        
+            <a href="iOS.html"><strong>iOS</strong></a>
+        
+            <a href="Cocoapods.html"><strong>Cocoapods</strong></a>
+        
+            <a href="Shell.html"><strong>Shell</strong></a>
+        
+            <a href="SSH.html"><strong>SSH</strong></a>
+        
+            <a href="Fastlane.html"><strong>Fastlane</strong></a>
+        
+            <a href="Jenkins.html"><strong>Jenkins</strong></a>
+        
+            <a href="Ruby.html"><strong>Ruby</strong></a>
+        
+            <a href="RaspberryPi.html"><strong>RaspberryPi</strong></a>
+        
+            <a href="Xcode.html"><strong>Xcode</strong></a>
+        
+            <a href="Python.html"><strong>Python</strong></a>
+         
+        </p>
+
+
+                </div>
+              </div>
+
+              <div id="site-categories" class="side-item">
+                <div class="side-header">
+                  <h2>Recent Posts</h2>
+                </div>
+                <div class="side-content">
+                <ul class="posts-list">
+	      
+		      
+			      <li class="post">
+			        <a href="15982325565462.html">使用Python写iOS Word文档</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15960887152430.html">Jenkins 配置</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15936838298753.html">【转载】树莓派配置v2ray客户端</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15936592764846.html">树莓派环境安装</a>
+			      </li>
+		     
+		  
+		      
+			      <li class="post">
+			        <a href="15934342416600.html">FRP 笔记</a>
+			      </li>
+		     
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		  
+		      
+		   
+		  		</ul>
+                </div>
+              </div>
+        </div><!-- sidebar -->
+      </div><!-- hide for small -->
+</div><!-- large 4 -->
+
+</div><!-- row -->
+
+ <div class="page-bottom clearfix">
+  <div class="row">
+   <p class="copyright">Copyright &copy; 2015
+Powered by <a target="_blank" href="http://www.mweb.im">MWeb</a>,&nbsp; 
+Theme used <a target="_blank" href="http://github.com">GitHub CSS</a>.</p>
+  </div>
+</div>
+
+        </section>
+      </div>
+    </div>
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="asset/prism.js"></script>
+
+
+<style type="text/css">
+figure{margin: 0;padding: 0;}
+figcaption{text-align:center;}
+
+/* PrismJS 1.14.0
+ http://prismjs.com/download.html#themes=prism&languages=markup+css+clike+javascript */
+/**
+ * prism.js default theme for JavaScript, CSS and HTML
+ * Based on dabblet (http://dabblet.com)
+ * @author Lea Verou
+ */
+
+code[class*="language-"],
+pre[class*="language-"] {
+    color: black;
+    background: none;
+    text-shadow: 0 1px white;
+    font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
+    text-align: left;
+    white-space: pre;
+    word-spacing: normal;
+    word-break: normal;
+    word-wrap: normal;
+    line-height: 1.5;
+    
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    
+    -webkit-hyphens: none;
+    -moz-hyphens: none;
+    -ms-hyphens: none;
+    hyphens: none;
+}
+
+pre[class*="language-"]::-moz-selection, pre[class*="language-"] ::-moz-selection,
+code[class*="language-"]::-moz-selection, code[class*="language-"] ::-moz-selection {
+    text-shadow: none;
+    background:#b3d4fc;
+}
+
+pre[class*="language-"]::selection, pre[class*="language-"] ::selection,
+code[class*="language-"]::selection, code[class*="language-"] ::selection {
+    text-shadow: none;
+    background: #b3d4fc;
+}
+
+@media print {
+    code[class*="language-"],
+    pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+/* Code blocks */
+pre[class*="language-"] {
+    padding: 1em;
+    margin: .5em 0;
+    overflow: auto;
+}
+
+:not(pre) > code[class*="language-"],
+pre[class*="language-"] {
+    background: #F7F7F7;
+}
+
+/* Inline code */
+:not(pre) > code[class*="language-"] {
+    padding: .1em;
+    border-radius: .3em;
+    white-space: normal;
+}
+
+.token.comment,
+.token.prolog,
+.token.doctype,
+.token.cdata {
+    color: slategray;
+}
+
+.token.punctuation {
+    color: #999;
+}
+
+.namespace {
+    opacity: .7;
+}
+
+.token.property,
+.token.tag,
+.token.boolean,
+.token.number,
+.token.constant,
+.token.symbol,
+.token.deleted {
+    color: #905;
+}
+
+.token.selector,
+.token.attr-name,
+.token.string,
+.token.char,
+.token.builtin,
+.token.inserted {
+    color: #690;
+}
+
+.token.operator,
+.token.entity,
+.token.url,
+.language-css .token.string,
+.style .token.string {
+    color: #9a6e3a;
+    background: hsla(0, 0%, 100%, .5);
+}
+
+.token.atrule,
+.token.attr-value,
+.token.keyword {
+    color: #07a;
+}
+
+.token.function,
+.token.class-name {
+    color: #DD4A68;
+}
+
+.token.regex,
+.token.important,
+.token.variable {
+    color: #e90;
+}
+
+.token.important,
+.token.bold {
+    font-weight: bold;
+}
+.token.italic {
+    font-style: italic;
+}
+
+.token.entity {
+    cursor: help;
+}
+
+
+pre[class*="language-"].line-numbers {
+    position: relative;
+    padding-left: 3.8em;
+    counter-reset: linenumber;
+}
+
+pre[class*="language-"].line-numbers > code {
+    position: relative;
+    white-space: inherit;
+}
+
+.line-numbers .line-numbers-rows {
+    position: absolute;
+    pointer-events: none;
+    top: 0;
+    font-size: 100%;
+    left: -3.8em;
+    width: 3em; /* works for line-numbers below 1000 lines */
+    letter-spacing: -1px;
+    border-right: 1px solid #999;
+
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+
+}
+
+    .line-numbers-rows > span {
+        pointer-events: none;
+        display: block;
+        counter-increment: linenumber;
+    }
+
+        .line-numbers-rows > span:before {
+            content: counter(linenumber);
+            color: #999;
+            display: block;
+            padding-right: 0.8em;
+            text-align: right;
+        }
+
+</style>
+
+  
+    
+
+    <script src="asset/js/foundation.min.js"></script>
+    <script>
+      $(document).foundation();
+      function fixSidebarHeight(){
+        var w1 = $('.markdown-body').height();
+          var w2 = $('#sidebar').height();
+          if (w1 > w2) { $('#sidebar').height(w1); };
+      }
+      $(function(){
+        fixSidebarHeight();
+      })
+      $(window).load(function(){
+          fixSidebarHeight();
+      });
+     
+    </script>
+
+<script src="https://utteranc.es/client.js"
+        repo="dsencheng/dsencheng.github.io"
+        issue-term="title"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script>
+
+  </body>
+</html>

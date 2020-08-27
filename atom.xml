@@ -4,14 +4,417 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2020-07-30T14:43:59+08:00</updated>
+  <updated>2020-08-27T11:05:29+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
-  <generator uri="http://www.coderforart.com/">CoderForArt</generator>
+  <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[使用Python写iOS Word文档]]></title>
+    <link href="https://dsencheng.github.io/15982325565462.html"/>
+    <updated>2020-08-24T09:29:16+08:00</updated>
+    <id>https://dsencheng.github.io/15982325565462.html</id>
+    <content type="html"><![CDATA[
+<p>背景：公司要求把项目中的每一个方法都编写入技术文档里。基本格式如下：</p>
 
+<pre><code class="language-text">方法功能描述
+
+方法定义
+类名:
+UIView
+方法名:
+layoutSubviews
+方法入参:
+无
+抛出异常:
+无
+方法返回值:
+void
+方法逻辑
+
+</code></pre>
+
+<p>同事从网上找了一份Python代码，代码分析错误比较多，自己改了一份，可以应付大部分情况。<br/>
+<strong>llvm或Xcode的语法分析没找到，还望知道的读者不吝赐教。</strong><br/>
+<span id="more"></span><!-- more --></p>
+
+<p>iOS开发语言分<code>objective-c</code>和<code>swift</code>，所以语法分析也要写两份。<br/>
+首先从<code>objective-c</code>开始。</p>
+
+<p>OC语言的方法声明:</p>
+
+<pre><code class="language-text">- (instancetype)initWithFrame:(CGRect)frame
+</code></pre>
+
+<ul>
+<li>方法由 <code>+</code> 或 <code>-</code> 两个符号开头，表示类方法和实例方法。</li>
+<li><code>(instancetype)</code>表示返回值类型，没有返回值表示为<code>(void)</code>。</li>
+<li><code>initWithFrame:</code>是方法名字。</li>
+<li><code>(CGRect)frame</code>是方法需要的参数。</li>
+</ul>
+
+<p>由于需要统计所有的方法，因为<code>.h</code>文件方法不全，所以直接从<code>.m</code>文件分析。</p>
+
+<h5 id="toc_0">1、解析出<code>.m</code>文件中的所有方法名</h5>
+
+<p><code>.m</code>文件里的方法无论分几行，开头是由<code>+(</code> 或 <code>-(</code> ，结尾是 <code>{</code> ，也就是方法实现的第一个大括号，这样解析方法名的逻辑就锁定了。<strong><em>此处极小概率会把运算符号解析。</em></strong></p>
+
+<pre><code class="language-text">def getOCFileMethdLineCountArray(iOSUrlFilePath):
+    arr = []
+    iOSUrlFile_object = open(iOSUrlFilePath, &#39;r&#39;)
+    methodName = &#39;&#39;
+  
+    try: 
+        for lineIdx,line in enumerate(iOSUrlFile_object):
+
+            # 仅判断符号条件的方法
+            if line.startswith(&#39;+(&#39;) or line.startswith(&#39;-(&#39;) or line.startswith(&#39;+ (&#39;) or line.startswith(&#39;- (&#39;) :
+                methodName += line
+                # 匹配到方法的大括号
+                if &#39;{&#39; in methodName:
+                    arr.append((os.path.basename(iOSUrlFilePath).split(&#39;.&#39;)[0] ,methodName))
+                    methodName = &#39;&#39;
+
+                    
+    finally:
+        iOSUrlFile_object.close()
+    return arr
+</code></pre>
+
+<h5 id="toc_1">2、解析出完整方法中的各项说明</h5>
+
+<p>按照文档要求，需要解析出<code>方法名</code>，<code>返回值</code>，<code>方法参数</code>3个内容。<br/>
+这里罗列了一些常见的方法实现。</p>
+
+<pre><code class="language-text">-(NSString *)bankCard:(Int)card apiKey:(NSString *)apiKey secretKey:(NSString *)secretKey cardImageUrl:(NSString * _Nonnull)imageUrl block:(cardOCRBlock _Nullable)completion {
+-(NSString *)stringUrlEncodeing:(NSString *)str {
+-(id)init{
+-(void)cancelRequest {
+- (id)initWithFrame:(CGRect)frame{
+- (void)updateWithConfig: (void(^)(Config *config))block  {
+- (NSMutableArray&lt;UIButton *&gt; *)itemBtns{
+- (void)layoutSubviews {
+- (void(^)(TestModel * ))initWithBlock:(void(^)(NSString*))block{
+</code></pre>
+
+<p>如果从头部解析，复杂度比较高。从尾部开始反而会比较简单，像贪吃蛇一样，一点一点从尾部吃掉内容。</p>
+
+<pre><code class="language-text">def anyliseOC(text):
+    
+    methodName = &#39;&#39;
+    params = []
+    returnValue = &#39;&#39;
+
+    # 去掉关键字
+    repArray = [&#39;_Nonnull&#39;,&#39;_Nullable&#39;,&#39;__nullable&#39;,&#39;__nonnull&#39;,&#39;+&#39;,&#39;-&#39;]
+    ss1 = text.replace(&#39;{&#39;,&#39;&#39;)
+    for rep in repArray:
+        ss1 = ss1.replace(rep,&#39;&#39;)
+    # 反向解析参数
+    rfIndex = ss1.rfind(&#39;:&#39;)
+    if rfIndex != -1:
+        while rfIndex != -1:
+            # 最后的参数部分
+            pas = ss1[rfIndex+1:].strip()
+            # 去掉参数类型的左右两端小括号
+            pas = pas.replace(&#39;(&#39;,&#39;&#39;,1)
+            rIdx = pas.rfind(&#39;)&#39;)
+            if rIdx != -1:
+                pas = pas[:rIdx] + pas[rIdx+1:]
+            # 多个空格合并成一个空格,执行2次空格替换。
+            pas = pas.replace(&#39;  &#39;,&#39; &#39;).replace(&#39;  &#39;,&#39; &#39;).strip()
+            # 添加参数数组中
+            params.insert(0,pas)
+
+            # 截掉解析过的尾部
+            ss1 = ss1[:rfIndex+1].strip()
+            # 最后方法名。向前解析，是否遇到空格或右括号
+            spIndex = ss1.rfind(&#39; &#39;,0,rfIndex)
+            spIndex1 = ss1.rfind(&#39;)&#39;,0, rfIndex)
+            # 先找到有括号
+            if spIndex1 &gt; spIndex:
+                spIndex = spIndex1
+            # 解析到方法名
+            if spIndex != -1:
+                fc = ss1[spIndex+1:rfIndex+1]
+                methodName = fc + methodName 
+
+            # 截掉解析过的尾部
+            ss1 = ss1[:spIndex+1]
+
+            # 开始下一次解析
+            rfIndex = ss1.rfind(&#39;:&#39;)
+            
+        
+    else:
+        # 没有参数的方法
+        # 方法名。向前解析，是否遇到空格或右括号
+            ss1 = ss1.strip()
+            spIndex = ss1.rfind(&#39; &#39;)
+            spIndex1 = ss1.rfind(&#39;)&#39;)
+            # 先找到有括号
+            if spIndex1 &gt; spIndex:
+                spIndex = spIndex1
+            # 解析到方法名
+            if spIndex != -1:
+                fc = ss1[spIndex+1:]
+                methodName = fc + methodName 
+            
+            # 截掉解析过的尾部
+            ss1 = ss1[:spIndex]
+            
+    # 返回值处理两端的括号，最后的* 
+    returnValue = ss1.strip()
+    if returnValue.startswith(&#39;(&#39;):
+        returnValue = returnValue[1:].strip()
+    if returnValue.endswith(&#39;)&#39;):
+        returnValue = returnValue[:-1].strip()
+    if returnValue.endswith(&#39;*&#39;):
+        returnValue = returnValue[:-1].strip()
+    print(&#39;方法名：{}&#39;.format(methodName))
+    print(&#39;参数：{}&#39;.format(params))
+    print(&#39;返回值：{}&#39;.format(returnValue))
+
+</code></pre>
+
+<h5 id="toc_2">4、解析swift文件中的所有方法。</h5>
+
+<p><code>swift</code>语法中，<code>func</code>为关键字。直接搬运同事的代码，稍作修改。这里采用从头到尾读取解析。像<code>init</code> ，<code>deinit</code>这类没有<code>func</code>关键字的方法无法准确识别，略有瑕疵。</p>
+
+<pre><code class="language-text">def getSwiftFileMethdLineCountArray(iOSUrlFilePath):
+    arr = []
+
+    iOSUrlFile_object = open(iOSUrlFilePath, &#39;r&#39;)
+    # methodName = &#39;&#39;
+    
+    fc1 = re.compile(r&#39;[,:=]+&#39;)
+    try: 
+        lines = enumerate(iOSUrlFile_object)
+        classLine = &#39;&#39;
+        startClass = False
+        funcLine = &#39;&#39;
+        startFunc = False
+        for lineIdx,line in lines:
+            # 去除空格,换行符,制表符
+            # line = &quot;&quot;.join(line.split())
+            #判断是否是空行或注释行
+            if not len(line)  or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;/*&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39; *&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;&gt;&gt;&gt;&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;//&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;*/&#39;) or line.replace(&#39; &#39;,&#39;&#39;).startswith(&#39;///&#39;):  
+                continue
+            else:
+                line = line.replace(&#39;  &#39;,&#39;&#39;)
+                
+                if  line.startswith(&#39;init&#39;) or \
+                    line.startswith(&#39;deinit&#39;) or \
+                    &quot; init&quot; in line or \
+                    &quot;init &quot; in line or \
+                    &quot;func &quot; in line or \
+                    &quot; func&quot; in line or \
+                    &quot;func\n&quot; in line or \
+                    startFunc :
+                    # 如果init前面含有符号,这应该是使用，而不是声明。
+                    indexf = line.find(&#39; init&#39;)
+                    if indexf &lt; 0:
+                        indexf = line.find(&#39;init &#39;)
+                    if indexf &gt;= 0 and re.search(fc1,line[:indexf]) is not None :
+                        continue
+
+                    funcLine += line.replace(&#39;\n&#39;,&#39; &#39;).replace(&#39;  &#39;,&#39;&#39;)
+                    if line.find(&#39;{&#39;) &lt; 0:
+                        startFunc = True
+                        continue
+                    else:
+                        startFunc = False
+                        arr.append((os.path.basename(iOSUrlFilePath).split(&#39;.&#39;)[0] ,funcLine))
+                        funcLine = &#39;&#39;
+    finally:
+        iOSUrlFile_object.close()
+    return arr
+
+</code></pre>
+
+<h5 id="toc_3">5、解析<code>swift</code>方法中的各项内容</h5>
+
+<p><code>swift</code>方法使用<code>func</code>关键字，方法说明和各项参数都是放在<code>()</code>之内，返回值是在 <code>-&gt;</code>到 <code>{</code> 符号之间，所以这里从头尾到中间的方式读取解析。</p>
+
+<blockquote>
+<p><strong>这里的方法名分析比较简易，没有去掉参数，有需要的读者还需进一步补充逻辑。</strong></p>
+</blockquote>
+
+<pre><code class="language-text">def anyliseSwift(oriText):
+    
+    # 去除方法名中的一些关键字
+    oriText = oriText.replace(&#39;@escaping&#39;,&#39;&#39;).replace(&#39;public&#39;,&#39;&#39;)\
+        .replace(&#39;override&#39;,&#39;&#39;).replace(&#39;required&#39;,&#39;&#39;).replace(&#39;open&#39;,&#39;&#39;)\
+            .replace(&#39;private&#39;,&#39;&#39;).replace(&#39;convenience&#39;,&#39;&#39;).strip()
+    # 获取方法完整名。
+    funcName = u&#39;&#39;
+    beganIndex = oriText.find(&#39;func &#39;)
+    endIndex = oriText.find(&#39;{&#39;)
+    if beganIndex != -1 :
+        # 加上func字符串长度
+        funcName = oriText[beganIndex + 5:endIndex].strip()
+    else:
+        # 没有func开头的方法名不在额外处理
+        funcName = oriText[:endIndex].strip()
+
+    # 获取返回值
+    retIndex = oriText.rfind(&#39;-&gt;&#39;)
+    retValue = u&quot;无&quot;
+    if retIndex != -1:
+        retValue = oriText[retIndex+2:endIndex].strip()
+    # 这里会因为闭包解析出错，小括号会被拆分,造成左右不等量，处理一下。
+    if retValue.count(&#39;(&#39;) != retValue.count(&#39;)&#39;):
+        retValue = u&quot;无&quot;
+        retIndex = endIndex
+
+    # 获取参数
+    pStart = oriText.find(&#39;(&#39;)
+    pEnd = oriText.rfind(&#39;)&#39;,0, retIndex)
+    fullParam = oriText[pStart+1:pEnd].strip()
+    params = fullParam.split(&#39;,&#39;)
+    if len(params[0]) == 0:
+        params[0] = u&#39;无&#39;
+    else:
+        #格式化每个参数
+        for i,p in enumerate(params):
+            # 去掉开头的下划线，去掉第一个分号，双空格替换成一个。
+            if p.startswith(&#39;_&#39;):
+                p = p[1:]
+            p = p.strip().replace(&#39;:&#39;,&#39; &#39;,1).replace(&#39;  &#39;,&#39; &#39;)
+            # 去掉方法中的参数说明。
+            if len(p.split(&#39; &#39;)) == 3:
+                idx = p.find(&#39; &#39;)
+                p = p[idx:].strip()
+            params[i] = p
+    
+    return (funcName,params,retValue)
+
+</code></pre>
+
+<h5 id="toc_4">6、生成Word文档。</h5>
+
+<pre><code class="language-text"># 方法的固定功能说明。
+def generateSumary(oriText,className):
+    if oriText.find(&#39;init&#39;) &gt;= 0:
+        return u&quot;类初始化。&quot;
+    elif oriText.lower().find(&#39;viewdidload&#39;) &gt;= 0:
+        return u&quot;页面加载完成。&quot;
+    elif oriText.lower().find(&#39;viewdidappear&#39;) &gt;= 0:
+        return &quot;页面已经显示。&quot;
+    elif oriText.lower().find(&#39;viewwillappear&#39;) &gt;= 0:
+        return &quot;页面将要显示。&quot;
+    elif oriText.lower().find(&#39;viewwilldisappear&#39;) &gt;= 0:
+        return u&quot;页面将要消失。&quot;
+    elif oriText.lower().find(&#39;viewdiddisappear&#39;) &gt;= 0:
+        return u&quot;页面已经消失。&quot;
+    else:
+        return u&quot;&quot;
+
+# 设置段落格式
+def setText(doc,text,size,bold):
+    p1 = doc.add_paragraph()
+    p1.paragraph_format.first_line_indent = Cm(0.74)  
+    p1.paragraph_format.line_spacing = 1.5 # 1.5倍行距 
+    l1 = p1.add_run(text)
+    l1.font.size = size
+    l1.font.name = u&quot;宋体&quot;
+    l1.bold = bold
+        
+
+# 具体内容添加
+def addDetail(doc,text1,textArr):
+    setText(doc,text1,Pt(14),True)
+    for text in textArr:
+        # print(text+&#39;\n&#39;)
+        setText(doc,text,Pt(14),False)
+
+# 将源文件分析完成后，输出到目标目录下
+def writeToWord(sourcePath,outPath):
+    # 创建空文档
+    document = Document()
+    document.styles[&#39;Normal&#39;].font.name = u&#39;宋体&#39;
+    document.styles[&#39;Normal&#39;]._element.rPr.rFonts.set(qn(&#39;w:eastAsia&#39;), u&#39;宋体&#39;)
+    # 添加标题，设置级别level，0为Title，1或省略为Heading 1，0&lt;=level&lt;=9
+    # document.add_heading(&#39;Document Title&#39;, 0)
+
+    path = sourcePath+&#39;&#39;
+    arrT = []
+
+    for dirpath, dirname, filenames in os.walk(path):   
+        for filename in filenames:
+            if &#39;.m&#39; in filename or &#39;.mm&#39; in filename:
+                filePath = os.path.join(dirpath, filename)
+                MacroWithCountDicts = getOCFileMethdLineCountArray(filePath)
+                print(&#39;=====================&#39;)
+                print(&#39;{} 有 {} 个方法&#39;.format(filename,len(MacroWithCountDicts)))
+                arrT += MacroWithCountDicts
+
+            elif &#39;.swift&#39; in filename:
+                filePath = os.path.join(dirpath, filename)
+                MacroWithCountDicts = getSwiftFileMethdLineCountArray(filePath)
+                print(&#39;=====================&#39;)
+                print(&#39;{} 有 {} 个方法&#39;.format(filename,len(MacroWithCountDicts)))
+                arrT += MacroWithCountDicts
+
+
+    print(&quot;********************************&quot;)
+    print(&quot;一共有 {} 个方法&quot;.format(len(arrT)))
+    print(&quot;********************************&quot;)
+    for result in arrT:
+        fullFuncName = result[1]
+        allMsg = []
+        if fullFuncName.strip().startswith(&#39;+&#39;) or fullFuncName.strip().startswith(&#39;-&#39;):
+            allMsg = anyliseOC(fullFuncName)
+        else:
+            allMsg = anyliseSwift(fullFuncName)
+
+        className = result[0]
+        funcName = allMsg[0]
+        paras = allMsg[1]
+        returnStr = allMsg[2]
+        # # 函数名设置为4级标题
+        document.add_heading(funcName,level=4)
+
+        # #功能设置为5级标题
+        document.add_heading(u&quot;方法功能描述&quot;,level=5)
+
+        setText(document,generateSumary(funcName,className),Pt(14),False)
+
+        # 方法定义设置为5级标题
+        document.add_heading(u&quot;方法定义&quot;,level=5)
+        addDetail(document,u&quot;类名:&quot;,[className])
+        addDetail(document,u&quot;方法名:&quot;,[funcName])
+        addDetail(document,u&quot;方法入参:&quot;,paras)
+        addDetail(document,u&quot;抛出异常:&quot;,[u&quot;无&quot;])
+        addDetail(document,u&quot;方法返回值:&quot;,[returnStr])
+
+        # 方法的逻辑设置为5级标题
+        document.add_heading(u&quot;方法逻辑&quot;,level=5)
+        # 一些固定方法填充内容。
+        # if &#39;NSCoder&#39; in funcName:
+        #     setText(document,u&quot;调用fatalError方法。&quot;,Pt(14),False)
+        # elif &#39;init&#39; in funcName:
+        #     setText(document,u&quot;父类初始化，&quot;,Pt(14),False)
+        # else:
+        setText(document,u&quot;&quot;,Pt(14),False)
+
+    try:
+        document.save(outPath+&quot;生成iOS方法文档.docx&quot;)
+    except Exception:
+        print(u&quot;检查下当前目录是否存在,是否包含/&quot;)
+    else:
+        print(u&quot;完成,请打开&quot;+outPath+u&quot;目录下的文件&quot;)
+        
+  
+</code></pre>
+
+<p>虽然这份Python代码还有诸多缺陷，但已达到预计实现的90%以上，没有在继续完善。如果没有达到你的要求，自己动手补充一下吧！欢迎反馈补充。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Jenkins 配置]]></title>
@@ -1502,50 +1905,6 @@ IP  : 66.112.xx.xx
 
 URL : http://www.cip.cc/66.112.xx.xx
 </code></pre>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[正确设置WKWebView的UserAgent指南]]></title>
-    <link href="https://dsencheng.github.io/15681188779301.html"/>
-    <updated>2019-09-10T20:34:37+08:00</updated>
-    <id>https://dsencheng.github.io/15681188779301.html</id>
-    <content type="html"><![CDATA[
-<p>开发者在使用<code>WKWebView</code>时会遇到需要自定义<code>UserAgent</code>的情况，比如web需要区分iOS、Android、WeChat等等。<br/>
-网上也有这大量如何修改<code>UserAgent</code>的方法，但总是会出现<code>UserAgent</code>无效的情况，比如<a href="https://awesome-tips.gitbook.io/ios/webview/content">iOS12 设置 WKWebView 的 UserAgent</a></p>
-
-<p>掉进坑里无数次后发现，系统早已准备好，只是我没有发现，擦干菜鸟的泪水。。。</p>
-
-<span id="more"></span><!-- more -->
-
-<h4 id="toc_0">系统需要高于 iOS9</h4>
-
-<h6 id="toc_1">WKWebView正确设置、修改UserAgent</h6>
-
-<pre><code class="language-text">WKWebViewConfiguration* webViewConfig = WKWebViewConfiguration.new;
-NSLog(@&quot;修改前 = %@&quot;,webViewConfig.applicationNameForUserAgent);
-//正确设置UserAgent的代码
-webViewConfig.applicationNameForUserAgent = @&quot;我是自定义Agent&quot;;
-NSLog(@&quot;修改后 = %@&quot;,webViewConfig.applicationNameForUserAgent);
-//正确使用设计的初始化方法，不要使用其他初始化方法。
-WKWebView* webView = [[WKWebView alloc] initWithFrame:self.view.frame configuration:webViewConfig];
-//注意：下面这句代码是查看，不是设置UserAgent
-[webView evaluateJavaScript:@&quot;navigator.userAgent&quot; completionHandler:^(NSString * _Nullable originUserAgent, NSError * _Nullable error) {
-    NSLog(@&quot;完整UserAgent = %@&quot;,originUserAgent);
-}];
-</code></pre>
-
-<h6 id="toc_2">输出</h6>
-
-<pre><code class="language-text">修改前 = Mobile/16A404
-修改后 = 我是自定义Agent
-完整UserAgent = Mozilla/5.0 (iPhone; CPU iPhone OS 12_0_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) 我是自定义Agent
-</code></pre>
-
-<p>你可能会好奇 <code>Mobile/16A404</code> 是什么？ <br/>
-我也没有找到具体含义，如果你知道可以告诉我。<br/>
-<strong>友情提醒</strong>，<code>applicationNameForUserAgent</code> 应该追加，不是直接赋值。   </p>
 
 ]]></content>
   </entry>
