@@ -205,14 +205,14 @@ Xcode打包插件：Xcode integration</p>
 
 <h1 id="toc_5">问题记录</h1>
 
-<h4 id="toc_6">无法更新插件</h4>
+<h4 id="toc_6">问题：无法更新插件</h4>
 
 <p>管理Jenkins &gt; 插件管理 &gt; 高级 <br/>
 把<code>URL</code>里的地址<code>https</code>改为<code>http</code> </p>
 
 <hr/>
 
-<h4 id="toc_7">局域网内，无法通过ip+port访问</h4>
+<h4 id="toc_7">问题：局域网内，无法通过ip+port访问</h4>
 
 <p>关闭Jenkins服务，打开文件夹 <code>/usr/local/Cellar/jenkins/</code> 或者 <code>/usr/local/Cellar/jenkins-lts/</code> ,找到<code>homebrew.mxcl.jenkins.pist</code>这个文件.</p>
 
@@ -225,7 +225,7 @@ Xcode打包插件：Xcode integration</p>
 
 <hr/>
 
-<h4 id="toc_8">fastlane: command not found</h4>
+<h4 id="toc_8">问题：fastlane: command not found</h4>
 
 <p>参照安装方法添加路径<code>sudo gem install fastlane -n /usr/local/bin</code>，在Jenkins &gt; 节点管理 &gt; 配置(右侧⚙图标) &gt; 设置环境变量。<br/>
 查看当前环境变量,</p>
@@ -235,7 +235,7 @@ Xcode打包插件：Xcode integration</p>
 
 <hr/>
 
-<h3 id="toc_9">git fetch 443</h3>
+<h3 id="toc_9">问题： git fetch 443</h3>
 
 <blockquote>
 <p>使用私有库</p>
@@ -282,6 +282,51 @@ Finished: FAILURE
 
 <p>PKG卸载<br/>
 &#39;/Library/Application Support/Jenkins/Uninstall.command&#39;</p>
+
+<hr/>
+
+<h3 id="toc_10">问题：errSecInternalComponent</h3>
+
+<p>报错内容如下，*号为主机名或工程名。</p>
+
+<pre><code class="language-text">/Users/***/Library/Developer/Xcode/DerivedData/***-hhnneuyrewxlcchalpeniwciweuw/Build/Products/Release-iphoneos/***.framework: errSecInternalComponent
+Command /usr/bin/codesign failed with exit code 1
+
+** BUILD FAILED **
+</code></pre>
+
+<p>这个问题大部分原因是访问keychain失败造成的。</p>
+
+<p>当前场景是一台Windows主机通过Jenkins添加一台Mac Mini节点，iOS的打包任务绑定在Mac节点。Mac本身有Jenkins可以正常打包，但执行Windows主机的Jenkins打包任务就会报错。</p>
+
+<p><code>Jenkins(windows) -&gt; Jenkins Node(Mac Mini)</code><br/>
+这是因为Windows通过SSH访问Mac，打包任务没有Keychains的访问权限。</p>
+
+<p>经过google之后，找到了解决办法。<br/>
+1.首先打开Mac Mini的命令行，输入 <code>security list-keychains</code>，查看当前已有的keychain。下面是示例：</p>
+
+<pre><code class="language-text">&quot;/Users/****/Library/Keychains/login.keychain-db&quot;
+&quot;/Users/****/JenkinsTmp/login.keychain&quot;
+&quot;/Library/Keychains/System.keychain&quot;
+</code></pre>
+
+<p>2.打开<code>钥匙串(Keychains)</code>，依次选择左侧的<code>登录(login)</code>，我的<code>证书(My Certificates)</code>，选择你的证书，点左侧三角展开证书，双击<code>证书key</code>，然后选择<code>访问控制(Access Control)</code>，勾选<code>允许所有应用程序访问此项目(Allow all applications to access this item)</code>，点击<code>存储更改(Save Changes)</code>，输入登录密码，完成。</p>
+
+<p>3.在Jenkins构建之前，解锁keychain，然后打包。</p>
+
+<pre><code class="language-text">cd YourProject
+pod install
+# ssh登录需要解锁keychain，可以依次尝试 security list-keychains 命令列出的路径。
+#security unlock-keychain -p 123456 login.keychain
+#security unlock-keychain -p 123456 ~/Library/Keychains/login.keychain-db
+security unlock-keychain -p 123456 ~/JenkinsTmp/login.keychain
+# 执行打包
+xcodebuild -workspace &#39;YourProject.xcworkspace&#39; -scheme YourTarget
+</code></pre>
+
+<p>参考链接：<br/>
+<a href="https://stackoverflow.com/questions/24023639/xcode-command-usr-bin-codesign-failed-with-exit-code-1-errsecinternalcomponen">Xcode errSecInternalComponent</a><br/>
+<a href="https://stackoverflow.com/questions/35517496/unable-to-unlock-the-keychain">Unable to unlock the keychain</a></p>
 
 
     
