@@ -314,6 +314,11 @@ Command /usr/bin/codesign failed with exit code 1
 
 <p>3.在Jenkins构建之前，解锁keychain，然后打包。</p>
 
+<p><code>security unlock-keychain -p &lt;login password&gt; &lt;keychain path&gt;</code></p>
+
+<p>以下为示例。<br/>
+<strong>123456替换成登录密码!</strong></p>
+
 <pre><code class="language-text">cd YourProject
 pod install
 # ssh登录需要解锁keychain，可以依次尝试 security list-keychains 命令列出的路径。
