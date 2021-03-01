@@ -75,6 +75,10 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="VSCode.html">VSCode</a></li>
+        
+            <li><a href="Git.html">Git</a></li>
+        
             <li><a href="iOS.html">iOS</a></li>
         
             <li><a href="Cocoapods.html">Cocoapods</a></li>
@@ -92,6 +96,8 @@
             <li><a href="RaspberryPi.html">RaspberryPi</a></li>
         
             <li><a href="Xcode.html">Xcode</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
         
             <li><a href="Python.html">Python</a></li>
          
@@ -115,6 +121,394 @@
 	<div class="large-8 medium-8 columns">
 		<div class="markdown-body home-categories">
 		
+			<div class="article">
+                <a class="clearlink" href="16145826764719.html">
+                
+                  <h1>超快！UIScrollView嵌套UICollectionView，双向滚动</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>注：布局使用了SnapKit</p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="16145826764719.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2021/03/01</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="16136110176093.html">
+                
+                  <h1>Git命令拾遗</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h5 id="toc_0">全局更改提交人姓名和电子邮件</h5>
+
+<h6 id="toc_1">终端操作</h6>
+
+<pre><code class="language-text">$ git config --global user.name &quot;John Doe&quot;
+$ git config --global user.email &quot;john@doe.org&quot;
+</code></pre>
+
+<h6 id="toc_2">Sourcetree</h6>
+
+<p>仓库 &gt; 仓库设置 &gt; 高级 ，选中<code>使用全局用户设置</code></p>
+
+<h5 id="toc_3">更改每个存储库的提交者名称和电子邮件</h5>
+
+<h6 id="toc_4">终端操作</h6>
+
+<pre><code class="language-text">$ git config user.name &quot;John Doe&quot;
+$ git config user.email &quot;john@doe.org&quot;
+</code></pre>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="16136110176093.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2021/02/18</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Git.html'>Git</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="16124279585782.html">
+                
+                  <h1>折腾Docker之Jenkins</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h4 id="toc_0">安装</h4>
+
+<p>1.拉取镜像<br/>
+<code>docker pull jenkins/jenkins</code><br/>
+注意: <code>docker search jenkins</code> 显示的<code>jenkins</code>,已经废弃，需要使用<code>jenkins/jenkins</code>。</p>
+
+<p>2.运行容器，首次启动需要几分钟。</p>
+
+<pre><code class="language-text">docker run -d \
+--name jenkins \
+--restart=always \
+--privileged=true \
+-v $HOME/jenkins_home:/var/jenkins_home \
+-p 8080:8080 \
+jenkins/jenkins
+</code></pre>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="16124279585782.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2021/02/04</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="16121070654252.html">
+                
+                  <h1>折腾Docker之Nginx</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>在创建Gitlab时，加了一个参数<code>--hostname gitlab.interotc.com</code>，而现在用<code>http://192.168.0.X:10080</code>的这种方式。显然这种方式并不方便。<br/>
+这时候就需要请出Nginx了。<br/>
+执行命令<code>docker pull nginx</code>，拉取最新镜像。<br/>
+拉取完成后执行命令<code>docker images</code></p>
+
+<pre><code class="language-text">REPOSITORY         TAG           IMAGE ID       CREATED       SIZE
+gitlab/gitlab-ce   13.8.1-ce.0   404c168c204f   5 days ago    2.15GB
+nginx              latest        f6d0b4767a6c   2 weeks ago   133MB
+</code></pre>
+
+<p>可以看到宿主机有两个镜像。<br/>
+执行命令<code>docker ps</code></p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="16121070654252.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2021/01/31</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="16120859165616.html">
+                
+                  <h1>折腾Docker之Gitlab</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h3 id="toc_0">三、安装Gitlab</h3>
+
+<h5 id="toc_1">1、打开终端，搜索gitlab.</h5>
+
+<pre><code class="language-text">&gt; docker search gitlab
+</code></pre>
+
+<h5 id="toc_2">2、拉取镜像</h5>
+
+<pre><code class="language-text">&gt; docker pull gitlab/gitlab-ce
+</code></pre>
+
+<h5 id="toc_3">3.创建容器</h5>
+
+<p>创建之前，建议打开<code>Docker Desktop</code> - <code>Preferences</code> - <code>Resources</code><br/>
+<code>Advanced</code> 页签把 CPU 改成 4， Memory 改成 4GB。<br/>
+<code>File sharing</code> 全部删除，然后添加 <code>/Users</code> 或 <code>/Users/用户名</code>，以减少容器访问磁盘。<br/>
+终端执行命令：</p>
+
+<pre><code class="language-text">docker run --detach \
+--hostname gitlab.interotc.com \
+--name gitlab \
+--restart always \
+--publish 10443:443 --publish 10080:80 --publish 10022:22 \
+--volume $HOME/gitlab/config:/etc/gitlab \
+--volume $HOME/gitlab/logs:/var/log/gitlab \
+--volume $HOME/gitlab/data:/var/opt/gitlab \
+--privileged=true \
+gitlab/gitlab-ce:13.8.1-ce.0
+</code></pre>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="16120859165616.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2021/01/31</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="16118025704485.html">
+                
+                  <h1>折腾Docker安装</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<h3 id="toc_0">一. 安装 Docker</h3>
+
+<p>下载 <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> 按提示进行安装。</p>
+
+<p>安装完成后，打开<code>Docker Desktop</code>，选择<code>Preferences</code>，然后选择<code>Docker Engine</code>，加入下面国内镜像源，点击<code>Apply &amp; Restart</code>。</p>
+
+<pre><code class="language-text">{
+    &quot;registry-mirrors&quot;: [
+    &quot;https://docker.mirrors.ustc.edu.cn&quot;,
+    &quot;https://hub-mirror.c.163.com&quot;,
+    &quot;https://mirror.baidubce.com&quot;,
+    &quot;https://reg-mirror.qiniu.com&quot;,
+    &quot;https://mirror.ccs.tencentyun.com&quot;
+  ]
+}
+</code></pre>
+
+<h3 id="toc_1">二. 安装 Kubernetes(可选)</h3>
+
+<p><strong>注：如果是简单使用Docker，可跳过此步骤。</strong></p>
+
+<p>因为中国大陆网络限制的原因，直接<code>Enable Kubernetes</code>，会一直卡在<code>starting</code>的状态。</p>
+
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                   <a href="16118025704485.html">Read more</a>&nbsp;&nbsp; 
+                    <span class="date">2021/01/28</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='Docker.html'>Docker</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="16061203734084.html">
+                
+                  <h1>VSCode设置代理</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p>如果出现插件的安装，和包的下载，长时间处于loading的状态，说明某些服务已经被墙，无法访问。这是就需要添加代理，来正常使用。</p>
+
+<p>本机已有<code>v2ray</code>代理服务，或其他代理、翻墙服务。</p>
+
+<p>打开VSCode的<code>设置</code>，输入<code>代理</code>，找到<code>Http:Proxy</code>项，输入代理地址，例如<code>http://127.0.0.1:1087</code>。</p>
+
+<p>这里遇见一个坑，在设置完成后。比如安装好Flutter插件，很多服务依然无法访问。</p>
+
+<p>这时需要对<code>Http:Support</code>项做修改，默认应该是<code>override</code>，修改成<code>on</code>，退出VSCode，重启后插件的代理就生效了。</p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/11/23</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='VSCode.html'>VSCode</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
+			<div class="article">
+                <a class="clearlink" href="16004385011746.html">
+                
+                  <h1>文章收藏</h1>
+                  <div class="a-content">
+                      
+                      <div class="a-content-text">
+                        
+                        	<p><a href="https://juejin.im/post/6860260103791050760#heading-29">iOS 的自动构建流程</a></p>
+
+                        
+                      </div>
+                  </div>
+                </a>
+                <div class="read-more clearfix">
+                  <div class="more-left left">
+                  
+                    <span class="date">2020/09/18</span>
+                    <span>posted in&nbsp;</span> 
+          				  
+          					    <span class="posted-in"><a href='iOS.html'>iOS</a></span>
+          				   
+                    
+
+                  </div>
+                  <div class="more-right right">
+                  <span class="comments">
+                      
+
+                       
+                  </span>
+                  </div>
+                </div>
+              </div><!-- article -->
+        
 			<div class="article">
                 <a class="clearlink" href="15982325565462.html">
                 
@@ -210,349 +604,6 @@ void
                 </div>
               </div><!-- article -->
         
-			<div class="article">
-                <a class="clearlink" href="15936838298753.html">
-                
-                  <h1>【转载】树莓派配置v2ray客户端</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>点击打开<a href="https://www.ichenfei.com/2019/11/24/%E6%A0%91%E8%8E%93%E6%B4%BE%E9%85%8D%E7%BD%AE%E4%BD%BF%E7%94%A8v2ray%E5%AE%A2%E6%88%B7%E7%AB%AF/">原文链接</a>，本文有修改。</p>
-
-<h2 id="toc_0">下载安装</h2>
-
-<p>使用一键安装脚本安装，参考v2ray官方教程-下载安装</p>
-
-<pre><code class="language-text">bash &lt;(curl -L -s https://install.direct/go.sh)
-</code></pre>
-
-<p>可能会出现网络错误<code>Failed to fetch release information. Please check your network or try again.</code></p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15936838298753.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2020/07/02</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='RaspberryPi.html'>RaspberryPi</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15936592764846.html">
-                
-                  <h1>树莓派环境安装</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://installvirtual.com/how-to-install-python-3-8-on-raspberry-pi-raspbian/">如何在RaspberryPi上安装Python 3.8</a></p>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/07/02</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='RaspberryPi.html'>RaspberryPi</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15934342416600.html">
-                
-                  <h1>FRP 笔记</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><a href="https://github.com/fatedier/frp/blob/master/README_zh.md">中文文档</a></p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15934342416600.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2020/06/29</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='RaspberryPi.html'>RaspberryPi</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15933946041998.html">
-                
-                  <h1>Ruby 笔记</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>内部使用外部传入的参数</p>
-
-<pre><code class="language-text">xxx do |options|
-    desc = options[:m]
-    puts desc
-    
-调用时
-
-xxx m:&quot;hello&quot;
-
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/06/29</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Ruby.html'>Ruby</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15923835113038.html">
-                
-                  <h1>Xcode命令</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>命令行-单元测试</p>
-
-<pre><code class="language-text">使用Cocoapods有workspace 必须加-workspace，注意使用引号及完整的文件名， [-only-testing:&lt;test-identifier&gt;] test-identifier格式说明 TestTarget[/TestClass[/TestMethod]]
-
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39;
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests&#39;
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests/LoginTests/testLoginExample&#39;
-
-省略了class
-xcodebuild test -workspace &#39;opensdk.xcworkspace&#39; -scheme &#39;opensdk&#39; -destination &#39;platform=iOS Simulator,name=iPhone 8,OS=13.5&#39; -only-testing:&#39;opensdkTests/testLoginExample&#39;
-
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2020/06/17</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Xcode.html'>Xcode</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15923777936483.html">
-                
-                  <h1>Shell 笔记</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p>获取podspec版本号</p>
-
-<pre><code class="language-text">VersionString=`grep -E &#39;s.version.*=&#39; xxx.podspec`
-VersionString=${VersionString##*=}
-VersionNumber=`tr -d &quot;&#39;&quot; &lt;&lt;&lt;&quot;$VersionString&quot;`
-echo &quot;current version is ${VersionNumber}&quot;
-</code></pre>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15923777936483.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2020/06/17</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Shell.html'>Shell</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15747536824820.html">
-                
-                  <h1>Cocoapods之`pod`命令</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<p><code>pod init</code><br/>
-初始化</p>
-
-<p><code>pod install</code><br/>
-安装/更新库</p>
-
-<p><code>pod lib lint</code><br/>
-验证lib合法性</p>
-
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                   <a href="15747536824820.html">Read more</a>&nbsp;&nbsp; 
-                    <span class="date">2019/11/26</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Cocoapods.html'>Cocoapods</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
-			<div class="article">
-                <a class="clearlink" href="15747536460432.html">
-                
-                  <h1>Cocoapods之`Podfile`文件</h1>
-                  <div class="a-content">
-                      
-                      <div class="a-content-text">
-                        
-                        	<pre><code class="language-text">#swift为动态库
-use_frameworks!
-#最低版本号
-platform :ios, &#39;9.0&#39;
-#忽略库里的警告
-inhibit_all_warnings!
-
-target &#39;DCServices_Example&#39; do
-  pod &#39;DCServices&#39;, :path =&gt; &#39;../&#39;
-
-  target &#39;DCServices_Tests&#39; do
-    inherit! :search_paths
-
-    
-  end
-end
-</code></pre>
-
-                        
-                      </div>
-                  </div>
-                </a>
-                <div class="read-more clearfix">
-                  <div class="more-left left">
-                  
-                    <span class="date">2019/11/26</span>
-                    <span>posted in&nbsp;</span> 
-          				  
-          					    <span class="posted-in"><a href='Cocoapods.html'>Cocoapods</a></span>
-          				   
-                    
-
-                  </div>
-                  <div class="more-right right">
-                  <span class="comments">
-                      
-
-                       
-                  </span>
-                  </div>
-                </div>
-              </div><!-- article -->
-        
               
 
 
@@ -605,6 +656,10 @@ end
 
       	<p class="cat-list">
         
+            <a href="VSCode.html"><strong>VSCode</strong></a>
+        
+            <a href="Git.html"><strong>Git</strong></a>
+        
             <a href="iOS.html"><strong>iOS</strong></a>
         
             <a href="Cocoapods.html"><strong>Cocoapods</strong></a>
@@ -623,6 +678,8 @@ end
         
             <a href="Xcode.html"><strong>Xcode</strong></a>
         
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
             <a href="Python.html"><strong>Python</strong></a>
          
         </p>
@@ -640,31 +697,31 @@ end
 	      
 		      
 			      <li class="post">
-			        <a href="15982325565462.html">使用Python写iOS Word文档</a>
+			        <a href="16145826764719.html">超快！UIScrollView嵌套UICollectionView，双向滚动</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15960887152430.html">Jenkins 配置</a>
+			        <a href="16136110176093.html">Git命令拾遗</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15936838298753.html">【转载】树莓派配置v2ray客户端</a>
+			        <a href="16124279585782.html">折腾Docker之Jenkins</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15936592764846.html">树莓派环境安装</a>
+			        <a href="16121070654252.html">折腾Docker之Nginx</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15934342416600.html">FRP 笔记</a>
+			        <a href="16120859165616.html">折腾Docker之Gitlab</a>
 			      </li>
 		     
 		  

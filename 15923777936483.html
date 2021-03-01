@@ -75,6 +75,10 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="VSCode.html">VSCode</a></li>
+        
+            <li><a href="Git.html">Git</a></li>
+        
             <li><a href="iOS.html">iOS</a></li>
         
             <li><a href="Cocoapods.html">Cocoapods</a></li>
@@ -92,6 +96,8 @@
             <li><a href="RaspberryPi.html">RaspberryPi</a></li>
         
             <li><a href="Xcode.html">Xcode</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
         
             <li><a href="Python.html">Python</a></li>
          
@@ -146,13 +152,71 @@ echo &quot;current version is ${VersionNumber}&quot;
 
 <span id="more"></span><!-- more -->
 
-<p>20200730更新<br/>
-经过几天的Jenkins折腾，借助管道，获取版本号的命令现在仅需要一行.<br/>
+<p>经过几天的Jenkins折腾，借助管道，获取版本号的命令现在仅需要一行.<br/>
 首先使用<code>grep</code>命令，读取文件内容并过滤到<code>s.version</code>这一行；然后使用<code>tr</code>命令去掉单引号、字母、空格、等号；最后使用<code>sed</code>命令，替换第一个点。</p>
 
 <pre><code class="language-text">grep -E &#39;s.version.*=&#39; xxx/xxx.podspec | tr -d &quot;&#39;a-z= &quot; | sed &quot;s/\.//1&quot;
 
 3.3.3
+</code></pre>
+
+<p>Jenkins iOS修改版本号脚本示例。<br/>
+iOS这里使用了不同的文件来区分环境，比较简单</p>
+
+<pre><code class="language-text">sed -i &#39;&#39; -e &quot;s/CFBundleVersion.*/CFBundleVersion=2.33/g&quot; dev.xcconfig
+</code></pre>
+
+<p>Jenkins安卓修改版本号脚本示例。<br/>
+安卓的不同环境是放在同一个文件里做区分，逻辑比较复杂。</p>
+
+<pre><code class="language-text">#获取关键字行数    
+rows=$(sed -n -e &#39;/isDev/=&#39; build.gradle)
+#获取替换行数差值
+di=$(grep -n -A 6 &#39;isDev{&#39; build.gradle | sed -n -e &#39;/versionCode/=&#39;)
+#计算指定行数 
+target=`expr $rows + $di - 1`
+#替换指定行的内容
+sed -n &quot;${target} s/versionCode .*/versionCode 99/p&quot; build.gradle
+</code></pre>
+
+<h4 id="toc_0">Sed命令</h4>
+
+<ul>
+<li><p>替换原始文件内容。<br/>
+Mac系统不可以直接使用<code>-i</code>，改成<code>-i &#39;&#39; -e</code>的组合方式。<br/>
+搜索<code>APP_Version</code>开头(包含)之后的任意字符,到换行符前。<br/>
+替换为<code>APP=88.88</code>。<br/>
+修改的文件<code>aa.txt</code>。批量替换可改为<code>*.txt</code>。</p>
+<pre><code class="language-text">sed -i &#39;&#39; -e &#39;s/APP_Version.*/APP=88.88/g&#39; aa.txt
+</code></pre></li>
+<li><p>打印匹配内容的行号</p>
+<pre><code class="language-text">sed -n -e &#39;/isPro/=&#39; build.gradle
+</code></pre></li>
+<li><p>正则截取/替换内容<br/>
+1.假设变量<code>branch=branches/v0.0.9E2</code>，输出<code>v0.0.9E2</code>。</p>
+<pre><code class="language-text">abc=`echo $branch | sed &#39;s/.*\///g&#39;`
+echo $abc
+</code></pre></li>
+</ul>
+
+<h4 id="toc_1">SCP命令</h4>
+
+<p>远程复制文件</p>
+
+<pre><code class="language-text">scp zzjs@172.16.77.210:~/Desktop/a.file ~/Desktop
+scp ~/Desktop/a.file zzjs@172.16.77.210:~/Desktop
+</code></pre>
+
+<h4 id="toc_2">TR命令</h4>
+
+<p>删除数字</p>
+
+<pre><code class="language-text">echo &quot;hello 123 world 45345&quot; |tr -d &#39;0-9&#39;
+</code></pre>
+
+<p>保留数子</p>
+
+<pre><code class="language-text">echo &quot;hello 123 world 45345&quot; |tr -dc  &#39;0-9&#39;
 </code></pre>
 
 
@@ -233,6 +297,10 @@ echo &quot;current version is ${VersionNumber}&quot;
 
       	<p class="cat-list">
         
+            <a href="VSCode.html"><strong>VSCode</strong></a>
+        
+            <a href="Git.html"><strong>Git</strong></a>
+        
             <a href="iOS.html"><strong>iOS</strong></a>
         
             <a href="Cocoapods.html"><strong>Cocoapods</strong></a>
@@ -251,6 +319,8 @@ echo &quot;current version is ${VersionNumber}&quot;
         
             <a href="Xcode.html"><strong>Xcode</strong></a>
         
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
             <a href="Python.html"><strong>Python</strong></a>
          
         </p>
@@ -268,31 +338,31 @@ echo &quot;current version is ${VersionNumber}&quot;
 	      
 		      
 			      <li class="post">
-			        <a href="15982325565462.html">使用Python写iOS Word文档</a>
+			        <a href="16145826764719.html">超快！UIScrollView嵌套UICollectionView，双向滚动</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15960887152430.html">Jenkins 配置</a>
+			        <a href="16136110176093.html">Git命令拾遗</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15936838298753.html">【转载】树莓派配置v2ray客户端</a>
+			        <a href="16124279585782.html">折腾Docker之Jenkins</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15936592764846.html">树莓派环境安装</a>
+			        <a href="16121070654252.html">折腾Docker之Nginx</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15934342416600.html">FRP 笔记</a>
+			        <a href="16120859165616.html">折腾Docker之Gitlab</a>
 			      </li>
 		     
 		  

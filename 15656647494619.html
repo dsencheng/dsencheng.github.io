@@ -75,6 +75,10 @@
     <li><label>Categories</label></li>
 
         
+            <li><a href="VSCode.html">VSCode</a></li>
+        
+            <li><a href="Git.html">Git</a></li>
+        
             <li><a href="iOS.html">iOS</a></li>
         
             <li><a href="Cocoapods.html">Cocoapods</a></li>
@@ -92,6 +96,8 @@
             <li><a href="RaspberryPi.html">RaspberryPi</a></li>
         
             <li><a href="Xcode.html">Xcode</a></li>
+        
+            <li><a href="Docker.html">Docker</a></li>
         
             <li><a href="Python.html">Python</a></li>
          
@@ -145,13 +151,15 @@
 <li>其他依赖工具，如Git、Fastlane、Cocoapods、Maven等。</li>
 </ol>
 
-<p><strong>准备完成后，创建新项目或使用已有项目，打包一次验证是否可以成功打包。</strong></p>
+<p><strong>建议：准备完成后，创建新项目或使用已有项目，打包一次验证是否可以成功打包。</strong></p>
+
+<h5 id="toc_1">本文使用的<strong>操作系统为MacOS</strong>。</h5>
 
 <span id="more"></span><!-- more -->
 
-<h1 id="toc_1">安装</h1>
+<h1 id="toc_2">Jenkins安装</h1>
 
-<h4 id="toc_2"><a href="https://www.jenkins.io/zh/doc/book/installing/">Jenkins中文安装文档</a></h4>
+<h4 id="toc_3"><a href="https://www.jenkins.io/zh/doc/book/installing/">Jenkins中文安装文档</a></h4>
 
 <p>1、<strong>推荐安装方式</strong>，安装完成自动运行。<strong>不推荐PKG方式安装</strong></p>
 
@@ -164,25 +172,29 @@ brew services stop jenkins-lts
 brew services restart jenkins-lts
 </code></pre>
 
-<p>2、简单方式，下载jenkins-lts.war，cd到文件所在目录，使用命令启动</p>
+<p>2、<strong>不推荐</strong>。简单方式，下载jenkins-lts.war，cd到文件所在目录，使用命令启动</p>
 
 <pre><code class="language-text">java -jar jenkins-lts.war
 </code></pre>
 
-<p>3、浏览器访问: <a href="http://localhost:8080">http://localhost:8080</a> 或者 <a href="http://10.0.1.147:8080">http://10.0.1.147:8080</a> 按引导教程完成配置。若局域网内无法访问，参考下面的问题记录。</p>
+<p>3、浏览器访问: <a href="http://localhost:8080">http://localhost:8080</a> 按引导教程完成配置。若局域网内无法访问，参考下面的问题记录。</p>
 
-<h1 id="toc_3">Jenkins构建</h1>
+<h1 id="toc_4">Jenkins使用</h1>
 
 <ol>
-<li>创建一个FreeStyle的任务。</li>
-<li>新任务的配置工作。</li>
-<li>构建。</li>
+<li><p>如果是英文，建议先安装中文插件<br/>
+登录Jenkins后，依次点击左侧的“齿轮(Manage Jenkins)”，然后找到右侧“拼图(Manage Plugins)”，继续点击第二个选项卡“Available”，在搜索框输入“Localization: Chinese (Simplified)”，在插件前面的多选框里打钩，然后点击下面的“Install without restart”按钮，等待下载安装完成后重启，如果没有重启，可以手动重启Jenkins。</p></li>
+<li><p>创建一个FreeStyle的任务。<br/>
+选择“新建任务”，输入任务名称，选择“构建自由风格的软件项目”，点击“确定”。</p></li>
+<li><p>新任务的配置工作。<br/>
+“描述”简要说明下项目。<br/>
+“源码地址”填写好Git或SVN的代码仓库地址，同时需要提前在“凭据”中，添加访问代码仓库的账号密码。SVN可能需要安装插件“Subversion”。<br/>
+“构建”，“增加构建步骤”，“执行shell”，添加项目的构建脚本，基本的配置工作就算完成了。<br/>
+<strong>任务配置介绍</strong></p></li>
 </ol>
 
-<p><strong>任务配置介绍</strong></p>
-
 <pre><code class="language-text">1.General
-    设置文件存留天数、数量等。
+    项目描述，设置参数化构建，文件存留天数、数量等。
 2.源码管理
     git、svn
 3.构建触发器
@@ -196,23 +208,45 @@ brew services restart jenkins-lts
     提供通知，邮件，推送等构建完成后任务。
 </code></pre>
 
-<h1 id="toc_4">Jenkins插件</h1>
+<ol>
+<li>build 立即构建。</li>
+</ol>
+
+<h1 id="toc_5">Jenkins插件</h1>
 
 <p>安装完成后建议重启<br/>
 汉化插件：Localization: Chinese (Simplified) <br/>
 证书管理插件：Keychains and Provisioning Profiles Management<br/>
 Xcode打包插件：Xcode integration</p>
 
-<h1 id="toc_5">问题记录</h1>
+<h1 id="toc_6">添加节点</h1>
 
-<h4 id="toc_6">问题：无法更新插件</h4>
+<p>1.首先添加目标节点的登录账户。进入“凭据”，“添加凭据”，&quot;类型&quot;选择“Username with password”，“用户名”填写目标节点的SSH登录账户名，“密码”填写账户对应的密码。</p>
+
+<p>2.进入“系统管理” - “节点管理” - ”新建节点“ ，填写节点名称，点击”确定“。<br/>
+”远程工作目录“这里填写目标节点的项目目录，比如<code>/Users/your_login_name/.jenkins</code>。<br/>
+”启动方式“，选择”launch agents via ssh“，如果没有该选项，需要安装”SSH Build Agents“ 插件。<br/>
+”主机“填写ip地址。<br/>
+”Credentials“选择刚刚添加的账户。<br/>
+“Host Key Verification Strategy”选择“Non verifying Verification Strategy”。<br/><br/>
+点击保存完成。</p>
+
+<p>附：如果在Jenkins构建过程中出现命令执行错误，但在终端可以执行命令，就要思考一下是否需要在“环境变量”中添加使用命令的环境。<br/>
+例如使用Cocoapods，需要在配置节点，“节点属性”，“环境变量”添加键值。<br/>
+如果仍然报错，依次打开“系统管理”，“系统设置”，“全局属性”，“环境变量”，添加同样的键值。<br/>
+键：PATH<br/>
+值：/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/your_login_name/.rvm/bin:/usr/local/bin/pod</p>
+
+<h1 id="toc_7">问题记录</h1>
+
+<h4 id="toc_8">问题：无法更新插件</h4>
 
 <p>管理Jenkins &gt; 插件管理 &gt; 高级 <br/>
 把<code>URL</code>里的地址<code>https</code>改为<code>http</code> </p>
 
 <hr/>
 
-<h4 id="toc_7">问题：局域网内，无法通过ip+port访问</h4>
+<h4 id="toc_9">问题：局域网内，无法通过ip+port访问</h4>
 
 <p>关闭Jenkins服务，打开文件夹 <code>/usr/local/Cellar/jenkins/</code> 或者 <code>/usr/local/Cellar/jenkins-lts/</code> ,找到<code>homebrew.mxcl.jenkins.pist</code>这个文件.</p>
 
@@ -225,7 +259,7 @@ Xcode打包插件：Xcode integration</p>
 
 <hr/>
 
-<h4 id="toc_8">问题：fastlane: command not found</h4>
+<h4 id="toc_10">问题：fastlane: command not found</h4>
 
 <p>参照安装方法添加路径<code>sudo gem install fastlane -n /usr/local/bin</code>，在Jenkins &gt; 节点管理 &gt; 配置(右侧⚙图标) &gt; 设置环境变量。<br/>
 查看当前环境变量,</p>
@@ -235,7 +269,7 @@ Xcode打包插件：Xcode integration</p>
 
 <hr/>
 
-<h3 id="toc_9">问题： git fetch 443</h3>
+<h3 id="toc_11">问题： git fetch 443</h3>
 
 <blockquote>
 <p>使用私有库</p>
@@ -285,7 +319,7 @@ Finished: FAILURE
 
 <hr/>
 
-<h3 id="toc_10">问题：errSecInternalComponent</h3>
+<h3 id="toc_12">问题：errSecInternalComponent</h3>
 
 <p>报错内容如下，*号为主机名或工程名。</p>
 
@@ -329,9 +363,18 @@ security unlock-keychain -p 123456 ~/JenkinsTmp/login.keychain
 xcodebuild -workspace &#39;YourProject.xcworkspace&#39; -scheme YourTarget
 </code></pre>
 
+<p>如果还是有问题，建议重启。</p>
+
 <p>参考链接：<br/>
 <a href="https://stackoverflow.com/questions/24023639/xcode-command-usr-bin-codesign-failed-with-exit-code-1-errsecinternalcomponen">Xcode errSecInternalComponent</a><br/>
 <a href="https://stackoverflow.com/questions/35517496/unable-to-unlock-the-keychain">Unable to unlock the keychain</a></p>
+
+<h1 id="toc_13">打包报错 error: exportArchive: Code signing &quot;xxxx&quot; failed.</h1>
+
+<pre><code class="language-text">Error Domain=IDEDistributionPipelineErrorDomain Code=0 &quot;Code signing &quot;xxxx&quot; failed.&quot; UserInfo={NSLocalizedDescription=Code signing &quot;xxxx&quot; failed., NSLocalizedRecoverySuggestion=View distribution logs for more information.}
+</code></pre>
+
+<p>需要解锁kenchain <code>security unlock-keychain -p &lt;login password&gt;</code></p>
 
 
     
@@ -411,6 +454,10 @@ xcodebuild -workspace &#39;YourProject.xcworkspace&#39; -scheme YourTarget
 
       	<p class="cat-list">
         
+            <a href="VSCode.html"><strong>VSCode</strong></a>
+        
+            <a href="Git.html"><strong>Git</strong></a>
+        
             <a href="iOS.html"><strong>iOS</strong></a>
         
             <a href="Cocoapods.html"><strong>Cocoapods</strong></a>
@@ -429,6 +476,8 @@ xcodebuild -workspace &#39;YourProject.xcworkspace&#39; -scheme YourTarget
         
             <a href="Xcode.html"><strong>Xcode</strong></a>
         
+            <a href="Docker.html"><strong>Docker</strong></a>
+        
             <a href="Python.html"><strong>Python</strong></a>
          
         </p>
@@ -446,31 +495,31 @@ xcodebuild -workspace &#39;YourProject.xcworkspace&#39; -scheme YourTarget
 	      
 		      
 			      <li class="post">
-			        <a href="15982325565462.html">使用Python写iOS Word文档</a>
+			        <a href="16145826764719.html">超快！UIScrollView嵌套UICollectionView，双向滚动</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15960887152430.html">Jenkins 配置</a>
+			        <a href="16136110176093.html">Git命令拾遗</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15936838298753.html">【转载】树莓派配置v2ray客户端</a>
+			        <a href="16124279585782.html">折腾Docker之Jenkins</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15936592764846.html">树莓派环境安装</a>
+			        <a href="16121070654252.html">折腾Docker之Nginx</a>
 			      </li>
 		     
 		  
 		      
 			      <li class="post">
-			        <a href="15934342416600.html">FRP 笔记</a>
+			        <a href="16120859165616.html">折腾Docker之Gitlab</a>
 			      </li>
 		     
 		  

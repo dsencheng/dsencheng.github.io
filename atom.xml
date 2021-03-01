@@ -4,13 +4,756 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2020-09-02T16:38:11+08:00</updated>
+  <updated>2021-03-01T16:51:08+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
     
   </author>
   <generator uri="http://www.mweb.im/">MWeb</generator>
+  
+  <entry>
+    <title type="html"><![CDATA[超快！UIScrollView嵌套UICollectionView，双向滚动]]></title>
+    <link href="https://dsencheng.github.io/16145826764719.html"/>
+    <updated>2021-03-01T15:11:16+08:00</updated>
+    <id>https://dsencheng.github.io/16145826764719.html</id>
+    <content type="html"><![CDATA[
+<p>注：布局使用了SnapKit</p>
+
+<span id="more"></span><!-- more -->
+
+<p>上图<br/>
+<img src="media/16145826764719/Simulator%20Screen%20Shot%20-%20iPhone%20SE%20-2nd%20generation-%20-%202021-03-01%20at%2015.10.26.png" alt="Simulator Screen Shot - iPhone SE -2nd generation- - 2021-03-01 at 15.10.26"/></p>
+
+<p>上代码</p>
+
+<pre><code class="language-text">import UIKit
+
+private let reuseCell = &quot;UICollectionViewCell&quot;
+class TestViewController: UIViewController,UICollectionViewDataSource,UICollectionViewDelegate {
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        let scrollView = UIScrollView()
+        scrollView.backgroundColor = .lightGray
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        
+        let containerView = UIView()
+        containerView.backgroundColor = .gray
+        scrollView.addSubview(containerView)
+        containerView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+            make.height.width.equalToSuperview()
+        }
+        
+        let layout = UICollectionViewFlowLayout()
+        layout.estimatedItemSize = UICollectionViewFlowLayout.automaticSize
+        layout.scrollDirection = .horizontal
+        
+        let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.backgroundColor = .white
+        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseCell)
+        collection.delegate = self
+        collection.dataSource = self
+        containerView.addSubview(collection)
+        collection.snp.makeConstraints { (make) in
+            make.top.equalTo(100)
+            make.left.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(200)
+        }
+    }
+    
+    
+    func numberOfSections(in collectionView: UICollectionView) -&gt; Int {
+        60
+    }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -&gt; Int {
+        return 2
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -&gt; UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseCell, for: indexPath)
+        let color = CGFloat.random(in: 0...1.0)
+        cell.contentView.backgroundColor = UIColor(red: color, green: color, blue: color, alpha: 1)
+        return cell
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath)
+    }
+}
+</code></pre>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Git命令拾遗]]></title>
+    <link href="https://dsencheng.github.io/16136110176093.html"/>
+    <updated>2021-02-18T09:16:57+08:00</updated>
+    <id>https://dsencheng.github.io/16136110176093.html</id>
+    <content type="html"><![CDATA[
+<h5 id="toc_0">全局更改提交人姓名和电子邮件</h5>
+
+<h6 id="toc_1">终端操作</h6>
+
+<pre><code class="language-text">$ git config --global user.name &quot;John Doe&quot;
+$ git config --global user.email &quot;john@doe.org&quot;
+</code></pre>
+
+<h6 id="toc_2">Sourcetree</h6>
+
+<p>仓库 &gt; 仓库设置 &gt; 高级 ，选中<code>使用全局用户设置</code></p>
+
+<h5 id="toc_3">更改每个存储库的提交者名称和电子邮件</h5>
+
+<h6 id="toc_4">终端操作</h6>
+
+<pre><code class="language-text">$ git config user.name &quot;John Doe&quot;
+$ git config user.email &quot;john@doe.org&quot;
+</code></pre>
+
+<span id="more"></span><!-- more -->
+
+<p><code>cat .git/config</code> 查看配置</p>
+
+<h6 id="toc_5">Sourcetree</h6>
+
+<p>仓库 &gt; 仓库设置 &gt; 高级 ，取消<code>使用全局用户设置</code>，并输入当前仓库的提交者名称和电子邮件。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[折腾Docker之Jenkins]]></title>
+    <link href="https://dsencheng.github.io/16124279585782.html"/>
+    <updated>2021-02-04T16:39:18+08:00</updated>
+    <id>https://dsencheng.github.io/16124279585782.html</id>
+    <content type="html"><![CDATA[
+<h4 id="toc_0">安装</h4>
+
+<p>1.拉取镜像<br/>
+<code>docker pull jenkins/jenkins</code><br/>
+注意: <code>docker search jenkins</code> 显示的<code>jenkins</code>,已经废弃，需要使用<code>jenkins/jenkins</code>。</p>
+
+<p>2.运行容器，首次启动需要几分钟。</p>
+
+<pre><code class="language-text">docker run -d \
+--name jenkins \
+--restart=always \
+--privileged=true \
+-v $HOME/jenkins_home:/var/jenkins_home \
+-p 8080:8080 \
+jenkins/jenkins
+</code></pre>
+
+<span id="more"></span><!-- more -->
+
+<p>3.打开浏览器，输入<code>127.0.0.1:8080</code>或者宿主机的IP地址，首次访问，需要<code>解锁 Jenkins</code>。根据提示，打开<code>/var/jenkins_home/secrets/initialAdminPassword</code>文件来查看初始化密码。在创建容器时，已经做了目录映射<code>-v $HOME/jenkins_home:/var/jenkins_home</code>，所以打开宿主机的<code>$HOME/jenkins_home/secrets/initialAdminPassword</code>密码文件查看就可以了。</p>
+
+<p>4.输入初始化密码后，点击<code>继续</code>，在<code>自定义Jenkins</code>页面，选择<code>安装推荐的插件</code>，等待插件安装完成。如果你对Jenkins比较了解，也可以选择手动安装插件。<br/>
+ps:安装插件出奇的顺利，以前通过其他方式安装，总是会有插件安装失败。而且页面自动中文，不是英文的。</p>
+
+<p>5.插件安装完成后，<code>创建第一个管理员用户</code>，填写用户名，密码，邮箱，点击<code>保存并完成</code>。</p>
+
+<p>6.<code>实例配置</code>页面不做修改，直接<code>保存并完成</code>，最后点击<code>开始使用Jenkins</code>。好了，到这里就完成了，开始使用吧。</p>
+
+<p><strong>注：docker里的Jenkins是Linux环境，不是Mac环境。</strong></p>
+
+<h5 id="toc_1">更新Jenkins</h5>
+
+<pre><code class="language-text"># 进入容器
+&gt; docker exec -it -u root jenkins bash
+
+# 进入jenkins.war目录
+&gt; cd /usr/share/jenkins/
+
+# 下载新包，因为当前目录已有正在使用的jenkins.war文件，新的文件命名为jenkins.war.1
+&gt; wget http://mirrors.jenkins.io/war/latest/jenkins.war
+# 上面的地址较慢，可以在Jenkins的升级提示里复制新的下载链接，比如下面的这个链接。
+&gt; wget https://updates.jenkins.io/download/war/2.280/jenkins.war
+# 或者手动下载，替换容器内的文件。
+
+# 更改新旧文件名
+&gt; ls
+jenkins.war  jenkins.war.1  ref
+&gt; mv jenkins.war jenkins.war.backup
+&gt; ls 
+jenkins.war.1  jenkins.war.backup  ref
+&gt; mv jenkins.war.1 jenkins.war
+&gt; ls
+jenkins.war  jenkins.war.backup  ref
+
+# 退出容器
+&gt; exit
+
+# 重启容器
+&gt; docker restart jenkins
+</code></pre>
+
+<h4 id="toc_2">添加节点</h4>
+
+<p>iOS任务需要Mac环境，而Docker里的Jenkins是Linux环境，所以还需要添加宿主机为节点。我的宿主机是Mac mini，这里的套娃逻辑如下:</p>
+
+<pre><code class="language-text">Mac &gt; Docker &gt; Jenkins容器(Linux) &gt; 新建节点 &gt; Mac
+</code></pre>
+
+<p>打开Jenkins的<code>系统管理</code> &gt; <code>节点管理</code> &gt; <code>新建节点</code>。<br/>
+填写<code>节点名称</code>，这个名称在任务配置中指定节点需要填写。<br/>
+<code>远程工作目录</code>，填写项目存放路径，例如<code>/Users/dsen/.jenkins</code>。<br/>
+<code>用法</code>，选择<code>只允许绑定到这台机器的job</code>。<br/>
+<code>启动方式</code>，选择<code>Launch agents via SSH</code>，<code>主机</code>填写IP，如<code>192.168.1.45</code>，不需要添加前缀。<code>Credentials</code>添加节点的登录账户和密码，也就是这台Mac电脑的登录账户。<code>Host Key Verification Strategy</code>选择<code>Non verifying Verifiycation Strategy</code>。</p>
+
+<p><code>节点属性</code> 勾选 <code>环境变量</code>，新增键值，键输入 <code>PATH</code>, 值输入<code>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/dsen/.rvm/bin:/usr/local/bin/pod</code>。如果不知道这个值，可以打开节点的终端，输入<code>echo $PATH</code>获得。</p>
+
+<h4 id="toc_3">新建任务</h4>
+
+<p>新建一个任务，名字随便输入，选择<code>构建一个自由风格的软件项目</code>，点击确定。在项目的配置里，<code>构建</code> &gt; <code>增加构建步骤</code> &gt; <code>执行shell</code>，填写<code>uname -a</code>，点击保存。返回项目页面后，点击<code>立即构建</code>，构建完成后，可以在构建历史查看<code>控制台输出</code>。<br/>
+如果是<code>Linux 67c7f669fe0b 4.19.121-linuxkit #1 SMP Tue Dec 1 17:50:32 UTC 2020 x86_64 GNU/Linux</code>，说明当前任务是在Linux系统执行的。<br/>
+打开项目的设置，勾选<code>限制项目的运行节点</code>，输入之前添加的节点名称，保存之后，再次构建，查看<code>控制台输出</code>，如果是<code>Darwin localhost 19.6.0 Darwin Kernel Version 19.6.0: Sun Jul  5 00:43:10 PDT 2020; root:xnu-6153.141.1~9/RELEASE_X86_64 x86_64</code>，说明当前任务是在Mac系统执行的。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[折腾Docker之Nginx]]></title>
+    <link href="https://dsencheng.github.io/16121070654252.html"/>
+    <updated>2021-01-31T23:31:05+08:00</updated>
+    <id>https://dsencheng.github.io/16121070654252.html</id>
+    <content type="html"><![CDATA[
+<p>在创建Gitlab时，加了一个参数<code>--hostname gitlab.interotc.com</code>，而现在用<code>http://192.168.0.X:10080</code>的这种方式。显然这种方式并不方便。<br/>
+这时候就需要请出Nginx了。<br/>
+执行命令<code>docker pull nginx</code>，拉取最新镜像。<br/>
+拉取完成后执行命令<code>docker images</code></p>
+
+<pre><code class="language-text">REPOSITORY         TAG           IMAGE ID       CREATED       SIZE
+gitlab/gitlab-ce   13.8.1-ce.0   404c168c204f   5 days ago    2.15GB
+nginx              latest        f6d0b4767a6c   2 weeks ago   133MB
+</code></pre>
+
+<p>可以看到宿主机有两个镜像。<br/>
+执行命令<code>docker ps</code></p>
+
+<span id="more"></span><!-- more -->
+
+<pre><code class="language-text">CONTAINER ID   IMAGE                          COMMAND             CREATED        STATUS                  PORTS                                                                  NAMES
+14f86e7bba8f   gitlab/gitlab-ce:13.8.1-ce.0   &quot;/assets/wrapper&quot;   23 hours ago   Up 23 hours (healthy)   0.0.0.0:10022-&gt;22/tcp, 0.0.0.0:10080-&gt;80/tcp, 0.0.0.0:10443-&gt;443/tcp   gitlab
+</code></pre>
+
+<p>当前有一个名字为<code>gitlab</code>的容器正在运行。<br/>
+尝试创建一个Nginx容器。<br/>
+执行命令</p>
+
+<pre><code class="language-text">docker run -d \
+-p 80:80 -p 443:443 \
+--name nginx \
+--restart=always \
+--privileged=true \
+-v $HOME/nginx/html:/usr/share/nginx/html \ #可以去掉
+-v $HOME/nginx/conf/nginx.conf:/etc/nginx/nginx.conf \
+-v $HOME/nginx/conf/default.conf:/etc/nginx/conf.d/default.conf \
+-v $HOME/nginx/logs:/var/log/nginx \
+nginx
+</code></pre>
+
+<h4 id="toc_0">错误:</h4>
+
+<p><code>not a directory: unknown: Are you trying to mount a directory onto a file (or vice-versa)? Check if the specified host path exists and is the expected type.</code></p>
+
+<p>出现这个问题是<code>-v xxx:xxx</code> 卷映射的问题，<code>default.conf</code> 这种<strong>是文件映射，不是目录</strong>。<br/>
+处理方法是先创建一次Nginx容器，把容器内地文件复制出来。然后删除容器，再次重新创建容器，添加卷映射。<br/>
+处理步骤</p>
+
+<pre><code class="language-text">1.创建一个默认容器
+docker run -p 80:80 --name mynginx -d nginx
+
+2.查看容器ID
+docker ps -a
+回显
+CONTAINER ID   IMAGE  COMMAND                  CREATED          STATUS                PORTS                                                                  NAMES
+9fa05ef56aa2   nginx  &quot;/docker-entrypoint.…&quot;   20 minutes ago   Up 20 minutes         0.0.0.0:80-&gt;80/tcp, 0.0.0.0:443-&gt;443/tcp                               otc-nginx
+
+3.复制文件出来，可以使用命令 `mkdir -p ~/nginx/{conf,html,logs}` 提前创建好目录
+docker cp 容器ID:/etc/nginx/nginx.conf $HOME/nginx/conf/nginx.conf
+
+4.删除创建的临时容器
+docker rm 容器ID
+
+</code></pre>
+
+<p>参考<a href="https://www.cnblogs.com/xishaohui/p/8871994.html">Docker安装nginx以及负载均衡</a></p>
+
+<p>解决错误之后，重新创建容器，完成后打开浏览器，访问宿主机，如<code>http://192.168.0.X</code>。<br/>
+此时页面显示如下内容，说明成功。</p>
+
+<pre><code class="language-text">Welcome to nginx!
+
+If you see this page, the nginx web server is successfully installed and working. Further configuration is required.
+
+For online documentation and support please refer to nginx.org.
+Commercial support is available at nginx.com.
+
+Thank you for using nginx.
+</code></pre>
+
+<p>Nginx已经启动成功，接下来就是添加配置文件，把请求转给gitlab容器。<br/>
+假设宿主机的IP是192.168.7.10，宿主机已经启动gitlab和nginx两个docker容器。<br/>
+宿主机10080端口映射gitlab的80端口。</p>
+
+<p>1.本机增加host映射</p>
+
+<pre><code class="language-text">127.0.0.1    localhost
+::1         localhost
+# 新增映射
+192.168.7.10 gitlab.interotc.com
+</code></pre>
+
+<p>2.增加Nginx配置，重启Nginx容器。</p>
+
+<pre><code class="language-text">server {
+    listen       80;
+    listen  [::]:80;
+    server_name  gitlab.interotc.com;
+
+    location / {
+        proxy_set_header Host $proxy_host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        # 这里有个坑，nginx容器内的网段和宿主机网段不一样，不要使用localhost或者127.0.0.1。
+        # 如果你是安装的nginx，不是采用docker，那么nginx和宿主机是一个网段。
+        proxy_pass    http://192.168.7.10:10080;
+    }
+
+}
+
+</code></pre>
+
+<p>3.顺利的话，现在访问<code>gitlab.interotc.com</code>就可以显示正确的网页了。</p>
+
+<p>这里有个套娃逻辑。<br/>
+本机增加host映射，访问<code>gitlab.interotc.com</code><br/>
+⬇️<br/>
+发送到<code>192.168.7.10</code>(宿主机)的80端口<br/>
+⬇️<br/>
+宿主机的80端口已经映射nginx容器的80端口<br/>
+请求发送给nginx容器的80端口<br/>
+⬇️<br/>
+nginx容器收到<code>gitlab.interotc.com</code>请求<br/>
+⬇️<br/>
+解析配置文件<code>proxy_pass    http://192.168.7.10:10080;</code><br/>
+意思是把请求转给<code>192.168.7.10</code>(宿主机)的10080端口<br/>
+⬇️<br/>
+宿主机的10080端口已经映射gitlab容器的80端口<br/>
+请求发给gitlab的80端口<br/>
+⬇️<br/>
+gitlab的80端口收到请求，返回网页。</p>
+
+<p>在写nginx配置时，需要清楚容器和宿主机的网络关系，在照搬一些文章的nginx配置文件时，<code>proxy_pass    http://localhost:10080;</code>和<code>proxy_pass    http://127.0.0.1:10080;</code>使我走进了一个很大的误区。nginx容器内的<code>localhost</code>是指nginx容器内的Linux网络，并不是指宿主机(我的宿主机是Mac)。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[折腾Docker之Gitlab]]></title>
+    <link href="https://dsencheng.github.io/16120859165616.html"/>
+    <updated>2021-01-31T17:38:36+08:00</updated>
+    <id>https://dsencheng.github.io/16120859165616.html</id>
+    <content type="html"><![CDATA[
+<h3 id="toc_0">三、安装Gitlab</h3>
+
+<h5 id="toc_1">1、打开终端，搜索gitlab.</h5>
+
+<pre><code class="language-text">&gt; docker search gitlab
+</code></pre>
+
+<h5 id="toc_2">2、拉取镜像</h5>
+
+<pre><code class="language-text">&gt; docker pull gitlab/gitlab-ce
+</code></pre>
+
+<h5 id="toc_3">3.创建容器</h5>
+
+<p>创建之前，建议打开<code>Docker Desktop</code> - <code>Preferences</code> - <code>Resources</code><br/>
+<code>Advanced</code> 页签把 CPU 改成 4， Memory 改成 4GB。<br/>
+<code>File sharing</code> 全部删除，然后添加 <code>/Users</code> 或 <code>/Users/用户名</code>，以减少容器访问磁盘。<br/>
+终端执行命令：</p>
+
+<pre><code class="language-text">docker run --detach \
+--hostname gitlab.interotc.com \
+--name gitlab \
+--restart always \
+--publish 10443:443 --publish 10080:80 --publish 10022:22 \
+--volume $HOME/gitlab/config:/etc/gitlab \
+--volume $HOME/gitlab/logs:/var/log/gitlab \
+--volume $HOME/gitlab/data:/var/opt/gitlab \
+--privileged=true \
+gitlab/gitlab-ce:13.8.1-ce.0
+</code></pre>
+
+<span id="more"></span><!-- more -->
+
+<h6 id="toc_4">命令参数解释</h6>
+
+<p><code>--detach</code> 后台运行<br/>
+<code>--hostname gitlab.interotc.com</code> 容器的主机名或域名，即192.168.10.10或者 gitlab.example.com<br/>
+<code>--name gitlab</code> 容器的名字<br/>
+<code>--restart always</code> 设置重启方式，always 代表一直开启，服务器开机后也会自动开启的<br/>
+<code>--publish 10080:80</code>  把本机端口映射到容器端口，即访问宿主机10080端口为容器的80端口<br/>
+<code>--volume $HOME/gitlab/config:/etc/gitlab</code> 宿主机目录映射到容器目录<br/>
+<code>--privileged=true</code> 提升容器的<code>root</code>用户拥有真正root权限，否则只是普通用户权限<br/>
+<code>gitlab/gitlab-ce:13.8.1-ce.0</code> 这里我指定了镜像的tag版本，如果你是最新的版本，可以改为<code>gitlab/gitlab-ce</code></p>
+
+<p>创建成功后会显示一串字符，例如</p>
+
+<pre><code class="language-text">&gt; docker run --detach \                                                                                                                          
+--hostname gitlab.interotc.com \
+--name gitlab \
+--restart always \
+--publish 10443:443 --publish 10080:80 --publish 10022:22 \
+--volume $HOME/gitlab/config:/etc/gitlab \
+--volume $HOME/gitlab/logs:/var/log/gitlab \
+--volume $HOME/gitlab/data:/var/opt/gitlab \
+--privileged=true \
+gitlab/gitlab-ce:13.8.1-ce.0
+af8fc3a2499f6ce47d52a64871dd2027bfcb3e17c7ee23fc64026c6f236e09ab
+</code></pre>
+
+<p>执行命令<br/>
+<code>docker ps</code> 或者 <code>docker container ls</code></p>
+
+<pre><code class="language-text">&gt; docker ps                                                                                                                                      
+CONTAINER ID   IMAGE                          COMMAND             CREATED              STATUS                                 PORTS                                                                  NAMES
+af8fc3a2499f   gitlab/gitlab-ce:13.8.1-ce.0   &quot;/assets/wrapper&quot;   About a minute ago   Up About a minute (health: starting)   0.0.0.0:10022-&gt;22/tcp, 0.0.0.0:10080-&gt;80/tcp, 0.0.0.0:10443-&gt;443/tcp   gitlab
+</code></pre>
+
+<p><code>STATUS</code> 会有下面几种状态 </p>
+
+<pre><code class="language-text">`health: starting`  说明容器正在启动中，还没有启动完成。
+`healthy`  说明容器启动完成，一切正常。
+`unhealthy`  说明容器启动完成，但是不健康，有问题。建议执行命令重启容器`docker restart gitlab`。
+</code></pre>
+
+<p><strong>大坑</strong>:如果状态一直是<code>unhealthy</code>，在更改CPU=4 , Memory=4GB的情况下，状态变为<code>healthy</code>。恢复CPU=2 , Memory=2GB时，状态又变回<code>unhealthy</code>。说明gitlab很消耗性能。<br/>
+<strong>深坑</strong>：在启动容器后， com.docker.hyperkit 进程出现高达 100%、200%的CPU使用率，在提高CPU数量，删除<code>File sharing</code>条目之后得到缓解。</p>
+
+<h5 id="toc_5">4、访问gitlab</h5>
+
+<p>本机打开浏览器访问<code>http://127.0.0.1:10080</code>，会显示<code>Change your password</code>，这是第一次访问，修改管理员账户密码。更改完成后，就进入了登录页面，输入<code>root</code>和刚改的密码，就可以进入gitlab的控制台了。<br/>
+局域网内其他用户可以通过<code>http://宿主机ip:10080</code>来访问。</p>
+
+<h4 id="toc_6">5.设置语言</h4>
+
+<p>成功登录后，可以设置当前用户的语言为中文。点击右上角的头像，选择<code>Settings</code>，左侧找到<code>Preferences</code>，页面向下滚动就可以看到<code>Localization</code>了，下拉选择中文，最后点击<code>Save changes</code>，刷新页面就可以显示成中文了。如图<br/>
+<img src="media/16120859165616/16134863305633.jpg" alt="" style="width:1273px;"/><br/>
+<img src="media/16120859165616/16134864292402.jpg" alt="" style="width:1274px;"/></p>
+
+<h4 id="toc_7">6.创建用户</h4>
+
+<p>在使用<code>root</code>用户登录之后，点击导航栏的扳手图标，找到左侧<code>用户</code>，点击右侧按钮<code>新用户</code>，之后填写好必填项，初始密码填写12345678，点击最下面的<code>创建用户</code>按钮就可以了。<br/>
+<img src="media/16120859165616/16134870337206.jpg" alt="" style="width:1272px;"/></p>
+
+<h4 id="toc_8">7.创建一个项目</h4>
+
+<p>点击导航栏的<code>Gitlab</code>图标，会显示首页的项目，点击右侧<code>新建项目</code>，选择<code>创建空白项目</code>，也可以选择使用模板创建。<br/>
+<img src="media/16120859165616/16134870881325.jpg" alt="" style="width:1267px;"/></p>
+
+<p>项目名称填入<code>demo</code>，点击<code>新建项目</code>按钮完成。</p>
+
+<p><img src="media/16120859165616/16134872391466.jpg" alt="" style="width:1272px;"/></p>
+
+<p>创建完成后，还需要添加SSH，才可以访问仓库。<br/>
+<img src="media/16120859165616/16134874595200.jpg" alt="" style="width:1276px;"/></p>
+
+<p>点击<code>添加SSH密钥</code>，在<code>密钥</code>输入框中，填写密钥。如果不知道如何添加，可以点击页面中的<code>生成一个</code>链接，会跳转到帮助页面，有文档教你如何创建密钥。<br/>
+下面以Mac系统为例，创建一个<code>ED25519</code>密钥。<br/>
+打开命令行，输入<code>ssh-keygen -t ed25519 -C &quot;admin@example.com&quot;</code>回车，记得替换一下邮箱。</p>
+
+<p><img src="media/16120859165616/16134888347946.jpg" alt="" style="width:681px;"/></p>
+
+<p><strong>注意，输入文件名字时，如果没有指定完整路径，文件会存放在当前用户的目录，即<code>/Users/xxx</code></strong></p>
+
+<p>查看一下你的密钥对存放的目录</p>
+
+<pre><code class="language-text">ls ~/.ssh/ #这是默认目录，可以替换指定的存储目录
+gitlab_root     gitlab_root.pub
+</code></pre>
+
+<p>使用<code>cat</code>命令，查看并复制公钥的内容。复制ssh开头的这行内容。</p>
+
+<pre><code class="language-text">&gt; cat ~/.ssh/gitlab_root.pub                                                                                                                     
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKAxw5whGEq+Itaui0vH0Jic4lb45kg7W7xwVA0f4fy2 admin@example.com
+</code></pre>
+
+<p>复制后粘贴到gitlab中的密钥输入框内，点击<code>添加密钥</code>。<br/>
+<img src="media/16120859165616/16134894177816.jpg" alt="" style="width:1275px;"/><br/>
+<img src="media/16120859165616/16134895554352.jpg" alt="" style="width:1273px;"/></p>
+
+<p>然后回到<code>demo</code>项目的主页，按照<code>命令行指引</code>，这就完成项目的创建了。</p>
+
+<h2 id="toc_9">踩坑</h2>
+
+<p>坑:<br/>
+<code>Permission denied (publickey,password,keyboard-interactive).</code></p>
+
+<p><a href="https://stackoverflow.com/questions/1556056/permission-denied-publickey-keyboard-interactive">参考:Permission denied (publickey,keyboard-interactive)</a><br/>
+<a href="https://github.com/lqshow/notes/issues/26">参考:SSH Permission denied (publickey,password,keyboard-interactive)</a><br/>
+<a href="https://www.cnblogs.com/feiquan/p/13693329.html">参考:Mac下SSH免密登录Permission denied (publickey,password,keyboard-interactive).</a></p>
+
+<p>问题的原因应该是SSH端口的问题。<br/>
+gitlab容器创建时，增加了 10022:22 的映射关系，即宿主机 10022 端口映射到容器的 22 端口。在使用 <code>git clone git@gitlab.interotc.com:zzjs/demo.git</code> 命令时会报上面的错误。<br/>
+同时又因为本地有多个git环境，不同的账号。<br/>
+不断的google之后，处理如下：<br/>
+1.创建config文件，来解决不同环境和不同账号的问题。<br/>
+2.创建authorized_keys文件，来解决免密登录。</p>
+
+<pre><code class="language-text"># 进入ssh目录
+&gt; cd ~/.ssh
+# 查看文件，我这里的文件比较多
+&gt; ls
+gitee_id_rsa      github_id_rsa       gitlab_zzjs         known_hosts
+config            gitee_id_rsa.pub    github_id_rsa.pub   gitlab_zzjs.pub
+
+
+</code></pre>
+
+<p>可以看到已经存在一个 <code>config</code> 文件了，如果没有这个文件，使用 <code>touch config</code> 创建一个就好了。<br/>
+在<code>config</code>文件中添加下面的内容</p>
+
+<pre><code class="language-text">Host gitlab.interotc.com
+HostName gitlab.interotc.com
+User zzjs@example.com
+Port 10022
+PreferredAuthentications publickey
+IdentityFile ~/.ssh/gitlab_zzjs
+</code></pre>
+
+<p>当前目录是没有 <code>authorized_keys</code> 文件的，这里使用管道的方式创建文件。</p>
+
+<pre><code class="language-text">&gt;  cat gitlab_zzjs.pub &gt;&gt; authorized_keys
+&gt;  chmod 600 authorized_keys
+&gt;  cat authorized_keys
+ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEY0aS5EkIHAs3PPT2Gv1qjbp14S084qn5t6ryt1O/W zzjs@example.com
+</code></pre>
+
+<p>这两步完成后来测试一下</p>
+
+<pre><code class="language-text">&gt; ssh -T git@gitlab.interotc.com
+The authenticity of host &#39;[gitlab.interotc.com]:10022 ([x.x.x.x]:10022)&#39; can&#39;t be established.
+ECDSA key fingerprint is SHA256:zX6tCKkYn+/77AMxBN0OWr1uoo43jKCJqp+2bGt4PVY.
+Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+Warning: Permanently added &#39;[gitlab.interotc.com]:10022&#39; (ECDSA) to the list of known hosts.
+Welcome to GitLab, @zzjs!
+</code></pre>
+
+<p>再次测试，并<code>git clone</code>，成功！</p>
+
+<pre><code class="language-text">&gt; ssh -T git@gitlab.interotc.com
+Welcome to GitLab, @zzjs!
+&gt; git clone git@gitlab.interotc.com:zzjs/demo.git
+Cloning into &#39;demo&#39;...
+warning: You appear to have cloned an empty repository.
+</code></pre>
+
+<p>虽然解决了问题，但对于本地来说设置和操作过多，后续尝试使用Nginx去解决这个问题。</p>
+
+<p>坑:<br/>
+<code>Pushing to http://gitlab.interotc.com/zzjs/demo.git<br/>
+remote: You are not allowed to push code to this project.<br/>
+fatal: unable to access &#39;http://gitlab.interotc.com/zzjs/demo.git/&#39;: The requested URL returned error: 403</code></p>
+
+<p>这是使用Sourcetree，在推送时的报错。暂时较忙，也没有启用https，在新建克隆时，把http的请求改成git的请求后，问题不在出现。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[折腾Docker安装]]></title>
+    <link href="https://dsencheng.github.io/16118025704485.html"/>
+    <updated>2021-01-28T10:56:10+08:00</updated>
+    <id>https://dsencheng.github.io/16118025704485.html</id>
+    <content type="html"><![CDATA[
+<h3 id="toc_0">一. 安装 Docker</h3>
+
+<p>下载 <a href="https://www.docker.com/products/docker-desktop">Docker Desktop</a> 按提示进行安装。</p>
+
+<p>安装完成后，打开<code>Docker Desktop</code>，选择<code>Preferences</code>，然后选择<code>Docker Engine</code>，加入下面国内镜像源，点击<code>Apply &amp; Restart</code>。</p>
+
+<pre><code class="language-text">{
+    &quot;registry-mirrors&quot;: [
+    &quot;https://docker.mirrors.ustc.edu.cn&quot;,
+    &quot;https://hub-mirror.c.163.com&quot;,
+    &quot;https://mirror.baidubce.com&quot;,
+    &quot;https://reg-mirror.qiniu.com&quot;,
+    &quot;https://mirror.ccs.tencentyun.com&quot;
+  ]
+}
+</code></pre>
+
+<h3 id="toc_1">二. 安装 Kubernetes(可选)</h3>
+
+<p><strong>注：如果是简单使用Docker，可跳过此步骤。</strong></p>
+
+<p>因为中国大陆网络限制的原因，直接<code>Enable Kubernetes</code>，会一直卡在<code>starting</code>的状态。</p>
+
+<span id="more"></span><!-- more -->
+
+<h5 id="toc_2">深坑：Kubernetes is starting</h5>
+
+<p><strong>参考：<a href="https://github.com/AliyunContainerService/k8s-for-docker-desktop">k8s-for-docker-desktop</a> 解决方案。</strong></p>
+
+<p>1、首先克隆仓库到本地。 <br/>
+2、终端打开<code>k8s-for-docker-desktop</code>目录，执行<code>./load_images.sh</code> 命令，等待完成。<br/>
+3、打开<code>Docker Desktop</code>，选择<code>Preferences</code>，打开左侧<code>Kubernetes</code>,勾选<code>Enable Kubernetes</code>,点击<code>Apply &amp; Restart</code>。等待完成。如果有弹窗，点击<code>Install</code>。</p>
+
+<h3 id="toc_3">一. 初步使用 Docker</h3>
+
+<p>1.搜索镜像<br/>
+<code>docker search 关键字</code><br/>
+示例</p>
+
+<pre><code class="language-text">&gt; docker search hello
+NAME                                       DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+hello-world                                Hello World! (an example of minimal Dockeriz…   1379      [OK]
+kitematic/hello-world-nginx                A light-weight nginx container that demonstr…   148
+tutum/hello-world                          Image to test docker deployments. Has Apache…   78                   [OK]
+nginxdemos/hello                           NGINX webserver that serves a simple page co…   65                   [OK]
+</code></pre>
+
+<p>2.拉取镜像<br/>
+<code>docker pull 关键字</code><br/>
+示例</p>
+
+<pre><code class="language-text">&gt; docker pull hello-world
+Using default tag: latest
+latest: Pulling from library/hello-world
+0e03bdcc26d7: Pull complete
+Digest: sha256:31b9c7d48790f0d8c50ab433d9c3b7e17666d6993084c002c2ff1ca09b96391d
+Status: Downloaded newer image for hello-world:latest
+docker.io/library/hello-world:latest
+</code></pre>
+
+<p>3.查看镜像<br/>
+<code>docker images</code> 或 <code>docker image ls</code><br/>
+示例</p>
+
+<pre><code class="language-text">&gt; docker images
+REPOSITORY         TAG           IMAGE ID       CREATED         SIZE
+jenkins/jenkins    latest        0d3e7552f52a   7 days ago      721MB
+gitlab/gitlab-ce   13.8.1-ce.0   404c168c204f   2 weeks ago     2.15GB
+nginx              latest        f6d0b4767a6c   4 weeks ago     133MB
+hello-world        latest        bf756fb1ae65   13 months ago   13.3kB
+</code></pre>
+
+<p>4.删除镜像<br/>
+<code>docker image rm 镜像ID或镜像名</code> 或 <code>docker rmi 镜像ID或镜像名</code><br/>
+示例</p>
+
+<pre><code class="language-text"># 删除镜像
+&gt; docker image rm hello-world
+Untagged: hello-world:latest
+Untagged: hello-world@sha256:31b9c7d48790f0d8c50ab433d9c3b7e17666d6993084c002c2ff1ca09b96391d
+Deleted: sha256:bf756fb1ae65adf866bd8c456593cd24beb6a0a061dedf42b26a993176745f6b
+Deleted: sha256:9c27e219663c25e0f28493790cc0b88bc973ba3b1686355f221c38a36978ac63
+# 查看镜像
+&gt; docker images
+REPOSITORY         TAG           IMAGE ID       CREATED       SIZE
+jenkins/jenkins    latest        0d3e7552f52a   7 days ago    721MB
+gitlab/gitlab-ce   13.8.1-ce.0   404c168c204f   2 weeks ago   2.15GB
+nginx              latest        f6d0b4767a6c   4 weeks ago   133MB
+# 拉取镜像
+&gt; docker pull hello-world
+Using default tag: latest
+latest: Pulling from library/hello-world
+0e03bdcc26d7: Pull complete
+Digest: sha256:31b9c7d48790f0d8c50ab433d9c3b7e17666d6993084c002c2ff1ca09b96391d
+Status: Downloaded newer image for hello-world:latest
+docker.io/library/hello-world:latest
+# 查看镜像
+&gt; docker images
+REPOSITORY         TAG           IMAGE ID       CREATED         SIZE
+jenkins/jenkins    latest        0d3e7552f52a   7 days ago      721MB
+gitlab/gitlab-ce   13.8.1-ce.0   404c168c204f   2 weeks ago     2.15GB
+nginx              latest        f6d0b4767a6c   4 weeks ago     133MB
+hello-world        latest        bf756fb1ae65   13 months ago   13.3kB
+# 删除镜像
+&gt; docker rmi bf756fb1ae65
+Untagged: hello-world:latest
+Untagged: hello-world@sha256:31b9c7d48790f0d8c50ab433d9c3b7e17666d6993084c002c2ff1ca09b96391d
+Deleted: sha256:bf756fb1ae65adf866bd8c456593cd24beb6a0a061dedf42b26a993176745f6b
+Deleted: sha256:9c27e219663c25e0f28493790cc0b88bc973ba3b1686355f221c38a36978ac63
+# 查看镜像
+&gt; docker images
+REPOSITORY         TAG           IMAGE ID       CREATED       SIZE
+jenkins/jenkins    latest        0d3e7552f52a   7 days ago    721MB
+gitlab/gitlab-ce   13.8.1-ce.0   404c168c204f   2 weeks ago   2.15GB
+nginx              latest        f6d0b4767a6c   4 weeks ago   133MB
+
+</code></pre>
+
+<p>5.删除重复的镜像<br/>
+<code>docker rmi 镜像名:TAG</code></p>
+
+<p>6.删除容器,删除之前需要停止容器，否则会报错</p>
+
+<pre><code class="language-text">&gt; docker rm gitlab                                                                                                                               
+Error response from daemon: You cannot remove a running container 381f7be56483d7ae3ee2362c3c7e4d041d6dc5e08c368de65807f383c253c3f2. Stop the container before attempting removal or force remove
+
+&gt; docker stop gitlab  
+gitlab
+
+</code></pre>
+
+<p>7.更新镜像<br/>
+先拉取最新镜像，完成后查看镜像，其中一个<code>TAG</code>为<code>&lt;none&gt;</code>，把这个镜像删除即可。<br/>
+如果有容器正在使用旧的镜像，删除是会报错的。需要先停止并删除容器，在删除镜像，使用新的镜像创建新的容器。</p>
+
+<p><strong>踩坑：</strong></p>
+
+<pre><code class="language-text"> &gt; docker search gitlab
+ Error response from daemon: Get https://index.docker.io/v1/search?q=gitlab&amp;n=25: net/http: TLS handshake timeout
+</code></pre>
+
+<blockquote>
+<p>如果已经配置<code>registry-mirrors</code>为国内镜像，仍然出现上面报错。尝试如下步骤:<strong>1.重启Docker 2.关闭终端 3.重新打开终端</strong>。</p>
+</blockquote>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[VSCode设置代理]]></title>
+    <link href="https://dsencheng.github.io/16061203734084.html"/>
+    <updated>2020-11-23T16:32:53+08:00</updated>
+    <id>https://dsencheng.github.io/16061203734084.html</id>
+    <content type="html"><![CDATA[
+<p>如果出现插件的安装，和包的下载，长时间处于loading的状态，说明某些服务已经被墙，无法访问。这是就需要添加代理，来正常使用。</p>
+
+<p>本机已有<code>v2ray</code>代理服务，或其他代理、翻墙服务。</p>
+
+<p>打开VSCode的<code>设置</code>，输入<code>代理</code>，找到<code>Http:Proxy</code>项，输入代理地址，例如<code>http://127.0.0.1:1087</code>。</p>
+
+<p>这里遇见一个坑，在设置完成后。比如安装好Flutter插件，很多服务依然无法访问。</p>
+
+<p>这时需要对<code>Http:Support</code>项做修改，默认应该是<code>override</code>，修改成<code>on</code>，退出VSCode，重启后插件的代理就生效了。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[文章收藏]]></title>
+    <link href="https://dsencheng.github.io/16004385011746.html"/>
+    <updated>2020-09-18T22:15:01+08:00</updated>
+    <id>https://dsencheng.github.io/16004385011746.html</id>
+    <content type="html"><![CDATA[
+<p><a href="https://juejin.im/post/6860260103791050760#heading-29">iOS 的自动构建流程</a></p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[使用Python写iOS Word文档]]></title>
@@ -841,13 +1584,71 @@ echo &quot;current version is ${VersionNumber}&quot;
 
 <span id="more"></span><!-- more -->
 
-<p>20200730更新<br/>
-经过几天的Jenkins折腾，借助管道，获取版本号的命令现在仅需要一行.<br/>
+<p>经过几天的Jenkins折腾，借助管道，获取版本号的命令现在仅需要一行.<br/>
 首先使用<code>grep</code>命令，读取文件内容并过滤到<code>s.version</code>这一行；然后使用<code>tr</code>命令去掉单引号、字母、空格、等号；最后使用<code>sed</code>命令，替换第一个点。</p>
 
 <pre><code class="language-text">grep -E &#39;s.version.*=&#39; xxx/xxx.podspec | tr -d &quot;&#39;a-z= &quot; | sed &quot;s/\.//1&quot;
 
 3.3.3
+</code></pre>
+
+<p>Jenkins iOS修改版本号脚本示例。<br/>
+iOS这里使用了不同的文件来区分环境，比较简单</p>
+
+<pre><code class="language-text">sed -i &#39;&#39; -e &quot;s/CFBundleVersion.*/CFBundleVersion=2.33/g&quot; dev.xcconfig
+</code></pre>
+
+<p>Jenkins安卓修改版本号脚本示例。<br/>
+安卓的不同环境是放在同一个文件里做区分，逻辑比较复杂。</p>
+
+<pre><code class="language-text">#获取关键字行数    
+rows=$(sed -n -e &#39;/isDev/=&#39; build.gradle)
+#获取替换行数差值
+di=$(grep -n -A 6 &#39;isDev{&#39; build.gradle | sed -n -e &#39;/versionCode/=&#39;)
+#计算指定行数 
+target=`expr $rows + $di - 1`
+#替换指定行的内容
+sed -n &quot;${target} s/versionCode .*/versionCode 99/p&quot; build.gradle
+</code></pre>
+
+<h4 id="toc_0">Sed命令</h4>
+
+<ul>
+<li><p>替换原始文件内容。<br/>
+Mac系统不可以直接使用<code>-i</code>，改成<code>-i &#39;&#39; -e</code>的组合方式。<br/>
+搜索<code>APP_Version</code>开头(包含)之后的任意字符,到换行符前。<br/>
+替换为<code>APP=88.88</code>。<br/>
+修改的文件<code>aa.txt</code>。批量替换可改为<code>*.txt</code>。</p>
+<pre><code class="language-text">sed -i &#39;&#39; -e &#39;s/APP_Version.*/APP=88.88/g&#39; aa.txt
+</code></pre></li>
+<li><p>打印匹配内容的行号</p>
+<pre><code class="language-text">sed -n -e &#39;/isPro/=&#39; build.gradle
+</code></pre></li>
+<li><p>正则截取/替换内容<br/>
+1.假设变量<code>branch=branches/v0.0.9E2</code>，输出<code>v0.0.9E2</code>。</p>
+<pre><code class="language-text">abc=`echo $branch | sed &#39;s/.*\///g&#39;`
+echo $abc
+</code></pre></li>
+</ul>
+
+<h4 id="toc_1">SCP命令</h4>
+
+<p>远程复制文件</p>
+
+<pre><code class="language-text">scp zzjs@172.16.77.210:~/Desktop/a.file ~/Desktop
+scp ~/Desktop/a.file zzjs@172.16.77.210:~/Desktop
+</code></pre>
+
+<h4 id="toc_2">TR命令</h4>
+
+<p>删除数字</p>
+
+<pre><code class="language-text">echo &quot;hello 123 world 45345&quot; |tr -d &#39;0-9&#39;
+</code></pre>
+
+<p>保留数子</p>
+
+<pre><code class="language-text">echo &quot;hello 123 world 45345&quot; |tr -dc  &#39;0-9&#39;
 </code></pre>
 
 ]]></content>
@@ -1005,7 +1806,7 @@ e. 点击 <code>Create repository</code> 按钮。</p>
 <pre><code class="language-text">pod repo add DCSpecs https://github.com/dsencheng/DCSpecs.git
 </code></pre>
 
-<p>3、执行成功后，可以进入目录查看 <code>~./cocoapods/repos/</code> ，是否有<code>DCSpecs</code>文件夹。</p>
+<p>3、执行成功后，可以进入目录查看 <code>~/.cocoapods/repos/</code> ，是否有<code>DCSpecs</code>文件夹。</p>
 
 <p>4、在<code>DCServices.podspec</code>文件目录，推送私有库。</p>
 
@@ -1032,879 +1833,6 @@ target “your_target_name”
 </code></pre>
 
 <p>打开终端在当前项目目录执行<code>pod install</code>完成!</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Cocoapods之私有库代码同步]]></title>
-    <link href="https://dsencheng.github.io/15747367843901.html"/>
-    <updated>2019-11-26T10:53:04+08:00</updated>
-    <id>https://dsencheng.github.io/15747367843901.html</id>
-    <content type="html"><![CDATA[
-<p>本文项目名<code>DCServices</code>,仓库为github。</p>
-
-<p>1、打开你的github主页，选择 <code>New repository</code> .</p>
-
-<blockquote>
-<p>a. <code>Repository name</code> 填写 <code>DCServices</code>。<br/>
-b. <code>Description</code> 可以不填写。<br/>
-c. 选择 <code>Private</code> 。<br/>
-d. 点击 <code>Create repository</code> 按钮。</p>
-
-<h6 id="toc_0">注:不需要勾选 <code>Initialize this repository with a README</code>。</h6>
-</blockquote>
-
-<span id="more"></span><!-- more -->
-
-<p>1.首次提交代码。之前已经创建好 <code>DCServices</code> 私有库，打开终端进入项目目录。</p>
-
-<pre><code class="language-text">~/GitHub/DCServices git add -A  
-~/GitHub/DCServices git commit -m &quot;首次提交&quot;                                                                                               
-[master 1b2baff] 首次提交
- 34 files changed, 1396 insertions(+), 4 deletions(-)
- create mode 100644 DCServices/Classes/DCTest.h
- create mode 100644 DCServices/Classes/DCTest.m
- ...
- ...
-create mode 100644 Example/Pods/Target Support Files/Pods-DCServices_Tests/Pods-DCServices_Tests.release.xcconfig
-~/GitHub/DCServices git tag 0.1.0                                                                                                              
-~/GitHub/DCServices git remote add origin https://github.com/dsencheng/DCServices.git                                                    
-~/GitHub/DCServices git push -u origin master --tag                                                                                           
-Enumerating objects: 86, done.
-Counting objects: 100% (86/86), done.
-Delta compression using up to 4 threads
-Compressing objects: 100% (77/77), done.
-Writing objects: 100% (86/86), 28.19 KiB | 1.23 MiB/s, done.
-Total 86 (delta 20), reused 0 (delta 0)
-remote: Resolving deltas: 100% (20/20), done.
-To https://github.com/dsencheng/DCServices.git
- * [new branch]      master -&gt; master
- * [new tag]         0.1.0 -&gt; 0.1.0
-Branch &#39;master&#39; set up to track remote branch &#39;master&#39; from &#39;origin&#39;.
-</code></pre>
-
-<p>2、这时刷新你的github项目主页,已经发生了变化。接下来创建一些其他文件，比如创建一个 <code>DCServerKit.h</code> 文件，文件路径 <code>...\DCServices\Classes\</code>。在.h文件里添加之前创建的测试文件 <code>#import &quot;DCTest.h&quot;</code>。</p>
-
-<p>3、打开终端，进入<code>Example</code> 目录，执行命令。</p>
-
-<pre><code class="language-text">~/GitHub/DCServices/Example pod install                                                                                              
-Analyzing dependencies
-Downloading dependencies
-Generating Pods project
-Integrating client project
-Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.
-</code></pre>
-
-<p>4、修改 <code>DCViewController.m</code> 文件，运行查看结果。</p>
-
-<pre><code class="language-text">#import &lt;DCTest.h&gt; 改为 #import &lt;DCServerKit.h&gt;
-</code></pre>
-
-<p>5、打开 <code>DCServices.podspec</code> 文件，增加版本号。版本号的作用，在Podfile文件中， <code>pod &#39;xxx&#39;, ~&gt; 2.1.0</code> 可以指定某个版本。</p>
-
-<pre><code class="language-text">s.version          = &#39;0.1.0&#39;
-修改位
-s.version          = &#39;0.1.1&#39;
-</code></pre>
-
-<p>6、执行 <code>pod lib lint</code> 验证库是否有错误或警告，并修复问题。</p>
-
-<p>7、同步代码，注意<code>git tag 0.1.1</code> 命令保持数字和 <code>s.version = &#39;0.1.1&#39;</code> 一致。</p>
-
-<pre><code class="language-text">~/GitHub/DCServices git add -A                                                                                                     
-~/GitHub/DCServices git commit -m &quot;0.1.1版本&quot;                                                                                         
-[master 29e9131] 0.1.1版本
- 5 files changed, 135 insertions(+), 116 deletions(-)
- create mode 100644 DCServices/Classes/DCServerKit.h
-~/GitHub/DCServices git tag 0.1.1                                                                                                           
-~/GitHub/DCServices git push origin master --tag                                                                                      
-Enumerating objects: 28, done.
-Counting objects: 100% (28/28), done.
-Delta compression using up to 4 threads
-Compressing objects: 100% (14/14), done.
-Writing objects: 100% (15/15), 2.58 KiB | 879.00 KiB/s, done.
-Total 15 (delta 9), reused 0 (delta 0)
-remote: Resolving deltas: 100% (9/9), completed with 9 local objects.
-To https://github.com/dsencheng/DCServices.git
-   1b2baff..29e9131  master -&gt; master
- * [new tag]         0.1.1 -&gt; 0.1.1
-</code></pre>
-
-<p>8、执行 <code>pod spec lint</code> 验证spec文件是否有错误，并修复问题。</p>
-
-<p>9、验证成功后，执行 <code>pod repo push DCSpecs DCServices.podspec</code> 向管理repo推送更新.</p>
-
-<p>踩坑指南<br/>
-1、如果你是私有库，通常都会报警告, 这个警告可以忽略。</p>
-
-<pre><code class="language-text">WARN  | url: The URL (https://github.com/dsencheng/DCServices) is not reachable.
-</code></pre>
-
-<p>比如 </p>
-
-<pre><code class="language-text">pod spec lint --allow-warnings
-pod repo push DCSpecs DCServices.podspec --allow-warnings
-</code></pre>
-
-<p>2、如果私有库中包含静态库，需要增加 <code>--use-libraries</code> 参数。 比如</p>
-
-<pre><code class="language-text">pod repo push DCSpecs DCServices.podspec --use-libraries --allow-warnings
-</code></pre>
-
-<p>3、如果私有库libA依赖私有库modelB，该如何解决呢？</p>
-
-<blockquote>
-<p>第一步，在 <code>Podfile</code> 中添加 <code>source</code></p>
-
-<pre><code class="language-text">source &#39;https://cdn.cocoapods.org/&#39;
-source &#39;https://github.com/dsencheng/DCSpecs.git&#39;
-</code></pre>
-
-<p>第二步，验证时也增加<code>source</code>, 参数 <code>--use-libraries</code>包含静态库，参数<code>--allow-warnings</code>忽略警告，参数<code>--verbose</code>输出详细信息。</p>
-
-<pre><code class="language-text">pod lib lint --sources=https://github.com/dsencheng/DCSpecs.git,https://cdn.cocoapods.org/ --use-libraries --allow-warnings --verbose
-</code></pre>
-</blockquote>
-
-<p>4、强制推送 <code>--force</code></p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Cocoapods之创建私有库]]></title>
-    <link href="https://dsencheng.github.io/15747347938087.html"/>
-    <updated>2019-11-26T10:19:53+08:00</updated>
-    <id>https://dsencheng.github.io/15747347938087.html</id>
-    <content type="html"><![CDATA[
-<p>本文以创建名为&quot;DCServices&quot;的私有库为例。<br/>
-1.打开任意终端工具，进入你的工作目录，输入命令 <code>pod lib create DCServices</code>，按照提示回答问题，即可完成lib项目的创建工作。</p>
-
-<span id="more"></span><!-- more -->
-
-<pre><code class="language-text">~/GitHub pod lib create DCServices                                                                                                                         
-Cloning `https://github.com/CocoaPods/pod-template.git` into `DCServices`.
-Configuring DCServices template.
-
-------------------------------
-
-To get you started we need to ask a few questions, this should only take a minute.
-
-If this is your first time we recommend running through with the guide:
- - https://guides.cocoapods.org/making/using-pod-lib-create.html
- ( hold cmd and click links to open in a browser. )
-
-
-What platform do you want to use?? [ iOS / macOS ]
- &gt; ios
-
-What language do you want to use?? [ Swift / ObjC ]
- &gt; objc
-
-Would you like to include a demo application with your library? [ Yes / No ]
- &gt; yes
-
-Which testing frameworks will you use? [ Specta / Kiwi / None ]
- &gt; none
-
-Would you like to do view based testing? [ Yes / No ]
- &gt; no
-
-What is your class prefix?
- &gt; DC
-
-Running pod install on your new library.
-
-Analyzing dependencies
-Downloading dependencies
-Installing DCServices (0.1.0)
-Generating Pods project
-Integrating client project
-
-[!] Please close any current Xcode sessions and use `DCServices.xcworkspace` for this project from now on.
-Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.
-
- Ace! you&#39;re ready to go!
- We will start you off by opening your project in Xcode
-  open &#39;DCServices/Example/DCServices.xcworkspace&#39;
-
-To learn more about the template see `https://github.com/CocoaPods/pod-template.git`.
-To learn more about creating a new pod, see `https://guides.cocoapods.org/making/making-a-cocoapod`.
-</code></pre>
-
-<p>2、创建完成后会自动打开Xcode工程，依次展开左侧列表 <code>Pods</code> &gt; <code>Development Pods</code> &gt; <code>DCServices</code> ,找到 <code>ReplaceMe.m</code> 文件后删除它。</p>
-
-<p>3、在 <code>DCServices</code> 中创建名为 <code>DCTest</code> 的.h和.m文件，存放路径选择 <code>...\DCServices\Classes\</code> ，完成后添加测试方法。</p>
-
-<pre><code class="language-text">DCTest.h 文件
----
-@interface DCTest : NSObject
-
-- (void)test;
-
-@end
-
-DCTest.m 文件
---
-@implementation DCTest
-
--(void)test {
-    NSLog(@&quot;test&quot;);
-}
-
-@end
-
-</code></pre>
-
-<p>4、 回到终端，进入 <code>DCServices/Example</code> , 执行 <code>pod install</code>。</p>
-
-<pre><code class="language-text">~/GitHub cd DCServices/Example                                                                                                                                  
-~/GitHub/DCServices/Example pod install                                                                                                       
-Analyzing dependencies
-Downloading dependencies
-Generating Pods project
-Integrating client project
-Pod installation complete! There is 1 dependency from the Podfile and 1 total pod installed.
-</code></pre>
-
-<p>5、打开 <code>Example for DCServices</code> 中的 <code>DCViewController.m</code> 文件，导入<code>DCTest.h</code>,并使用测试方法。</p>
-
-<pre><code class="language-text">#import &quot;DCViewController.h&quot;
-#import &lt;DCTest.h&gt;
-
-@interface DCViewController ()
-
-@end
-
-@implementation DCViewController
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    // Do any additional setup after loading the view, typically from a nib.
-    DCTest *obj = [DCTest new];
-    [obj test];
-}
-
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
-
-@end
-</code></pre>
-
-<p>6、选择模拟器或真机运行，Console窗口中输出 &#39;test&#39;，到此项目创建完成。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Xcode问题]]></title>
-    <link href="https://dsencheng.github.io/15744090741838.html"/>
-    <updated>2019-11-22T15:51:14+08:00</updated>
-    <id>https://dsencheng.github.io/15744090741838.html</id>
-    <content type="html"><![CDATA[
-<p>1.Xcode 11创建Category文件时，会添加 <code>#import &lt;Appkit/Appkit.h&gt;</code>，导致项目编译出错。</p>
-
-<pre><code class="language-text">解决办法：打开目录 `/Applications/Xcode.app/Contents/Developer/Library/Xcode/Templates/File Templates/Source/Objective-C File.xctemplate/CategoryNSObject`， 
-把.h.m文件复制出来，打开文件，删除对应的代码，然后替换源文件。这样下次创建Category文件时，就不会在出现`#import &lt;Appkit/Appkit.h&gt;`了。
-</code></pre>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[(转自 秋水逸冰)一键配置SS + BBR]]></title>
-    <link href="https://dsencheng.github.io/15687070926620.html"/>
-    <updated>2019-09-17T15:58:12+08:00</updated>
-    <id>https://dsencheng.github.io/15687070926620.html</id>
-    <content type="html"><![CDATA[
-<p>本文转载自：<a href="https://teddysun.com/486.html">https://teddysun.com/486.html</a></p>
-
-<h2 id="toc_0">本脚本适用环境</h2>
-
-<p>系统支持：CentOS 6+，Debian 7+，Ubuntu 12+<br/>
-内存要求：≥128M</p>
-
-<h2 id="toc_1">关于本脚本</h2>
-
-<p>1、一键安装 Shadowsocks-Python， ShadowsocksR， Shadowsocks-Go， Shadowsocks-libev 版（四选一）服务端；<br/>
-2、各版本的启动脚本及配置文件名不再重合；<br/>
-<span id="more"></span><!-- more --></p>
-
-<p>3、每次运行可安装一种版本；<br/>
-4、支持以多次运行来安装多个版本，且各个版本可以共存（注意端口号需设成不同）；<br/>
-5、若已安装多个版本，则卸载时也需多次运行（每次卸载一种）；</p>
-
-<h2 id="toc_2">默认配置</h2>
-
-<p>服务器端口：自己设定（如不设定，默认从 9000-19999 之间随机生成）<br/>
-密码：自己设定（如不设定，默认为 teddysun.com）<br/>
-加密方式：自己设定（如不设定，Python 和 libev 版默认为 aes-256-gcm，R 和 Go 版默认为 aes-256-cfb）<br/>
-协议（protocol）：自己设定（如不设定，默认为 origin）（仅限 ShadowsocksR 版）<br/>
-混淆（obfs）：自己设定（如不设定，默认为 plain）（仅限 ShadowsocksR 版）<br/>
-备注：脚本默认创建单用户配置文件，如需配置多用户，请手动修改相应的配置文件后重启即可。</p>
-
-<h2 id="toc_3">客户端下载</h2>
-
-<p>常规版 Windows 客户端<br/>
-<a href="https://github.com/shadowsocks/shadowsocks-windows/releases">https://github.com/shadowsocks/shadowsocks-windows/releases</a></p>
-
-<p>ShadowsocksR 版 Windows 客户端<br/>
-<a href="https://github.com/shadowsocksrr/shadowsocksr-csharp/releases">https://github.com/shadowsocksrr/shadowsocksr-csharp/releases</a></p>
-
-<h2 id="toc_4">使用方法</h2>
-
-<p>使用root用户登录，依次运行以下命令：</p>
-
-<pre><code class="language-text">$ wget --no-check-certificate -O shadowsocks-all.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks-all.sh
-$ chmod +x shadowsocks-all.sh
-$ ./shadowsocks-all.sh 2&gt;&amp;1 | tee shadowsocks-all.log
-</code></pre>
-
-<p>安装完成后，脚本提示如下</p>
-
-<pre><code class="language-text">Congratulations, your_shadowsocks_version install completed!
-Your Server IP        :your_server_ip
-Your Server Port      :your_server_port
-Your Password         :your_password
-Your Encryption Method:your_encryption_method
-
-Your QR Code: (For Shadowsocks Windows, OSX, Android and iOS clients)
- ss://your_encryption_method:your_password@your_server_ip:your_server_port
-Your QR Code has been saved as a PNG file path:
- your_path.png
-
-Welcome to visit:https://teddysun.com/486.html
-Enjoy it!
-</code></pre>
-
-<h2 id="toc_5">卸载方法</h2>
-
-<p>若已安装多个版本，则卸载时也需多次运行（每次卸载一种）<br/>
-使用root用户登录，运行以下命令：</p>
-
-<pre><code class="language-text">./shadowsocks-all.sh uninstall
-</code></pre>
-
-<h2 id="toc_6">启动脚本</h2>
-
-<p>启动脚本后面的参数含义，从左至右依次为：启动，停止，重启，查看状态。</p>
-
-<pre><code class="language-text">Shadowsocks-Python 版：
-/etc/init.d/shadowsocks-python start | stop | restart | status
-
-ShadowsocksR 版：
-/etc/init.d/shadowsocks-r start | stop | restart | status
-
-Shadowsocks-Go 版：
-/etc/init.d/shadowsocks-go start | stop | restart | status
-
-Shadowsocks-libev 版：
-/etc/init.d/shadowsocks-libev start | stop | restart | status
-
-</code></pre>
-
-<h2 id="toc_7">各版本默认配置文件</h2>
-
-<pre><code class="language-text">Shadowsocks-Python 版：
-/etc/shadowsocks-python/config.json
-
-ShadowsocksR 版：
-/etc/shadowsocks-r/config.json
-
-Shadowsocks-Go 版：
-/etc/shadowsocks-go/config.json
-
-Shadowsocks-libev 版：
-/etc/shadowsocks-libev/config.json
-
-</code></pre>
-
-<h2 id="toc_8">BBR plus</h2>
-
-<pre><code class="language-text">wget &quot;https://github.com/chiakge/Linux-NetSpeed/raw/master/tcp.sh&quot; &amp;&amp; chmod +x tcp.sh &amp;&amp; ./tcp.sh 
-</code></pre>
-
-<h1 id="toc_9">BBR</h1>
-
-<h2 id="toc_10">使用BBR加速器</h2>
-
-<p>让访问速度加速，飞起来！使用 BBR 加速工具。</p>
-
-<h2 id="toc_11">安装 BBR</h2>
-
-<pre><code class="language-text">wget --no-check-certificate https://github.com/teddysun/across/raw/master/bbr.sh
-</code></pre>
-
-<h2 id="toc_12">获取读写权限</h2>
-
-<pre><code class="language-text">chmod +x bbr.sh
-</code></pre>
-
-<h2 id="toc_13">启动BBR安装</h2>
-
-<pre><code class="language-text">./bbr.sh
-</code></pre>
-
-<p>接着按任意键，开始安装，坐等一会。安装完成一会之后它会提示我们是否重新启动vps，我们输入 y 确定重启服务器。</p>
-
-<p>重新启动之后，输入 lsmod | grep bbr 如果看到 tcp_bbr 就说明 BBR 已经启动了。</p>
-
-<p>再访问一下 Youtube，1080p 超高清，很顺畅不卡顿！</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Fastlane]]></title>
-    <link href="https://dsencheng.github.io/15682807277815.html"/>
-    <updated>2019-09-12T17:32:07+08:00</updated>
-    <id>https://dsencheng.github.io/15682807277815.html</id>
-    <content type="html"><![CDATA[
-<p><a href="https://docs.fastlane.tools/"><strong>Fastlane官方文档</strong></a></p>
-
-<p>1、安装</p>
-
-<pre><code class="language-text">sudo gem install fastlane -NV
-
-错误-1: 
-You don&#39;t have write permissions into the /usr/bin directory.
-解法方法：
-sudo gem install fastlane -n /usr/local/bin
-</code></pre>
-
-<span id="more"></span><!-- more -->
-
-<p>2、初始化,根据情况选择。可以选择自定义，稍后自己编辑文件。</p>
-
-<pre><code class="language-text">fastlane init
-</code></pre>
-
-<p>3、执行</p>
-
-<pre><code class="language-text">fastlane custom
-
-fastlane有多种执行方式，可以直接使用actions，custom是自定义的lane
-</code></pre>
-
-<h4 id="toc_0">Fastlane文件示例</h4>
-
-<p><strong>Appfile</strong> </p>
-
-<pre><code class="language-text">app_identifier &quot;com.xxx.opensdk&quot; 
-apple_id &quot;dsencheng@gmail.com&quot; 
-team_id &quot;xxxxxxxx&quot;
-
-</code></pre>
-
-<p><strong>Fastfile</strong>  <a href="https://docs.fastlane.tools/actions/">文档链接</a></p>
-
-<pre><code class="language-text">default_platform(:ios)
-
-platform :ios do
-  desc &quot;fastlane 打包测试&quot;
-  lane :AppStore do
-    cocoapods
-    increment_build_number
-    scan
-    gym
-    deliver
-    testflight
-  end
-end
-</code></pre>
-
-<h4 id="toc_1">插件</h4>
-
-<pre><code class="language-text">蒲公英fastlane插件
-fastlane add_plugin pgyer
-
-Facebook测试脚本
-brew install xctool
-</code></pre>
-
-<p>参考文章<br/>
-<a href="https://juejin.im/post/5a7b10bb6fb9a0636263bfd5#heading-14">iOS 持续交付之 Fastlane</a><br/>
-<a href="https://www.pgyer.com/doc/view/fastlane">使用 Fastlane 上传 App 到蒲公英</a></p>
-
-<h5 id="toc_2">问题记录</h5>
-
-<pre><code class="language-text">increment_build_number 报错
-</code></pre>
-
-<blockquote>
-<p>解决方法: build settings &gt; Current project version 设置为整数</p>
-</blockquote>
-<br>
-<hr/>
-
-<pre><code class="language-text">$ bundle exec fastlane beta update_description:&quot;大多数更新说明文字描述&quot;
-
-[!] Could not find action, lane or variable &#39;option&#39;. Check out the documentation for more details: https://docs.fastlane.tools/actions
-</code></pre>
-
-<blockquote>
-<p>这个问题很广泛，解决方法也不同。</p>
-
-<h5 id="toc_3">情况一,不熟悉<code>Ruby</code>语法。</h5>
-
-<p>执行<code>fastlane</code>时，需要传递更新说明参数，但编写<code>Fastfile</code>时丢失参数<code>option</code>，导致报错。</p>
-
-<pre><code class="language-text"># 示例
-default_platform(:ios)
-
-platform :ios do
-  desc &quot;打包测试&quot;
-  # lane :beta do 
-  # 这里需要补代码 |options| ，默认是没有的
-  lane :beta do |options|
-    #更新说明
-    update_description = option[:update_description]
-  end
-end
-</code></pre>
-</blockquote>
-
-<hr/>
-
-<p>20200630更新</p>
-
-<p><strong>Xcode管理Provisioning Profile文件，打包上传到蒲公英后，出现部分设备下载后黑色图标，点击提示‘无法安装’。</strong></p>
-
-<blockquote>
-<p>增加打包参数 <code>export_xcargs: &quot;-allowProvisioningUpdates&quot;</code><br/>
-<a href="https://docs.fastlane.tools/codesigning/xcode-project/">fastlane文档链接</a></p>
-
-<pre><code class="language-text"># 示例
-platform :ios do
-  desc &quot;Description of what the lane does&quot;
-  lane :sdkdemo do
-  desc &quot;开始打包&quot;
-  gym(
-    scheme: &quot;SDKDemo&quot;,
-    output_name: &quot;SDKDemo.ipa&quot;,
-    clean: true,
-    export_method: &quot;ad-hoc&quot;,
-    export_xcargs: &quot;-allowProvisioningUpdates&quot;,
-    )
-  desc &quot;上传到蒲公英&quot;
-  pgyer(api_key: &quot;xxx&quot;, user_key: &quot;xxx&quot;)
-  end
-end
-</code></pre>
-</blockquote>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[expect 中处理重定向]]></title>
-    <link href="https://dsencheng.github.io/15682637412780.html"/>
-    <updated>2019-09-12T12:49:01+08:00</updated>
-    <id>https://dsencheng.github.io/15682637412780.html</id>
-    <content type="html"><![CDATA[
-<p>先说结果，下面这个expect脚本会执行错误，其原因是spawn不能响应Linux中的重定向，也就 <strong>2&gt;&amp;1</strong> 这个部分。</p>
-
-<pre><code class="language-text">  #!/usr/bin/expect -f
-  spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log   //执行错误
-</code></pre>
-
-<p>通过Google在Stack Overflow上找到了解决方法。修改如下：</p>
-
-<pre><code class="language-text">  #!/usr/bin/expect -f
-  spawn bash -c &quot;./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log&quot;
-</code></pre>
-
-<p><a href="https://stackoverflow.com/questions/41046258/bash-command-redirection-in-expect-script-failing-with-permission-denied-spawn">原址链接</a></p>
-
-<span id="more"></span><!-- more -->
-
-<p>——————————————————————————</p>
-
-<h2 id="toc_0">下面是啰嗦，可以不看。</h2>
-
-<p>在vps上安装ss(翻墙)时，使用root用户登录，运行以下命令：</p>
-
-<pre><code class="language-text">  wget --no-check-certificate -O shadowsocks.sh https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
-  chmod +x shadowsocks.sh
-  ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
-</code></pre>
-
-<p>在ssh登录时，网上抄了一份expect脚本来自动登录，例如：</p>
-
-<h4 id="toc_1">注1：如果你想使用，请不要照抄，很可能执行失败</h4>
-
-<pre><code class="language-text">  #!/usr/bin/expect -f
-  set user 用户名
-  set host IP地址
-  set password 密码
-
-  spawn ssh $user@$host
-  expect {
-      &quot;yes/no&quot; {
-          send &quot;yes\r&quot;
-          exp_continue
-        }
-      &quot;password:&quot; {
-        send &quot;$password\r&quot; 
-      }
-  }
- interact
-</code></pre>
-
-<p>之后就想安装ss的3条命令，也可以这样执行啊，然后自己就写了一个expect脚本，保存为   <strong><em>ss.exp</em></strong>  </p>
-
-<h4 id="toc_2">注2：如果你想使用，请不要照抄，很可能执行失败</h4>
-
-<pre><code class="language-text">#!/usr/bin/expect -f
-set timeout -1
-spawn wget --no-check-certificate  https://raw.githubusercontent.com/teddysun/shadowsocks_install/master/shadowsocks.sh
-
-expect &quot;#&quot;
-spawn chmod +x shadowsocks.sh
-expect &quot;#&quot;
-spawn ./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
-
-
-expect {
-    &quot;*Default password*&quot; {
-        send &quot;\n&quot;
-        exp_continue
-    }
-    &quot;*Default port*&quot; {
-        send &quot;\n&quot;
-        exp_continue
-    }
-    &quot;*Which cipher you&#39;d select*&quot; {
-        send &quot;7\n&quot;
-        exp_continue
-    }
-    &quot;*Press any key to start*&quot; {
-        send &quot;\n&quot;
-        exp_continue
-    }
-    &quot;#&quot; {
-        send &quot;\r&quot;
-    }
-}
-interact
-</code></pre>
-
-<p>好，写完了，上传到vps上，同样用expect写的上传脚本</p>
-
-<pre><code class="language-text">#!/usr/bin/expect -f
-set pwd 密码
-
-spawn scp 本地文件名 访问地址的用户名@IP地址:/目录
-#例：spawn scp ss.exp root@127.0.0.1:/root
-expect &quot;password*&quot;
-send &quot;$pwd\r&quot;
-
-interact
-</code></pre>
-
-<p>Linux执行安装expect的命令</p>
-
-<pre><code class="language-text">sudo apt-get install expect
-</code></pre>
-
-<p>安装完成后，执行命令</p>
-
-<pre><code class="language-text">expect ss.exp //这是刚刚上传的文件
-</code></pre>
-
-<p>报错，会提示</p>
-
-<blockquote>
-<p>shadowsocks.sh argument error 什么的,懒得补错误提示了。</p>
-</blockquote>
-
-<p>找了好久，才发现</p>
-
-<pre><code class="language-text">./shadowsocks.sh 2&gt;&amp;1 | tee shadowsocks.log
-</code></pre>
-
-<p>原来这个命令中的 <strong>2&gt;&amp;1</strong> ，叫重定向，而expect好像不支持Linux中的重定向。<br/>
-经过2天的Google后终于找到了文章开头的处理方法。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Mac设置多个SSH]]></title>
-    <link href="https://dsencheng.github.io/15682636653993.html"/>
-    <updated>2019-09-12T12:47:45+08:00</updated>
-    <id>https://dsencheng.github.io/15682636653993.html</id>
-    <content type="html"><![CDATA[
-<h5 id="toc_0">1.前因</h5>
-
-<p>个人常用github，公司使用gitee，为了不同环境的使用方便。下文以这两个网站示例设置多个SSH。</p>
-
-<h5 id="toc_1">2.生成SSH公钥私钥</h5>
-
-<pre><code class="language-text">//1.进入ssh目录
-$ cd ~/.ssh 
-//2.创建公私钥，输入对应gitee、github邮箱
-$ ssh-keygen -t rsa -C &quot;youremail@email.com&quot; 
-Generating public/private rsa key pair.
-//3.输入区分名字,例如 github_id_rsa 、 gitee_rsa
-Enter file in which to save the key (/Users/dsen/.ssh/id_rsa):github_id_rsa
-//4.设置密码，我这里为了方便，没有使用密码，直接按回车enter,
-Enter passphrase (empty for no passphrase):
-Enter same passphrase again:
-Your identification has been saved in github_id_rsa.
-Your public key has been saved in github_id_rsa.pub.
-The key fingerprint is:
-SHA256:mvlMQCBQqa1TQjtSduYPIqJbxRJidpqAwj9bR5KQ02E youremail@email.com
-The key&#39;s randomart image is:
-+---[RSA 2048]----+
-|+ooo=Eo          |
-|====+= .         |
-|****. +          |
-|*==o=o .         |
-|+=.++oo S        |
-|+ ..  .=         |
-| +    + .        |
-|.      +         |
-|        o        |
-+----[SHA256]-----+
-
-</code></pre>
-
-<span id="more"></span><!-- more -->
-
-<h5 id="toc_2">3.创建config文件</h5>
-
-<p>在 <code>~/.ssh</code> 目录创建一个<code>config</code>文件</p>
-
-<pre><code class="language-text">vim config
-或
-touch config
-</code></pre>
-
-<h5 id="toc_3">4.config文件写入内容</h5>
-
-<pre><code class="language-text"># github
-  Host github.com
-  HostName github.com
-# github对应的email或者用户名
-  User xxxxx@gmail.com
-  PreferredAuthentications publickey
-# github对应的私钥完整路径,没有pub后缀
-  IdentityFile ~/.ssh/github_id_rsa
-
-# gitee
-  Host gitee.com
-# gitee对应的email
-  User xxxx@163.com
-  PreferredAuthentications publickey
-# gitee对应的私钥完整路径,没有pub后缀
-  IdentityFile ~/.ssh/gitee_id_rsa
-</code></pre>
-
-<h5 id="toc_4">5.配置网站SSH公钥</h5>
-
-<p>a.打开网址，填写公钥标题，用来识别。<br/>
-<a href="https://github.com/settings/keys">https://github.com/settings/keys</a><br/>
-<a href="https://gitee.com/profile/sshkeys">https://gitee.com/profile/sshkeys</a><br/>
-b.填写公钥内容。</p>
-
-<pre><code class="language-text">//查看公钥，把输出的内容全部填入的网站SSH公钥内容中，ssh-rsa开头，email结尾。
-$ cat github_id_rsa.pub
-ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDTa570Bo0BptLJKbXxVrMfe7xv6I9dFY7GTh7LQcaaYe9G7miT0HuX+PS1eu4qmYAeY7HmEsHFGOfOkcq+d5CYYLabUFCuW0BtQEgniQuUr9Aumr9R6nhUbyQ+ldFAUkOqmxP3upUSPbilCzfQ2hBpAik2zZ2yeiDTBKXXq5HU1c4W9c3pbTetUYr36QgfBo6XuK8zlt24DwNmjplOasUhiejK68KVBgmsPuIeU71b8aZcdn9oTF0BIjapLQ0n4F180Oexp0PHvojN8k13oglgkb+ljtrPa8tPbb4xd+j0gr3DM8aG+kF704yuTKwKlVIARZpbgdzc4SSaH0+zr4yN youremail@email.com
-</code></pre>
-
-<h5 id="toc_5">6. 测试</h5>
-
-<pre><code class="language-text">ssh -T git@github.com
-//成功
-Hi xxx! You&#39;ve successfully authenticated, but GitHub does not provide shell access.
-
-ssh -T git@gitee.com       
-//成功                                                                                                                       
-Hi xxx! You&#39;ve successfully authenticated, but GITEE.COM does not provide shell access.
-</code></pre>
-
-<h5 id="toc_6">7.错误</h5>
-
-<pre><code class="language-text">$ ssh -T git@gitee.com
-Permission denied, please try again
-</code></pre>
-
-<blockquote>
-<ol>
-<li>检查命令、config文件是否拼写错误。2.检查网站是否配置公钥。3.若<code>~/.ssh</code>目录存在<code>known_hosts</code>文件，打开 <code>known_hosts</code> ,删除对应的ip、网址记录。</li>
-</ol>
-</blockquote>
-
-<pre><code class="language-text">WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!
-</code></pre>
-
-<blockquote>
-<p>ssh-keygen -R &quot;you server hostname or ip&quot;</p>
-</blockquote>
-
-<h5 id="toc_7">参考链接：</h5>
-
-<p><a href="https://juejin.im/post/5bf6092a6fb9a04a0279fb6a">Mac生成多个ssh并配置不同域名</a></p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Mac 终端 terminal 命令行 iTerm2 访问外网]]></title>
-    <link href="https://dsencheng.github.io/15682635419676.html"/>
-    <updated>2019-09-12T12:45:41+08:00</updated>
-    <id>https://dsencheng.github.io/15682635419676.html</id>
-    <content type="html"><![CDATA[
-<h5 id="toc_0">此文不含 Shadowsocks 配置。</h5>
-
-<p>Mac下常用访问外网软件是小飞机，即Shadowsocks。<br/>
-配置完成后，打开网页就可以访问google等网站。<br/>
-作为一个码农，经常使用termainl、iterm2等终端工具访问外网，更新包等操作，这时就无法直接访问外网了。</p>
-
-<p>下面就是如何在终端内使用Shadowsocks的访问外网操作。</p>
-
-<h6 id="toc_1">点击小飞机 -- 复制终端代理命令，或直接使用下面的命令。</h6>
-
-<p><code>export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;</code></p>
-
-<h6 id="toc_2">此命令仅当前终端窗口有效。比如iTerm可以多开窗口，其他窗口不会生效。</h6>
-
-<span id="more"></span><!-- more -->
-
-<p>如果你需要一直有效，可以参考以下链接<br/>
-<a href="%5Bhttps://kerminate.me/2018/10/22/mac-%E7%BB%88%E7%AB%AF%E5%AE%9E%E7%8E%B0%E7%BF%BB%E5%A2%99/%5D(https://kerminate.me/2018/10/22/mac-%E7%BB%88%E7%AB%AF%E5%AE%9E%E7%8E%B0%E7%BF%BB%E5%A2%99/)">mac 终端实现翻墙</a><br/>
-<a href="%5Bhttps://segmentfault.com/a/1190000016126554%5D(https://segmentfault.com/a/1190000016126554)">Mac命令行终端下使用shadowsocks翻墙</a></p>
-
-<pre><code class="language-text">$ curl cip.cc                                                     
-IP  : 122.14.xx.xx
-地址  : 中国  北京
-运营商 : rhtd.net
-
-数据二 : 北京市 | 北京融合通达网络科技有限公司
-
-数据三 : 中国北京北京市 | 联通
-
-URL : http://www.cip.cc/122.14.xx.xx
-
-$ export http_proxy=http://127.0.0.1:1087;export https_proxy=http://127.0.0.1:1087;
-
-$ curl cip.cc                                                     
-IP  : 66.112.xx.xx
-地址  : 美国  加利福尼亚州  洛杉矶
-运营商 : it7.net
-
-数据二 : 美国
-
-数据三 : 美国加利福尼亚洛杉矶
-
-URL : http://www.cip.cc/66.112.xx.xx
-</code></pre>
 
 ]]></content>
   </entry>
