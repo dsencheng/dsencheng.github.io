@@ -4,7 +4,7 @@
   <title><![CDATA[Dsen]]></title>
   <link href="https://dsencheng.github.io/atom.xml" rel="self"/>
   <link href="https://dsencheng.github.io/"/>
-  <updated>2021-03-01T16:51:08+08:00</updated>
+  <updated>2021-03-02T08:43:11+08:00</updated>
   <id>https://dsencheng.github.io/</id>
   <author>
     <name><![CDATA[]]></name>
@@ -1160,7 +1160,7 @@ def writeToWord(sourcePath,outPath):
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[Jenkins 配置]]></title>
+    <title type="html"><![CDATA[Jenkins 配置之读取PodVersion版本号并修改]]></title>
     <link href="https://dsencheng.github.io/15960887152430.html"/>
     <updated>2020-07-30T13:58:35+08:00</updated>
     <id>https://dsencheng.github.io/15960887152430.html</id>
@@ -1400,7 +1400,7 @@ chromium-browser --proxy-server=&quot;https=socks5://127.0.0.1:1080;http=socks5:
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[树莓派环境安装]]></title>
+    <title type="html"><![CDATA[[转]树莓派环境安装]]></title>
     <link href="https://dsencheng.github.io/15936592764846.html"/>
     <updated>2020-07-02T11:07:56+08:00</updated>
     <id>https://dsencheng.github.io/15936592764846.html</id>
@@ -1411,7 +1411,7 @@ chromium-browser --proxy-server=&quot;https=socks5://127.0.0.1:1080;http=socks5:
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[FRP 笔记]]></title>
+    <title type="html"><![CDATA[树莓派之 FRP 笔记]]></title>
     <link href="https://dsencheng.github.io/15934342416600.html"/>
     <updated>2020-06-29T20:37:21+08:00</updated>
     <id>https://dsencheng.github.io/15934342416600.html</id>
