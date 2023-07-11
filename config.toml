@@ -1,8 +1,8 @@
-baseURL = "https://example.com"
-title = "Your title"
+baseURL = "https://dsencheng.github.io"
+title = "Dsen's Blog"
 themesDir = "../.."
 theme = "m10c"
-paginate = 8
+paginate = 10
 
 [menu]
   [[menu.main]]
