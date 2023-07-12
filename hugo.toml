@@ -1,24 +1,20 @@
 baseURL = 'http://dsencheng.github.io/'
-languageCode = 'en-us'
+languageCode = 'CN'
 title = "Dsen's Blog"
-theme = "m10c"
+theme = "LoveIt"
 paginate = 10
 
-[params]
-  author = "Dsen Cheng"
-  description = "技术复读机."
-  menu_item_separator = " - "
-  avatar = "/images/IMG_2078.JPG"
-  [[params.social]]
-    icon = "github"
-    name = "Github"
-    url = "https://github.com/dsencheng"
+[author]
+  name = "Dsen Cheng"
+  #description = "技术复读机."
+  #menu_item_separator = " - "
+  #avatar = "/images/IMG_2078.JPG"
 
 [menu]
   [[menu.main]]
     identifier = "home"
-    name = "主页"
-    url = "/"
+    name = "所有文章"
+    url = "/posts/"
     weight = 1
   [[menu.main]]
     identifier = "tags"
@@ -30,3 +26,57 @@ paginate = 10
     name = "关于"
     url = "/about/"
     weight = 3
+
+# 页面头部导航栏标题配置
+[params.header.title]
+    # title name
+    # 标题名称
+    name = ""
+
+# 主页个人信息
+[params.home.profile]
+    
+    # URL of avatar shown in home page
+    # 主页显示头像的 URL
+    avatarURL = "/images/IMG_2078.JPG"
+    # title shown in home page (HTML format is supported)
+    # 主页显示的网站标题 (支持 HTML 格式)
+    title = ""
+    # subtitle shown in home page (HTML format is supported)
+    # 主页显示的网站副标题 (允许 HTML 格式)
+    subtitle = "使用Hugo + GitHub + LoveIt 构建"
+
+[params.social]
+  [params.social.Github]
+    # weight when arranging icons (the greater the weight, the later the icon is positioned)
+    weight = 0
+    # your social ID
+    id = "dsencheng"
+    # prefix of your social link
+    prefix = "https://github.com/"
+    # content hovering on the icon
+    title = "Github"
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+
+[params.search]
+  enable = true
+  # type of search engine ["lunr", "algolia"]
+  type = "lunr"
+  # max index length of the chunked content
+  contentLength = 4000
+  # placeholder of the search bar
+  placeholder = ""
+  #  max number of results length
+  maxResultLength = 10
+  #  snippet length of the result
+  snippetLength = 30
+  #  HTML tag name of the highlight part in results
+  highlightTag = "em"
+  #  whether to use the absolute URL based on the baseURL in search index
+  absoluteURL = false
+  [params.search.algolia]
+    index = ""
+    appID = ""
+    searchKey = ""
