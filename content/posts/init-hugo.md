@@ -41,10 +41,12 @@ echo "theme = 'ananke'" >> hugo.toml
 hugo server
 ```
 
-`hugo`启动成功后湖出现
+`hugo`启动成功后提示，端口号会发生变化，不一定是1313
 
-`Web Server is available at http://localhost:1313/ (bind address 127.0.0.1)`
-`Press Ctrl+C to stop`
+```
+Web Server is available at http://localhost:1313/ (bind address 127.0.0.1)
+Press Ctrl+C to stop
+```
 
 然后打开`http://localhost:1313/`，就可以预览网页了。
 
