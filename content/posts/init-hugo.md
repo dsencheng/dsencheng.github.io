@@ -1,6 +1,7 @@
 ---
 title: "使用Hugo和GitHub Page制作个人博客"
 date: 2023-07-12T09:59:36+08:00
+tags: ["hugo"]
 draft: false
 ---
 
@@ -67,6 +68,9 @@ hugo new posts/my-first.md
 ```
 
 写入点内容，就可以看到自己的文章预览了。
+
+如果发布时，看不到文章，把文章中的
+`draft: true` 改成 `draft: false`
 
 而且可以在服务启动过程中做修改，可以实时预览效果。
 

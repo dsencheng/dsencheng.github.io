@@ -1,4 +1,32 @@
-baseURL = 'http://example.org/'
+baseURL = 'http://dsencheng.github.io/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = "Dsen's Blog"
 theme = "m10c"
+paginate = 10
+
+[params]
+  author = "Dsen Cheng"
+  description = "技术复读机."
+  menu_item_separator = " - "
+  avatar = "/images/IMG_2078.JPG"
+  [[params.social]]
+    icon = "github"
+    name = "Github"
+    url = "https://github.com/dsencheng"
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "主页"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "tags"
+    name = "标签"
+    url = "/tags/"
+    weight = 2
+  [[menu.main]]
+    identifier = "about"
+    name = "关于"
+    url = "/about/"
+    weight = 3
