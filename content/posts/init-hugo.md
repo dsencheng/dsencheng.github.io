@@ -12,7 +12,8 @@ draft: false
 本人使用的Mac系统，并且已经装有 `homebrew`，所以直接使用终端安装。
 
 打开`终端`，输入命令
-```shell
+
+```markdown
 brew install hugo
 ```
 
@@ -22,9 +23,11 @@ brew install hugo
 ```
 `hugo v0.115.2+extended darwin/amd64 BuildDate=unknown`
 
-注意，通过`brew`安装的hugo版本有可能比官网低，建议比对一下。如果不一致，可以升级。命令如下
+{{< admonition tip >}}
+通过**brew**安装的hugo版本有可能比官网低，建议比对一下。如果不一致，可以升级。命令如下
 
 `brew upgrade hugo`
+{{< /admonition >}}
 
 现在就可以初始化一个站点，来预览效果了
 ```
