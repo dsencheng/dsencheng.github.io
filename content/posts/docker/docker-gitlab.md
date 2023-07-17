@@ -29,7 +29,7 @@ categories: ["Docker"]
 
 ```text
 docker run --detach \
---hostname gitlab.interotc.com \
+--hostname gitlab.yourdomain.com \
 --name gitlab \
 --restart always \
 --publish 10443:443 --publish 10080:80 --publish 10022:22 \
@@ -43,7 +43,7 @@ gitlab/gitlab-ce:13.8.1-ce.0
 ###### 命令参数解释
 
 `--detach` 后台运行  
-`--hostname gitlab.interotc.com` 容器的主机名或域名，即192.168.10.10或者 gitlab.example.com  
+`--hostname gitlab.yourdomain.com` 容器的主机名或域名，即192.168.10.10或者 gitlab.example.com  
 `--name gitlab` 容器的名字  
 `--restart always` 设置重启方式，always 代表一直开启，服务器开机后也会自动开启的  
 `--publish 10080:80` 把本机端口映射到容器端口，即访问宿主机10080端口为容器的80端口  
@@ -55,7 +55,7 @@ gitlab/gitlab-ce:13.8.1-ce.0
 
 ```text
 > docker run --detach \                                                                                                                          
---hostname gitlab.interotc.com \
+--hostname gitlab.yourdomain.com \
 --name gitlab \
 --restart always \
 --publish 10443:443 --publish 10080:80 --publish 10022:22 \
@@ -153,7 +153,7 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKAxw5whGEq+Itaui0vH0Jic4lb45kg7W7xwVA0f4fy2
 [参考:Mac下SSH免密登录Permission denied (publickey,password,keyboard-interactive).](https://www.cnblogs.com/feiquan/p/13693329.html)
 
 问题的原因应该是SSH端口的问题。  
-gitlab容器创建时，增加了 10022:22 的映射关系，即宿主机 10022 端口映射到容器的 22 端口。在使用 `git clone git@gitlab.interotc.com:zzjs/demo.git` 命令时会报上面的错误。  
+gitlab容器创建时，增加了 10022:22 的映射关系，即宿主机 10022 端口映射到容器的 22 端口。在使用 `git clone git@gitlab.yourdomain.com:zzjs/demo.git` 命令时会报上面的错误。  
 同时又因为本地有多个git环境，不同的账号。  
 不断的google之后，处理如下：  
 1.创建config文件，来解决不同环境和不同账号的问题。  
@@ -174,8 +174,8 @@ config            gitee_id_rsa.pub    github_id_rsa.pub   gitlab_zzjs.pub
 在`config`文件中添加下面的内容
 
 ```text
-Host gitlab.interotc.com
-HostName gitlab.interotc.com
+Host gitlab.yourdomain.com
+HostName gitlab.yourdomain.com
 User zzjs@example.com
 Port 10022
 PreferredAuthentications publickey
@@ -194,20 +194,20 @@ ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKEY0aS5EkIHAs3PPT2Gv1qjbp14S084qn5t6ryt1O/W
 这两步完成后来测试一下
 
 ```text
-> ssh -T git@gitlab.interotc.com
-The authenticity of host '[gitlab.interotc.com]:10022 ([x.x.x.x]:10022)' can't be established.
+> ssh -T git@gitlab.yourdomain.com
+The authenticity of host '[gitlab.yourdomain.com]:10022 ([x.x.x.x]:10022)' can't be established.
 ECDSA key fingerprint is SHA256:zX6tCKkYn+/77AMxBN0OWr1uoo43jKCJqp+2bGt4PVY.
 Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added '[gitlab.interotc.com]:10022' (ECDSA) to the list of known hosts.
+Warning: Permanently added '[gitlab.yourdomain.com]:10022' (ECDSA) to the list of known hosts.
 Welcome to GitLab, @zzjs!
 ```
 
 再次测试，并`git clone`，成功！
 
 ```text
-> ssh -T git@gitlab.interotc.com
+> ssh -T git@gitlab.yourdomain.com
 Welcome to GitLab, @zzjs!
-> git clone git@gitlab.interotc.com:zzjs/demo.git
+> git clone git@gitlab.yourdomain.com:zzjs/demo.git
 Cloning into 'demo'...
 warning: You appear to have cloned an empty repository.
 ```
@@ -215,6 +215,6 @@ warning: You appear to have cloned an empty repository.
 虽然解决了问题，但对于本地来说设置和操作过多，后续尝试使用Nginx去解决这个问题。
 
 坑:  
-`Pushing to http://gitlab.interotc.com/zzjs/demo.git   remote: You are not allowed to push code to this project.   fatal: unable to access 'http://gitlab.interotc.com/zzjs/demo.git/': The requested URL returned error: 403`
+`Pushing to http://gitlab.yourdomain.com/zzjs/demo.git   remote: You are not allowed to push code to this project.   fatal: unable to access 'http://gitlab.yourdomain.com/zzjs/demo.git/': The requested URL returned error: 403`
 
 这是使用Sourcetree，在推送时的报错。暂时较忙，也没有启用https，在新建克隆时，把http的请求改成git的请求后，问题不在出现。

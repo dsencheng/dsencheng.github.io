@@ -7,7 +7,7 @@ categories: ["Docker"]
 ---
 
 
-在创建Gitlab时，加了一个参数`--hostname gitlab.interotc.com`，而现在用`http://192.168.0.X:10080`的这种方式。显然这种方式并不方便。  
+在创建Gitlab时，加了一个参数`--hostname gitlab.yourdomain.com`，而现在用`http://192.168.0.X:10080`的这种方式。显然这种方式并不方便。  
 这时候就需要请出Nginx了。  
 执行命令`docker pull nginx`，拉取最新镜像。  
 拉取完成后执行命令`docker images`
@@ -95,7 +95,7 @@ Nginx已经启动成功，接下来就是添加配置文件，把请求转给git
 127.0.0.1    localhost
 ::1         localhost
 # 新增映射
-192.168.7.10 gitlab.interotc.com
+192.168.7.10 gitlab.yourdomain.com
 ```
 
 2.增加Nginx配置，重启Nginx容器。
@@ -104,7 +104,7 @@ Nginx已经启动成功，接下来就是添加配置文件，把请求转给git
 server {
     listen       80;
     listen  [::]:80;
-    server_name  gitlab.interotc.com;
+    server_name  gitlab.yourdomain.com;
 
     location / {
         proxy_set_header Host $proxy_host;
@@ -119,17 +119,17 @@ server {
 
 ```
 
-3.顺利的话，现在访问`gitlab.interotc.com`就可以显示正确的网页了。
+3.顺利的话，现在访问`gitlab.yourdomain.com`就可以显示正确的网页了。
 
 这里有个套娃逻辑。  
-本机增加host映射，访问`gitlab.interotc.com`  
+本机增加host映射，访问`gitlab.yourdomain.com`  
 ⬇️  
 发送到`192.168.7.10`(宿主机)的80端口  
 ⬇️  
 宿主机的80端口已经映射nginx容器的80端口  
 请求发送给nginx容器的80端口  
 ⬇️  
-nginx容器收到`gitlab.interotc.com`请求  
+nginx容器收到`gitlab.yourdomain.com`请求  
 ⬇️  
 解析配置文件`proxy_pass http://192.168.7.10:10080;`  
 意思是把请求转给`192.168.7.10`(宿主机)的10080端口  
