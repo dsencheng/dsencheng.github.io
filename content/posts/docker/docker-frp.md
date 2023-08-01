@@ -1,22 +1,29 @@
 ---
-title: "折腾Docker之Debian系统安装frps"
+title: "折腾Docker之frp内网穿透"
 date: 2023-07-14T13:29:42+08:00
 draft: false
 tags: ["Docker"]
 categories: ["Docker"]
 ---
 
-现有一台基于KVM的VPS，现在想安装frps映射到家里的路由器或树莓派上。
+现有一台基于KVM的VPS，是`Debian`系统，现在想安装frp映射到家里的路由器或树莓派上。
 
-## 设置存储库
+用来从公司访问家里的树莓派，网络如下:
 
-首先通过SSH登录到VPS上，因为直接用的root账号，下面的命令会省掉sodu
+公司 -> VPS -> 家 -> 树莓派
+
+假设VPS的IP地址是 `11.11.11.11`，域名是`hellofrp.com`
+
+## VPS安装Docker
+
+[官方Debian安装Docker教程](https://docs.docker.com/engine/install/debian/#install-using-the-repository)
+
+首先通过SSH登录到VPS上，因为直接用的root账号，下面的命令会省掉sodu。
 
 {{< admonition tip >}}
 如果命令提示权限问题，请按照官方教程补充 `sodu`
 {{< /admonition >}}
 
-[官方Debian安装Docker教程](https://docs.docker.com/engine/install/debian/#install-using-the-repository)
 
 1. 更新软件包索引并安装软件包以允许使用 基于 HTTPS 的存储库：
 
@@ -37,23 +44,16 @@ categories: ["Docker"]
    "$(. /etc/os-release && echo "$VERSION_CODENAME")" stable" | \
    tee /etc/apt/sources.list.d/docker.list > /dev/null
    ```
-
-## 安装Docker
-
-1. 更新包索引:
-   ```
-   apt-get update
-   ```
-2. 安装 Docker Engine、containerd 和 Docker Compose
+4. 安装 Docker Engine、containerd 和 Docker Compose
    
    ```
    apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
    ```
-3. 通过运行映像验证 Docker 引擎安装是否成功
+5. 通过运行映像验证 Docker 引擎安装是否成功
    ```
    docker run hello-world
    ```
-4. 出现下面的内容，就表示安装成功了
+6. 出现下面的内容，就表示安装成功了
     ```
     Hello from Docker!
     This message shows that your installation appears to be working correctly.
@@ -77,6 +77,23 @@ categories: ["Docker"]
     https://docs.docker.com/get-started/
     ```
 
+
+{{< admonition tip >}}
+如果是自己玩，官方提供了一个安装脚本，可以省略1、2、3、4步骤。
+
+先更新系统程序
+```
+apt-get update
+apt-get upgrade
+```
+然后执行官方脚本
+```
+curl -fsSL https://get.docker.com -o get-docker.sh
+sudo sh get-docker.sh
+```
+{{< /admonition >}}
+
+
 ## 安装Frps
 
 1. 首先拉取一个Frp的镜像，本文基于 `snowdreamtech/frps` ,你也可以去 https://hub.docker.com/ 搜索适合的镜像
@@ -92,9 +109,10 @@ categories: ["Docker"]
    nano /etc/frp/frps.ini
    ```
    {{< admonition tip >}}
-    `/etc/frp/frps.ini` 文件路径需要和启动命令中的第一个路径保持一致
+    `/etc/frp/frps.ini` 文件路径需要和`docker`启动命令中的第一个路径保持一致
+    示例： `-v /etc/frp/frps.ini:/etc/frp/frps.ini`
     表示把宿主机的文件映射到Docker容器的文件
-    frps会依赖并读取这个配置文件
+    容器会依赖并读取这个配置文件
     {{< /admonition >}}
 
     `frps.ini`文件内容示例:
@@ -110,6 +128,8 @@ categories: ["Docker"]
    # 设置http及https协议下代理端口（非重要）
    vhost_http_port = 7080
    vhost_https_port = 7081
+   # 鉴权用，可以认为是个密码，客户端需要配置一样的
+   token = frp1234567890
     ```
 3. 启动Frps服务端
    ```
@@ -121,8 +141,96 @@ categories: ["Docker"]
     ```
     docker ps -a
     ```
-5. 访问frps面板，打开浏览器，输入`IP:dashboard_port`，如`8.8.8.8:7001`，就能看到frps的web管理页面了。
+5. 访问frps面板，打开浏览器，输入`IP:dashboard_port`，如`11.11.11.11:7001`，就能看到frps的web管理页面了。
    
+
+## 测试
+
+VPS上的frps启动之后，我先公司电脑做一个测试。
+
+大致的网络请求过程如下：
+
+本机 -> VPS -> FRP -> 本机
+
+## 启动本地web
+
+刚好`Hugo`可以启动一个本地web服务，本博客就是使用的`Hugo`，使用`hugo server`启动本地博客预览，终端会输出访问地址，我当前测试是 `http://localhost:1313/`。浏览器可以正常访问。
+
+## 下载frp
+
+这里是用的frp二进制程序，可以打开[https://github.com/fatedier/frp/releases](https://github.com/fatedier/frp/releases)页面下载。
+
+下载完成后解压缩，目录大致如下
+
+```
+- frp_0.51.2_darwin_amd64
+    - frpc_full.ini
+    - frpc.ini
+    - frpc
+    - frps_full.ini
+    - frps.ini
+    - frps
+    - LICENSE
+```
+
+删除`frpc.ini`的示例配置，使用下面内容，覆盖`frpc.ini`文件
+
+```
+[common]
+# 你的服务器ip地址或域名
+server_addr = 11.11.11.11
+server_port = 7000
+# 鉴权用，可以认为是个密码，和服务端保持一致
+token = frp1234567890
+# 客户端管理界面
+admin_addr = 127.0.0.1
+admin_port = 7400
+admin_user = admin
+admin_pwd = admin
+
+[blog]
+type = http
+# 客户端暴露的接口
+local_port = 1313
+# 如果你有单独的域名，配置下面这个
+# custom_domains = hellofrp.com
+# 我域名绑了很多服务，所以这里使用二级域名，访问示例: http://blog.hellofrp.com
+subdomain = blog
+```
+
+写好配置文件后，在你下载的frp目录下，启动`frpc`。
+
+```
+./frpc -c frpc.ini
+```
+
+## 验证
+
+浏览器访问`http://blog.hellofrp.com:7080`，成功就能看到和`http://localhost:1313/`一样的页面了。
+
+{{< admonition note >}}
+开始我用Docker启动的frpc，搞了半天也不对，frps能看到有个http连接上线了，但就是无法访问本机，而且本机的`http://127.0.0.1:7400/`也打不开。
+
+后来想想，好像把客户端搞错了，用Docker启动frpc，应该是这个容器，而不是本机(宿主机)。
+
+然后直接运行frpc的程序，本机客户端管理页面`http://127.0.0.1:7400/`可以打开了，并且通过子域名`blog.yourdomain.com`也能访问到我本机上的`http://localhost:1313/`博客
+
+等我搞明白了，在来更新
+
+```
+docker run --restart=always --network host -d -v /你的文件路径/frpc.ini:/etc/frp/frpc.ini --name frpc snowdreamtech/frpc
+```
+
+{{< /admonition >}}
+
+## 附图
+
+服务端
+![frps](/images/frp_s.png "服务端")
+
+客户端
+![frpc](/images/frp_c.png "客户端")
+
 
 ## 附加项：安装Docker Web管理
 
