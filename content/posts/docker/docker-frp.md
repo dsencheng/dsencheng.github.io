@@ -12,7 +12,9 @@ categories: ["Docker"]
 
 公司 -> VPS -> 家 -> 树莓派
 
-假设VPS的IP地址是 `11.11.11.11`，域名是`hellofrp.com`
+假设VPS的IP地址是 `11.11.11.11`，域名是`hellofrp.top`，并且已经把`@`、`*`记录解析到IP。
+
+![dns](/images/dns_a.png "A记录")
 
 ## VPS安装Docker
 
@@ -125,11 +127,13 @@ sudo sh get-docker.sh
    # 登录面板账号设置
    dashboard_user = admin
    dashboard_pwd = admin
-   # 设置http及https协议下代理端口（非重要）
+   # 设置http及https协议下代理端口
    vhost_http_port = 7080
    vhost_https_port = 7081
    # 鉴权用，可以认为是个密码，客户端需要配置一样的
    token = frp1234567890
+   # 绑定域名，客户端可设置子域名来连接
+   subdomain_host = hellofrp.top
     ```
 3. 启动Frps服务端
    ```
@@ -141,7 +145,7 @@ sudo sh get-docker.sh
     ```
     docker ps -a
     ```
-5. 访问frps面板，打开浏览器，输入`IP:dashboard_port`，如`11.11.11.11:7001`，就能看到frps的web管理页面了。
+5. 访问frps面板，打开浏览器，输入`11.11.11.11:7001` 或 `hellofrp.com:7001`，就能看到frps的web管理页面了。
    
 
 ## 测试
@@ -152,11 +156,11 @@ VPS上的frps启动之后，我先公司电脑做一个测试。
 
 本机 -> VPS -> FRP -> 本机
 
-## 启动本地web
+### 启动本地web
 
 刚好`Hugo`可以启动一个本地web服务，本博客就是使用的`Hugo`，使用`hugo server`启动本地博客预览，终端会输出访问地址，我当前测试是 `http://localhost:1313/`。浏览器可以正常访问。
 
-## 下载frp
+### 下载frp
 
 这里是用的frp二进制程序，可以打开[https://github.com/fatedier/frp/releases](https://github.com/fatedier/frp/releases)页面下载。
 
@@ -193,8 +197,8 @@ type = http
 # 客户端暴露的接口
 local_port = 1313
 # 如果你有单独的域名，配置下面这个
-# custom_domains = hellofrp.com
-# 我域名绑了很多服务，所以这里使用二级域名，访问示例: http://blog.hellofrp.com
+# custom_domains = hellofrp.top
+# 我域名绑了很多服务，所以这里使用二级域名，访问示例: http://blog.hellofrp.top
 subdomain = blog
 ```
 
@@ -206,7 +210,7 @@ subdomain = blog
 
 ## 验证
 
-浏览器访问`http://blog.hellofrp.com:7080`，成功就能看到和`http://localhost:1313/`一样的页面了。
+浏览器访问`http://blog.hellofrp.top:7080`，成功就能看到和`http://localhost:1313/`一样的页面了。
 
 {{< admonition note >}}
 开始我用Docker启动的frpc，搞了半天也不对，frps能看到有个http连接上线了，但就是无法访问本机，而且本机的`http://127.0.0.1:7400/`也打不开。
@@ -223,6 +227,22 @@ docker run --restart=always --network host -d -v /你的文件路径/frpc.ini:/e
 
 {{< /admonition >}}
 
+## 连接失败
+
+出现无法连接上时，排查 `http://127.0.0.1:7400/` 是否可以打开。
+   
+建议配置客户端管理页面。
+   
+打不开管理页面，说明客户端配置有错误，或者本地网络连接有问题。
+
+如果连接错误，客户端管理页面也有对应的错误日志，方便排查。
+
+我遇见过的几个问题：
+
+1. 没有配置二级域名A记录，域名管理用的是`Cloudflare`，上面没配置 `@` 记录，导致`www.hellofrp.top`浏览器无法访问到VPS。
+2. 客户端是路由器openwrt上的frpc页面工具，服务器地址填写 `www.hellofrp.top` 和 `hellofrp.top` 是有区别的。
+3. 子域名填写前缀就行。比如`wrt`，那么浏览器访问填写`wrt.hellofrp.top`，不要在子域名填写完整域名。`subdomain = wrt.hellofrp.top`，出现这种配置是错误的。
+![frps](/images/frp_wrt.png "OpenWrt")
 ## 附图
 
 服务端
@@ -262,3 +282,4 @@ de5b28eb2fa9   portainer/portainer-ce:latest  "/portainer"             2 weeks a
 首次访问，需要初始化一个管理员账号。
 
 登录后，点击左侧 `Home`，然后在点击 `local`，就能进入到 `Dashboard`，查看本机中的镜像、容器等信息了。
+
