@@ -186,8 +186,8 @@ server_addr = 11.11.11.11
 server_port = 7000
 # 鉴权用，可以认为是个密码，和服务端保持一致
 token = frp1234567890
-# 客户端管理界面
-admin_addr = 127.0.0.1
+# 客户端管理界面，建议填写localhost，就是本机
+admin_addr = localhost
 admin_port = 7400
 admin_user = admin
 admin_pwd = admin
@@ -213,11 +213,11 @@ subdomain = blog
 浏览器访问`http://blog.hellofrp.top:7080`，成功就能看到和`http://localhost:1313/`一样的页面了。
 
 {{< admonition note >}}
-开始我用Docker启动的frpc，搞了半天也不对，frps能看到有个http连接上线了，但就是无法访问本机，而且本机的`http://127.0.0.1:7400/`也打不开。
+开始我用Docker启动的frpc，搞了半天也不对，frps能看到有个http连接上线了，但就是无法访问本机，而且本机的`http://localhost:7400/`也打不开。
 
 后来想想，好像把客户端搞错了，用Docker启动frpc，应该是这个容器，而不是本机(宿主机)。
 
-然后直接运行frpc的程序，本机客户端管理页面`http://127.0.0.1:7400/`可以打开了，并且通过子域名`blog.yourdomain.com`也能访问到我本机上的`http://localhost:1313/`博客
+然后直接运行frpc的程序，本机客户端管理页面`http://localhost:7400/`可以打开了，并且通过子域名`blog.yourdomain.com`也能访问到我本机上的`http://localhost:1313/`博客
 
 等我搞明白了，在来更新
 
@@ -229,7 +229,7 @@ docker run --restart=always --network host -d -v /你的文件路径/frpc.ini:/e
 
 ## 连接失败
 
-出现无法连接上时，排查 `http://127.0.0.1:7400/` 是否可以打开。
+出现无法连接上时，排查 `http://localhost:7400/` 是否可以打开。
    
 建议配置客户端管理页面。
    
@@ -265,9 +265,9 @@ docker run --restart=always --network host -d -v /你的文件路径/frpc.ini:/e
 docker volume create portainer_data
 ```
 
-然后，下载安装 `Portainer` 服务容器:
+运行 `Portainer` 服务容器，`9000`是`http`访问端口，`9443`是`https`访问端口。官方教程中还开放了`8000`端口，这里不使用。
 ```
-docker run -d -p 8000:8000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
+docker run -d -p 9000:9000 -p 9443:9443 --name portainer --restart=always -v /var/run/docker.sock:/var/run/docker.sock -v portainer_data:/data portainer/portainer-ce:latest
 ```
 `Portainer` 安装完毕，可以使用 `docker ps` 检查容器是否已经启动:
 
